@@ -83,9 +83,9 @@ HTML과 CSS/JS의 경로는 상대경로입니다. GitHub Pages 프로젝트 경
 
 ## GitHub 저장소 생성과 Pages 배포
 
-기본 대상은 `softm/foodhannun`입니다. **소스에 저장소 주소가 들어 있다는 것만으로 원격 생성·배포가 완료된 것은 아닙니다.** 실행 결과와 GitHub Pages 상태를 확인해야 합니다.
+2026-10-20(한국 시간) [softm/foodhannun 저장소](https://github.com/softm/foodhannun) 생성과 [음식한눈 서비스](https://softm.github.io/foodhannun/)의 GitHub Pages 배포를 완료했습니다.
 
-Git과 [GitHub CLI](https://cli.github.com/)가 설치되고 `gh auth login`으로 본인의 GitHub 계정에 로그인한 환경에서 프로젝트 폴더의 다음 명령을 실행합니다.
+아래 스크립트는 사용자가 로컬 환경에서 선택 실행할 수 있는 배포 보조 도구입니다. Git과 [GitHub CLI](https://cli.github.com/)가 설치되고 `gh auth login`으로 본인의 GitHub 계정에 로그인한 환경에서 프로젝트 폴더의 다음 명령을 실행합니다.
 
 ```bash
 bash scripts/deploy-pages.sh
@@ -97,13 +97,13 @@ bash scripts/deploy-pages.sh
 
 | 설정 | 값 |
 | --- | --- |
-| 저장소 | `softm/foodhannun` |
+| 저장소 | [softm/foodhannun](https://github.com/softm/foodhannun) |
 | 공개 범위 | Public |
 | Pages source | Deploy from a branch |
 | Branch | `main` |
 | Folder | `/ (root)` |
 | Build command | 없음 |
-| 예상 프로젝트 주소 | `https://softm.github.io/foodhannun/` — 실제 주소는 Pages API 응답으로 확인 |
+| 서비스 주소 | [음식한눈](https://softm.github.io/foodhannun/) |
 
 별도 Actions 배포 워크플로와 브랜치 배포를 동시에 추가하지 않습니다. [GitHub Pages REST 문서](https://docs.github.com/en/rest/pages/pages#create-a-github-pages-site)와 [gh repo create 문서](https://cli.github.com/manual/gh_repo_create)를 기준으로 작성했습니다.
 
@@ -135,4 +135,8 @@ python3 scripts/sync-recipes.py --full
 
 ## 검증
 
-자바스크립트 문법, HTML의 필수 ID/중복 ID, 정적 경로, 정규화 JSON과 브라우저 데이터의 일치, 공식 이미지 파일, 키 없는 전체 수집 실패 시 기존 데이터 보존을 점검합니다. 실제 원격 배포 및 브라우저 확인 결과는 작업 완료 안내에 별도로 명시합니다.
+자바스크립트 문법, HTML의 필수 ID/중복 ID, 정적 경로, 정규화 JSON과 브라우저 데이터의 일치, 공식 이미지 파일, 키 없는 전체 수집 실패 시 기존 데이터 보존을 점검했습니다.
+
+2026-10-20(한국 시간) [첫 GitHub Pages 배포 실행](https://github.com/softm/foodhannun/actions/runs/39285531798)의 build·deploy·report 단계가 모두 성공했음을 확인했습니다. 원격에 업로드한 18개 파일은 로컬 원본과 Git blob SHA가 모두 일치했습니다.
+
+라이브 웹에서 레시피 목록 5건, `두부` 검색 결과 2건, 상세의 재료 원문과 영양 기준 중량 미제공 안내, 재료 1건의 장보기 추가·제거, 장보기 창을 닫은 뒤 레시피 상세가 유지되는 동작을 확인했습니다. 실제 모바일 기기 화면은 검증하지 않았습니다.
