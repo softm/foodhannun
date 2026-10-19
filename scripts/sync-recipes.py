@@ -3,6 +3,7 @@
 
 No key is required for the default, documented five-record sample. Full imports
 must be requested explicitly with --full and FOODSAFETY_API_KEY in the environment.
+An existing full snapshot requires --full to refresh or --sample to replace it.
 This script uses only Python's standard library and does not print request URLs.
 """
 
@@ -42,6 +43,10 @@ AMOUNT_RE = re.compile(
     r"(?:kg|mg|g|mL|ml|L|l|ℓ|큰술|작은술|큰\s*술|작은\s*술|컵|개|알|줄기|송이|"
     r"마리|모|봉지|봉|장|쪽|대|포기|뿌리|조각|줌|공기|근|스푼|tsp|tbsp|T|t)"
 )
+ATTACHED_AMOUNT_RE = re.compile(
+    r"(?<![\d./])" + AMOUNT_RE.pattern.removeprefix(r"(?<!\S)")
+)
+BRACKET_PAIRS = {"(": ")", "[": "]", "{": "}", "（": "）", "［": "］"}
 
 
 class SyncError(Exception):
@@ -128,12 +133,55 @@ def split_ingredients(text: str) -> list[str]:
     return pieces
 
 
+def balanced_brackets(text: str, single_group: bool = False) -> bool:
+    """Validate grouping without repairing or deleting any source characters."""
+    if single_group and (not text or text[0] not in BRACKET_PAIRS):
+        return False
+    stack: list[str] = []
+    for index, char in enumerate(text):
+        if char in BRACKET_PAIRS:
+            stack.append(BRACKET_PAIRS[char])
+        elif char in BRACKET_PAIRS.values():
+            if not stack or stack.pop() != char:
+                return False
+        if single_group and not stack and index != len(text) - 1:
+            return False
+    return not stack
+
+
+def split_attached_amount(candidate: str) -> tuple[str, str] | None:
+    """Split one clear quantity, preserving its original notation and grouping.
+
+    Examples: '두부200g', '두부(200g)', '두부(200g, 1/2모)'. Do not
+    reinterpret unmatched brackets or strings containing multiple ingredients.
+    """
+    match = ATTACHED_AMOUNT_RE.search(candidate)
+    if not match:
+        return None
+    prefix = candidate[:match.start()].rstrip()
+    if not prefix:
+        return None
+    if prefix[-1] in ("(", "（"):
+        start = len(prefix) - 1
+        name, amount = candidate[:start].strip(), candidate[start:].strip()
+        if name and balanced_brackets(name) and balanced_brackets(amount, single_group=True):
+            return name, amount
+        return None
+    if not balanced_brackets(prefix):
+        return None
+    remainder = candidate[match.end():].strip()
+    if remainder and not balanced_brackets(remainder, single_group=True):
+        return None
+    return prefix, candidate[match.start():].strip()
+
+
 def parse_ingredients(text: str, recipe_name: str) -> list[dict[str, str]]:
     ingredients: list[dict[str, str]] = []
     compact_title = re.sub(r"\s+", "", recipe_name)
     for raw in split_ingredients(text):
         candidate = raw.lstrip(" ·●•-*\t").strip()
-        candidate = re.sub(r"^\[[^\]]*인분\]\s*", "", candidate)
+        candidate = re.sub(r"(?:\s*<br\s*/?>)+\s*$", "", candidate, flags=re.IGNORECASE).strip()
+        candidate = re.sub(r"^\[[^\]]*인분\s*\]\s*", "", candidate)
         if ":" in candidate or "：" in candidate:
             heading, _, rest = re.split(r"([:：])", candidate, maxsplit=1)
             if not re.search(r"\d", heading):
@@ -149,8 +197,11 @@ def parse_ingredients(text: str, recipe_name: str) -> list[dict[str, str]]:
         if (not re.search(r"\d", candidate) and compact_title.endswith(compact)
                 and candidate.endswith(("국", "찜", "무침", "소박이", "소스"))):
             continue
+        attached = split_attached_amount(candidate)
         match = AMOUNT_RE.search(candidate)
-        if match:
+        if attached:
+            name, amount = attached
+        elif match:
             name, amount = candidate[:match.start()].strip(), candidate[match.start():].strip()
         else:
             verbal = re.search(r"\s+(약간|적당량|조금|기호에\s*따라.*)$", candidate)
@@ -235,8 +286,21 @@ def atomic_write_all(outputs: dict[Path, str]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--full", action="store_true", help="환경변수의 인증키로 전체 레시피 수집")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--full", action="store_true", help="환경변수의 인증키로 전체 레시피 수집")
+    mode.add_argument("--sample", action="store_true", help="공식 샘플 5건으로 명시적으로 전환 또는 갱신")
     args = parser.parse_args()
+    if not args.full and not args.sample:
+        existing_path = ROOT / "data" / "recipes.json"
+        if existing_path.exists():
+            try:
+                existing_mode = json.loads(existing_path.read_text(encoding="utf-8")).get("meta", {}).get("datasetMode")
+            except (OSError, ValueError, TypeError, AttributeError):
+                print("오류: 기존 데이터 모드를 확인하지 못했습니다. --full 또는 --sample을 명시하세요. 기존 파일을 보존합니다.", file=sys.stderr)
+                return 2
+            if existing_mode == "official-full":
+                print("오류: 전체 레시피가 저장되어 있습니다. 갱신은 --full, 샘플 5건으로 전환은 --sample을 명시하세요. 기존 파일을 보존합니다.", file=sys.stderr)
+                return 2
     api_key = os.environ.get("FOODSAFETY_API_KEY", "").strip() if args.full else ""
     if args.full and not api_key:
         print("오류: --full은 FOODSAFETY_API_KEY 환경변수가 필요합니다. 기존 파일을 보존합니다.", file=sys.stderr)

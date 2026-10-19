@@ -26,6 +26,10 @@
   let recent = (Array.isArray(persisted.recent) ? persisted.recent : []).filter(item => typeof item === 'string').slice(0, 6);
   let notes = persisted.notes && typeof persisted.notes === 'object' && !Array.isArray(persisted.notes) ? persisted.notes : {};
   const state = { query: '', method: 'all', category: 'all', allergen: 'all', sort: 'default', view: 'all' };
+  const RESULTS_BATCH_SIZE = 24;
+  let currentResults = [];
+  let displayedResults = 0;
+  let renderedSearchState = null;
   let activeRecipe = null;
   let activeTab = 'recipe';
   let returnFocus = null;
@@ -158,7 +162,9 @@
     state.sort = params.get('sort') === 'name' ? 'name' : 'default';
     state.view = params.get('view') === 'saved' ? 'saved' : 'all';
     syncControls();
-    render();
+    // Detail-only history navigation keeps appended cards and their focus targets.
+    // A changed search, filter, sort, or view always starts with the first batch.
+    if (renderedSearchState !== JSON.stringify(state)) render();
     const recipe = recipeById.get(params.get('recipe'));
     if (recipe) openRecipe(recipe.id, false);
     else if ($('#recipe-dialog')?.open) { activeRecipe = null; $('#recipe-dialog').close(); }
@@ -186,7 +192,7 @@
       (state.view !== 'saved' || saved.has(String(recipe.id))) &&
       (state.method === 'all' || recipe.method === state.method) &&
       (state.category === 'all' || recipe.category === state.category) &&
-      (state.allergen === 'all' || ![...allergens(recipe).map(item => item.name), ...possibleAllergens(recipe)].includes(state.allergen))
+      (state.allergen === 'all' || (String(recipe.ingredientText || '').trim() && ![...allergens(recipe).map(item => item.name), ...possibleAllergens(recipe)].includes(state.allergen)))
     ).sort((a, b) => {
       if (state.sort === 'name') return a.name.localeCompare(b.name, 'ko');
       if (state.query) return Number(normalize(b.name).includes(normalize(state.query))) - Number(normalize(a.name).includes(normalize(state.query)));
@@ -195,7 +201,7 @@
   }
   function renderCard(recipe) {
     const isSaved = saved.has(String(recipe.id));
-    const ingredients = (recipe.ingredients || []).slice(0, 3).map(item => item.name).join(' · ');
+    const ingredients = (recipe.ingredients || []).slice(0, 3).map(item => item.name).join(' · ') || '원문 재료 정보 미제공';
     return `<article class="recipe-card" data-card-id="${escape(recipe.id)}">
       <div class="recipe-visual">
         <button type="button" class="recipe-image-button" data-recipe-id="${escape(recipe.id)}" aria-label="${escape(recipe.name)} 레시피 보기"><img class="recipe-image" src="${escape(safeImage(recipe.image))}" alt="${escape(recipe.name)} 완성 사진" width="600" height="440" loading="lazy" decoding="async"></button>
@@ -205,15 +211,19 @@
       <div class="recipe-body"><div class="recipe-tags"><span class="tag tag--green">${escape(recipe.category)}</span><span class="tag">${escape(recipe.method)}</span></div>
         <h3 class="recipe-title"><button type="button" class="card-open" data-recipe-id="${escape(recipe.id)}">${escape(recipe.name)}</button></h3>
         <p class="recipe-ingredients">${escape(ingredients)}</p>
-        <div class="recipe-meta"><span>조리 단계 <strong>${recipe.steps?.length || 0}</strong>개</span><span>영양 · 재료 정보</span></div>
+        <div class="recipe-meta"><span>${recipe.steps?.length ? `조리 단계 <strong>${recipe.steps.length}</strong>개` : '조리 순서 미제공'}</span><span>${recipe.ingredients?.length ? '영양 · 재료 정보' : '재료 미제공'}</span></div>
         <div class="card-footer"><span>재료부터 만드는 법까지</span><button class="card-arrow icon-button" type="button" data-recipe-id="${escape(recipe.id)}" aria-label="${escape(recipe.name)} 상세 보기">${icons.arrow}</button></div>
       </div></article>`;
   }
   function render() {
     const result = filteredRecipes();
-    $('#recipe-grid').innerHTML = result.map(renderCard).join('');
+    currentResults = result;
+    displayedResults = Math.min(RESULTS_BATCH_SIZE, result.length);
+    $('#recipe-grid').innerHTML = result.slice(0, displayedResults).map(renderCard).join('');
+    renderedSearchState = JSON.stringify(state);
+    renderPagination();
     $('#results-title').textContent = state.query ? `“${state.query}” 검색 결과` : state.view === 'saved' ? '다시 꺼내 보는, 저장한 음식' : '오늘은 이런 한 끼 어때요?';
-    $('#results-count').textContent = `${result.length}개`;
+    $('#results-count').textContent = `${result.length.toLocaleString('ko-KR')}개`;
     $('#empty-state').hidden = Boolean(result.length);
     if (!result.length) {
       const heading = $('#empty-state h3');
@@ -230,6 +240,36 @@
     const caveat = $('#filter-caveat');
     if (caveat) caveat.hidden = state.allergen === 'all';
     syncControls(); updateCounts(); renderRecent();
+  }
+  function renderPagination() {
+    let controls = $('#recipe-pagination');
+    if (!controls) {
+      controls = document.createElement('div');
+      controls.id = 'recipe-pagination';
+      controls.className = 'recipe-pagination';
+      controls.innerHTML = '<p id="results-progress" class="results-progress" role="status" aria-live="polite" aria-atomic="true"></p><button type="button" class="button button--outline load-more-button" data-load-more aria-controls="recipe-grid" aria-describedby="results-progress"></button>';
+      $('#recipe-grid').insertAdjacentElement('afterend', controls);
+    }
+    const total = currentResults.length;
+    const remaining = total - displayedResults;
+    controls.hidden = total <= RESULTS_BATCH_SIZE;
+    $('#results-progress').textContent = `전체 ${total.toLocaleString('ko-KR')}개 중 ${displayedResults.toLocaleString('ko-KR')}개 표시`;
+    const button = controls.querySelector('[data-load-more]');
+    button.hidden = remaining <= 0;
+    button.textContent = `다음 ${Math.min(RESULTS_BATCH_SIZE, Math.max(0, remaining))}개 더 보기`;
+  }
+  function loadMoreResults() {
+    if (displayedResults >= currentResults.length) return;
+    const grid = $('#recipe-grid');
+    const start = displayedResults;
+    const next = Math.min(start + RESULTS_BATCH_SIZE, currentResults.length);
+    // Append only the next batch; existing card nodes, images, and handlers survive.
+    grid.insertAdjacentHTML('beforeend', currentResults.slice(start, next).map(renderCard).join(''));
+    displayedResults = next;
+    renderPagination();
+    const firstAdded = grid.children[start]?.querySelector('.recipe-image-button');
+    // Keep the viewport steady while letting keyboard users visit the new cards.
+    firstAdded?.focus({ preventScroll: true });
   }
   function renderRecent() {
     const container = $('#recent-searches');
@@ -299,11 +339,16 @@
   }
   function recipePanel(recipe) {
     const steps = recipe.steps || [];
+    if (!steps.length) return '<h3>조리 순서 미제공</h3><p class="notice">원문에 조리 순서가 제공되지 않았습니다. 조리 단계가 있는 다른 레시피를 확인해 주세요.</p>';
     const missing = steps.some((step, index) => Number(step.number) !== index + 1);
     const related = relatedRecipes(recipe);
     return `<div class="panel-heading"><h3>차근차근, 만드는 법</h3><span class="tag">${steps.length}개 단계</span></div><p class="source-note">조리시간과 난이도는 원문에서 제공하지 않습니다.</p>${missing ? '<p class="notice">원문에 일부 단계 번호가 없습니다. 제공된 순서와 번호를 그대로 표시합니다.</p>' : ''}<ol class="step-list">${steps.map(step => `<li value="${Number(step.number) || 1}"><span class="step-number" aria-hidden="true">${Number(step.number) || 1}</span><div><p>${escape(String(step.text || '').replace(/^\s*\d+\s*[.)]\s*/, '').replace(/([.!?다요])\s*[abc]$/, '$1'))}</p></div></li>`).join('')}</ol>${related.length ? `<div class="related-section"><h3>같은 재료로 만드는 다른 음식</h3><p class="source-note">재료 이름이 겹치는 레시피를 모았어요.</p><div class="related-list">${related.map(other => `<button type="button" class="related-recipe" data-recipe-id="${escape(other.id)}"><img src="${escape(safeImage(other.image))}" alt="" width="56" height="56" loading="lazy"><span>${escape(other.name)}</span>${icons.arrow}</button>`).join('')}</div></div>` : ''}`;
   }
   function ingredientsPanel(recipe) {
+    if (!(recipe.ingredients || []).length) {
+      const original = String(recipe.ingredientText || '').trim();
+      return `<h3>필요한 재료</h3><p class="notice">${original ? '재료 원문을 개별 항목으로 나누지 못했습니다. 아래 원문을 확인해 주세요.' : '원문에 재료 정보가 제공되지 않아 장보기 목록에 담을 수 없습니다.'}</p>${original ? `<details class="original-ingredients" open><summary>재료 원문 보기</summary><p>${escape(original)}</p></details>` : ''}`;
+    }
     return `<div class="panel-heading"><h3>필요한 재료</h3><button type="button" class="button button--primary" data-add-all="${escape(recipe.id)}">${icons.bag} 모두 담기</button></div><p class="source-note">원문에 적힌 분량입니다. 장보기는 판매처의 검색 결과로 연결되며, 가격·재고 정보는 제공하지 않습니다.</p><div class="ingredient-list">${(recipe.ingredients || []).map((ingredient, index) => {
       const key = cartKey(recipe.id, ingredient.name, ingredient.amount);
       const inCart = cart.some(item => item.key === key);
@@ -313,7 +358,12 @@
   function nutritionPanel(recipe) {
     const nutrition = recipe.nutrition || {};
     const entries = [['열량', nutrition.energy, 'kcal'], ['탄수화물', nutrition.carbohydrates, 'g'], ['단백질', nutrition.protein, 'g'], ['지방', nutrition.fat, 'g'], ['나트륨', nutrition.sodium, 'mg']];
-    return `<h3>원문에 제공된 영양 정보</h3><p class="notice">${nutrition.weight ? `원문 중량(1인분): ${escape(nutrition.weight)}. ` : '원문에서 기준 중량을 제공하지 않았습니다. '}아래 수치를 임의로 100g 또는 실제 섭취 1인분 기준으로 해석하지 마세요.</p><div class="nutrition-grid">${entries.map(([label, value, unit]) => `<div class="nutrition-item"><span>${label}</span><strong>${number(value)}${value == null || value === '' ? '' : `<small>${unit}</small>`}</strong></div>`).join('')}</div><p class="source-note">식품안전나라 COOKRCP01 제공값입니다. 재료의 종류·분량·조리법에 따라 실제 영양은 달라지며, 기준 분량이 확인되지 않아 음식 간 영양 순위와 식단 목표 필터는 제공하지 않습니다.</p>`;
+    const providedNumber = value => value == null || String(value).trim() === '' || !Number.isFinite(Number(value)) ? null : Number(value);
+    const weight = providedNumber(nutrition.weight);
+    const sourceNotices = [];
+    if (entries.every(([, value]) => providedNumber(value) === 0)) sourceNotices.push('원문 영양값이 모두 0으로 기재되어 있습니다. 실제 영양 정보는 원문 제공기관에 확인해 주세요.');
+    if (weight > 0 && [nutrition.carbohydrates, nutrition.protein, nutrition.fat].some(value => providedNumber(value) > weight)) sourceNotices.push('원문 영양값에 기준 중량보다 큰 수치가 있어 확인이 필요합니다.');
+    return `<h3>원문에 제공된 영양 정보</h3><p class="notice">${nutrition.weight ? `원문 중량(1인분): ${escape(nutrition.weight)}. ` : '원문에서 기준 중량을 제공하지 않았습니다. '}아래 수치를 임의로 100g 또는 실제 섭취 1인분 기준으로 해석하지 마세요.</p>${sourceNotices.map(text => `<p class="notice notice--warning">${text}</p>`).join('')}<div class="nutrition-grid">${entries.map(([label, value, unit]) => `<div class="nutrition-item"><span>${label}</span><strong>${number(value)}${value == null || value === '' ? '' : `<small>${unit}</small>`}</strong></div>`).join('')}</div><p class="source-note">식품안전나라 COOKRCP01 제공값입니다. 재료의 종류·분량·조리법에 따라 실제 영양은 달라집니다. 기준 분량이 확인되지 않은 수치를 환산하지 않으며, 음식 간 영양 순위와 식단 목표 필터는 제공하지 않습니다.</p>`;
   }
   function allergyPanel(recipe, known) {
     const possible = possibleAllergens(recipe);
@@ -381,7 +431,7 @@
     await copyText(`${recipe.name} · 음식한눈\n${shareUrl}`, '음식 공유 링크를 복사했어요.');
   }
   function renderSources() {
-    $('#sources-content').innerHTML = `<p class="eyebrow">ABOUT THE DATA</p><h2 id="sources-dialog-title">어디에서 온 정보인가요?</h2><p>음식한눈은 식품안전나라의 공개 레시피를 활용한 민간 음식 탐색 서비스입니다.</p><dl class="source-definition"><div><dt>현재 수록</dt><dd>${datasetLabel} ${recipes.length}종</dd></div><div><dt>가져온 날짜</dt><dd>${escape(fetchedDate())}</dd></div><div><dt>레시피·재료·사진·영양</dt><dd>식품의약품안전처 COOKRCP01</dd></div><div><dt>알레르기 표시</dt><dd>재료명 단서 분석 · 안전 판정 아님</dd></div><div><dt>저장한 음식·메모·장보기</dt><dd>현재 브라우저에 보관</dd></div><div><dt>구매처</dt><dd>네이버쇼핑 일반 검색 링크 · 제휴 아님</dd></div></dl><div class="source-links"><a href="${escape(sourceUrl())}" target="_blank" rel="noopener noreferrer">식품안전나라 API 원문 ↗</a><a href="https://www.data.go.kr/data/15060073/openapi.do" target="_blank" rel="noopener noreferrer">공공데이터포털 데이터·이용 조건 ↗</a><a href="https://openapi.foodsafetykorea.go.kr/api/sample/COOKRCP01/json/1/5" target="_blank" rel="noopener noreferrer">공개 샘플 데이터 ↗</a></div><p class="notice">이용자가 검색할 때는 저장된 데이터를 조회합니다. 전체 음식 실시간 검색, 공개 리뷰, 가격·재고 조회, 이미지 인식은 아직 연결되지 않았습니다.</p><p class="source-note">기준 중량이 없는 영양값을 환산하지 않습니다. 원문 데이터에도 누락이나 오류가 있을 수 있습니다.</p>`;
+    $('#sources-content').innerHTML = `<p class="eyebrow">ABOUT THE DATA</p><h2 id="sources-dialog-title">어디에서 온 정보인가요?</h2><p>음식한눈은 식품안전나라의 공개 레시피를 활용한 민간 음식 탐색 서비스입니다.</p><dl class="source-definition"><div><dt>현재 수록</dt><dd>${datasetLabel} ${recipes.length}종</dd></div><div><dt>가져온 날짜</dt><dd>${escape(fetchedDate())}</dd></div><div><dt>레시피·재료·사진·영양</dt><dd>식품의약품안전처 COOKRCP01</dd></div><div><dt>알레르기 표시</dt><dd>재료명 단서 분석 · 안전 판정 아님</dd></div><div><dt>저장한 음식·메모·장보기</dt><dd>현재 브라우저에 보관</dd></div><div><dt>구매처</dt><dd>네이버쇼핑 일반 검색 링크 · 제휴 아님</dd></div></dl><div class="source-links"><a href="${escape(sourceUrl())}" target="_blank" rel="noopener noreferrer">식품안전나라 API 원문 ↗</a><a href="https://www.data.go.kr/data/15060073/openapi.do" target="_blank" rel="noopener noreferrer">공공데이터포털 데이터·이용 조건 ↗</a>${data.meta?.datasetMode === 'official-sample' ? '<a href="https://openapi.foodsafetykorea.go.kr/api/sample/COOKRCP01/json/1/5" target="_blank" rel="noopener noreferrer">공개 샘플 데이터 ↗</a>' : ''}</div><p class="notice">검색 시에는 마지막에 가져온 레시피 데이터를 조회합니다. 공개 리뷰, 가격·재고 조회, 이미지 인식은 아직 연결되지 않았습니다.</p><p class="source-note">기준 중량이 없는 영양값을 환산하지 않습니다. 원문 데이터에도 누락이나 오류가 있을 수 있습니다.</p>`;
     $('#sources-dialog').setAttribute('aria-labelledby', 'sources-dialog-title');
   }
   function initVoice() {
@@ -404,6 +454,7 @@
   document.addEventListener('click', event => {
     const button = event.target.closest('button, [data-recipe-id]');
     if (!button) { if (!event.target.closest('#search-form')) { $('#suggestions').hidden = true; $('#search-input').setAttribute('aria-expanded', 'false'); } return; }
+    if (button.hasAttribute('data-load-more')) { loadMoreResults(); return; }
     if (button.dataset.save) { toggleSaved(button.dataset.save); return; }
     if (button.dataset.recipeId) { openRecipe(button.dataset.recipeId); return; }
     if (button.dataset.search) { clearTimeout(typingTimer); $('#search-input').value = button.dataset.search; state.view = 'all'; search(button.dataset.search); return; }
