@@ -4,6 +4,10 @@ from pathlib import Path
 from unittest.mock import patch
 spec=importlib.util.spec_from_file_location('collector',Path(__file__).with_name('collect-foodsafety.py'));module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
 class CollectorTests(unittest.TestCase):
+    def test_recall_pages_use_current_api_without_bulk_download(self):
+        with tempfile.TemporaryDirectory() as d,patch.dict(os.environ,{'FOODSAFETY_API_KEY':'dummy-key'}),patch.object(module,'fetch_page',return_value=([{'PRDTNM':'공고1'},{'PRDTNM':'공고2'}],2)),patch.object(module,'open_api') as bulk,contextlib.redirect_stdout(io.StringIO()):
+            p=Path(d)/'I0490';self.assertTrue(module.collect('I0490',p,prefer_pages=True));bulk.assert_not_called()
+            status=json.loads((p/'status.json').read_text());self.assertEqual(status['count'],2);self.assertEqual(status['apiTotal'],2);self.assertEqual(status['countBasis'],'api-row-count')
     def test_transient_key_lock_is_retried(self):
         with patch.object(module,'fetch_page_once',side_effect=[module.CollectionError('공식 API 응답 INFO-500'),([{'a':'b'}],1)]),patch.object(module.time,'sleep') as sleep,contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual(module.fetch_page('I2520','not-a-real-key',1,1000)[1],1);sleep.assert_called_once()

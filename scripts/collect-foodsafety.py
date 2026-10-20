@@ -162,7 +162,7 @@ def file_rows(path):
                     raise CollectionError('전체 파일 CSV 열 개수 불일치')
                 yield row
 
-def collect(service, output, reuse_source=False):
+def collect(service, output, reuse_source=False, prefer_pages=False):
     output.mkdir(parents=True, exist_ok=True)
     previous = None
     candidate = {}
@@ -189,9 +189,12 @@ def collect(service, output, reuse_source=False):
             status['sourceFields']=sorted({field for row in first for field in row})
             print(f'{service}: 공식 총 {expected:,}건 / 활용신청 정상 확인',flush=True)
         status['sourceTotal']=expected
+        status['apiTotal']=expected
+        if prefer_pages and (service!='I0490' or expected>10000):
+            raise CollectionError('실시간 전체 조회는 회수 정보 10,000건 이하에서만 지원합니다.')
         with tempfile.TemporaryDirectory(dir=output.parent,prefix=f'.{service}-stage-') as directory:
             stage=Path(directory)
-            if expected > BULK_THRESHOLD:
+            if expected > BULK_THRESHOLD and not prefer_pages:
                 bulk=stage/'source.bulk'
                 if reuse_source:
                     shutil.copyfile(output/'source-original.gz',bulk)
@@ -236,6 +239,7 @@ def collect(service, output, reuse_source=False):
                         count+=len(page)
                 rows=pages()
                 status['method']='official-paginated-full'
+                status['countBasis']='api-row-count'
             count=0; chunks=[]; batch=[]
             db=sqlite3.connect(stage/'fingerprints.sqlite')
             db.execute('CREATE TABLE fingerprints (digest BLOB PRIMARY KEY) WITHOUT ROWID')
@@ -290,5 +294,6 @@ if __name__ == '__main__':
     parser.add_argument('--service', choices=SERVICES, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--reuse-source',action='store_true')
+    parser.add_argument('--prefer-pages',action='store_true')
     args = parser.parse_args()
-    sys.exit(0 if collect(args.service, args.output,args.reuse_source) else 1)
+    sys.exit(0 if collect(args.service, args.output,args.reuse_source,args.prefer_pages) else 1)

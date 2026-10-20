@@ -1,95 +1,33 @@
-name: Sync FoodSafety recipes
-
+name: Sync FoodSafety recipes (manual)
 on:
   workflow_dispatch:
-  schedule:
-    # 06:20 Asia/Seoul (21:20 UTC, previous day)
-    - cron: "20 21 * * *"
-
 permissions:
   contents: write
-
+  pages: write
 concurrency:
-  group: foodhannun-recipe-sync
+  group: foodhannun-data-refresh
   cancel-in-progress: false
-
 jobs:
   sync:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
         with:
-          python-version: "3.12"
-
-      - name: Check API secret
-        id: api-key
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # The daily schedule is owned only by sync-food-data.yml.
+      - name: Collect recipes and validate related data
+        id: collection
         env:
           FOODSAFETY_API_KEY: ${{ secrets.FOODSAFETY_API_KEY }}
-        shell: bash
-        run: |
-          if [ -n "$FOODSAFETY_API_KEY" ]; then
-            echo "available=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "available=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::FOODSAFETY_API_KEY secret is not configured. Sync skipped safely."
-          fi
-
-      - name: Refresh official recipe snapshot
-        if: steps.api-key.outputs.available == 'true'
+        run: python3 scripts/refresh-food-data.py --mode recipes
+      - name: Publish and request Pages deployment
         env:
-          FOODSAFETY_API_KEY: ${{ secrets.FOODSAFETY_API_KEY }}
-        run: python3 scripts/sync-recipes.py --full
-
-      - name: Validate generated snapshot
-        if: steps.api-key.outputs.available == 'true'
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-
-          root = Path(".")
-          normalized = json.loads((root / "data/recipes.json").read_text(encoding="utf-8"))
-          recipes = normalized.get("recipes")
-          meta = normalized.get("meta") or {}
-
-          assert meta.get("datasetMode") == "official-full", meta.get("datasetMode")
-          assert isinstance(recipes, list) and recipes, "recipes must be a non-empty list"
-          assert meta.get("count") == len(recipes), (meta.get("count"), len(recipes))
-          assert meta.get("totalAvailable") == len(recipes), (meta.get("totalAvailable"), len(recipes))
-
-          ids = [str(item.get("id")) for item in recipes]
-          assert len(ids) == len(set(ids)), "duplicate recipe ids"
-
-          browser_data = (root / "assets/data.js").read_text(encoding="utf-8")
-          assert "window.FOOD_DATA =" in browser_data[:256], "assets/data.js is not the browser snapshot"
-          assert (root / "data/raw-full.json").stat().st_size > 0, "raw-full.json is empty"
-
-          print(f"validated {len(recipes)} official recipes")
-          PY
-
-      - name: Rebuild food connections and collection status
-        if: steps.api-key.outputs.available == 'true'
-        run: |
-          python3 scripts/build-food-links.py
-          python3 scripts/validate-food-links.py
-          python3 scripts/build-data-status.py
-
-      - name: Commit refreshed data
-        if: steps.api-key.outputs.available == 'true'
-        shell: bash
-        run: |
-          if git diff --quiet -- assets/data.js data/recipes.json data/raw-full.json data/food-links.json.gz data/integration-status.json data/collection-status.json data-status.html; then
-            echo "No recipe data changes."
-            exit 0
-          fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/data.js data/recipes.json data/raw-full.json data/food-links.json.gz data/integration-status.json data/collection-status.json data-status.html
-          git commit -m "chore: refresh FoodSafety recipe snapshot"
-          git push
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/publish-food-data.py --mode recipes
+      - if: steps.collection.outputs.collection_failed == 'true'
+        run: exit 1

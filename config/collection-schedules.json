@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "timeZone": "Asia/Seoul",
+  "jobs": {
+    "recalls": {"name": "회수·판매중지", "cronUtc": "17 * * * *", "scheduleKst": "매시 17분", "services": ["I0490"], "intervalHours": 1},
+    "daily": {"name": "품목·원재료·HACCP", "cronUtc": "0 19 * * *", "scheduleKst": "매일 04:00", "services": ["I1250", "C002", "I0580"], "intervalHours": 24},
+    "weekly": {"name": "식품원료 정보·코드", "cronUtc": "0 20 * * 0", "scheduleKst": "매주 월요일 05:00", "services": ["I1020", "I2520"], "intervalHours": 168},
+    "recipes": {"name": "조리식품 레시피", "cronUtc": "20 21 * * *", "scheduleKst": "매일 06:20", "services": ["COOKRCP01"], "intervalHours": 24},
+    "nutrition": {"name": "음식·가공식품·건강기능식품 영양", "cronUtc": "35 20 * * 0", "scheduleKst": "매주 월요일 05:35", "services": ["foods", "processed-foods", "supplements"], "intervalHours": 168}
+  },
+  "historical": [{"id": "C005", "name": "과거 바코드", "reason": "2018년 이후 갱신 중단 자료. 검증된 기존 수집본을 보존하며 정기 재수집에서 제외."}]
+}

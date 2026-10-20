@@ -140,7 +140,7 @@ python3 scripts/sync-recipes.py --sample
 
 인증키를 `assets/app.js`, HTML, 공개 JSON, README에 넣지 마세요. `--full`은 키가 없으면 중단하며 기존 데이터를 보존합니다. 원본 응답·출력 파일에 키가 들어 있지 않은지도 검사합니다. 모든 페이지 수집과 개수 검증을 마친 뒤 정적 파일을 교체합니다.
 
-`.github/workflows/sync-recipes.yml`을 통해 **매일 06:20(한국 시간)** 자동 갱신을 시도합니다. 저장소의 Actions Secret에 `FOODSAFETY_API_KEY`가 등록되어 있으면 전체 수집 → 건수·고유 ID·브라우저 스냅샷 검증 → 변경된 데이터 파일만 커밋/푸시합니다. Secret이 없으면 기존 데이터를 변경하지 않고 해당 실행을 안전하게 건너뜁니다. GitHub Pages는 `main` 브랜치 루트 배포를 사용하므로 데이터 커밋이 발생하면 기존 Pages 흐름으로 반영됩니다.
+`.github/workflows/sync-food-data.yml`을 통해 **매일 06:20(한국 시간)** 레시피를 자동 갱신합니다. 저장소의 Actions Secret에 `FOODSAFETY_API_KEY`가 등록되어 있으면 전체 수집 → 건수·고유 ID·브라우저 스냅샷 검증 → 변경된 데이터 파일만 커밋/푸시합니다. Secret이 없으면 기존 데이터를 변경하지 않고 해당 실행을 안전하게 건너뜁니다. 검증된 데이터만 main에 반영하고 기존 GitHub Pages 빌드를 명시적으로 요청합니다. 자동 토큰 커밋이 Pages를 자동 시작한다고 가정하지 않습니다.
 
 Secret 등록 위치: `Settings → Secrets and variables → Actions → New repository secret`. 이름은 반드시 `FOODSAFETY_API_KEY`로 설정합니다. 키 값은 문서나 소스에 커밋하지 않습니다.
 
@@ -174,3 +174,16 @@ Secret 등록 위치: `Settings → Secrets and variables → Actions → New re
 - 제품의 품목제조보고번호 → I1250·C002·I0490·과거 C005, I1250의 업소 인허가번호 → I0580을 정확히 연결합니다. HACCP 업소 자료는 개별 제품 인증 판정이 아닙니다.
 - 레시피 재료의 **원료 정보**는 공식 원료명·이명에 맞는 I1020·I2520 자료와 사용 부위·조건을 표시합니다. C005는 2018년 이후 갱신 중단 자료입니다.
 - [공식 자료 검색](food-safety.html)에서 원본 종류별 전체 자료를 검색합니다. 브라우저에 인증키를 넣지 않습니다.
+
+### 데이터 정기 수집·자동 반영
+
+| 자료 | 한국 시간(KST) | 성공 후 |
+| --- | --- | --- |
+| 회수·판매중지 | 매시 17분 | 검증·연결·main 반영·Pages 배포 |
+| 품목·제품 원재료·HACCP | 매일 04:00 | 검증·연결·main 반영·Pages 배포 |
+| 원료 정보·코드 | 월요일 05:00 | 검증·연결·main 반영·Pages 배포 |
+| 레시피 | 매일 06:20 | 검증·연결·main 반영·Pages 배포 |
+| 영양 DB 3종 | 월요일 05:35 | 검증·연결·main 반영·Pages 배포 |
+| 과거 바코드 C005 | 기존본 보존 | 갱신 중단 자료로 정기 재수집 제외 |
+
+통합 워크플로는 [sync-food-data.yml](.github/workflows/sync-food-data.yml)입니다. 수집은 격리 세대에서 수행하고 실패·빈 응답·비정상적인 감소 시 정상본을 보존합니다. 상세한 설정·복구 방법은 [운영 절차](docs/DATA-COLLECTION-OPERATIONS.md), 실제 최근 시도는 [수집 현황](data-status.html)에서 확인합니다.

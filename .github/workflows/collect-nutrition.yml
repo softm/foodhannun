@@ -1,8 +1,7 @@
-name: Collect complete K-FIND nutrition DB
+name: Nutrition archive only (manual)
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '35 20 * * 0'
+  # Scheduled collection and publication live in sync-food-data.yml.
 permissions:
   contents: read
 concurrency:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Build source search indexes and exact identifier lookups; preserve raw API rows."""
-import argparse,gzip,hashlib,json,sqlite3,tempfile
+import argparse,gzip,hashlib,json,sqlite3,tempfile,os
 from pathlib import Path
 import re,unicodedata
 
@@ -28,7 +28,7 @@ def bucket(value):
 def gzip_json(path,value):
  path.parent.mkdir(parents=True,exist_ok=True)
  raw=gzip.compress(json.dumps(value,ensure_ascii=False,separators=(',',':')).encode(),mtime=0)
- path.write_bytes(raw)
+ temporary=path.with_suffix(path.suffix+'.tmp');temporary.write_bytes(raw);os.replace(temporary,path)
  return {'path':str(path),'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
 def rows_for(root,status):
  chunks=status.get('chunks') or ([{'path':status['path'],'count':status['count']}] if status.get('path') else [])
@@ -40,13 +40,28 @@ def main():
  parser=argparse.ArgumentParser();parser.add_argument('--root',type=Path,default=Path(__file__).resolve().parents[1]);args=parser.parse_args()
  root=args.root.resolve();collection=root/'data/collection';output=root/'data/food-safety';output.mkdir(exist_ok=True)
  services={p.parent.name:json.loads(p.read_text()) for p in sorted(collection.glob('*/status.json'))}
+ previous_path=output/'manifest.json'
+ previous=json.loads(previous_path.read_text()) if previous_path.exists() else {}
+ changed=set(previous.get('services',{}))-set(services)
+ def signature(status):
+  return (status.get('status'),status.get('count'),status.get('sourceTotal'),[(p.get('path'),p.get('count'),p.get('sha256')) for p in status.get('chunks',[])])
  manifest={'schemaVersion':1,'services':{},'lookupBuckets':256,'lookupPath':'lookup/{bucket}.json.gz'}
  stats={'sourceRecords':0,'indexedRecords':0,'lookupPointers':0}
  with tempfile.TemporaryDirectory() as directory:
   db=sqlite3.connect(Path(directory)/'joins.sqlite');db.execute('CREATE TABLE refs(bucket INTEGER,key TEXT,service TEXT,part INTEGER,offset INTEGER)')
   for service,status in services.items():
    info={k:v for k,v in status.items() if k not in ('sourceFields','bulkPrefixHex')};manifest['services'][service]=info
-   if status['status']!='complete':continue
+   if status['status']!='complete':
+    if service in previous.get('services',{}):changed.add(service)
+    continue
+   old=previous.get('services',{}).get(service,{})
+   descriptor=old.get('index')
+   if descriptor and signature(old)==signature(status) and (output/descriptor['path']).is_file():
+    raw=(output/descriptor['path']).read_bytes()
+    if len(raw)==descriptor['bytes'] and hashlib.sha256(raw).hexdigest()==descriptor['sha256']:
+     info['index']=descriptor;stats['sourceRecords']+=status['count'];stats['indexedRecords']+=status['count']
+     print(f'{service}: reused verified {status["count"]:,} search pointers',flush=True);continue
+   changed.add(service)
    index=[];batch=[];count=0
    for part,offset,row in rows_for(collection,status):
     name,kind,maker=first(row,'name'),first(row,'type'),first(row,'maker')
@@ -75,13 +90,28 @@ def main():
   db.execute('CREATE INDEX refs_by_bucket ON refs(bucket,key)');db.commit()
   descriptors={}
   for i in range(256):
+   name=f'{i:02x}'
+   old_file=previous.get('lookupFiles',{}).get(name)
+   if not changed and old_file:
+    descriptors[name]=old_file;continue
    records={}
+   if old_file:
+    blob=(output/old_file['path']).read_bytes()
+    assert hashlib.sha256(blob).hexdigest()==old_file['sha256'],'Existing lookup hash mismatch'
+    for key,pointers in json.loads(gzip.decompress(blob)).items():
+     kept=[p for p in pointers if p[0] not in changed]
+     if kept:records[key]=kept
    for key,service,part,offset in db.execute('SELECT key,service,part,offset FROM refs WHERE bucket=? ORDER BY key,service,part,offset',(i,)):
     records.setdefault(key,[]).append([service,part,offset])
-   name=f'{i:02x}';descriptor=gzip_json(output/'lookup'/f'{name}.json.gz',records)
+   records={key:sorted(pointers) for key,pointers in sorted(records.items())}
+   descriptor=gzip_json(output/'lookup'/f'{name}.json.gz',records)
    descriptor['path']=str(Path(descriptor['path']).relative_to(output));descriptors[name]=descriptor
   db.close();manifest['lookupFiles']=descriptors
+  if not changed and previous.get('lookupFiles'):
+   stats['lookupPointers']=previous['counts']['lookupPointers']
+  else:
+   stats['lookupPointers']=sum(len(pointers) for descriptor in descriptors.values() for pointers in json.loads(gzip.decompress((output/descriptor['path']).read_bytes())).values())
  manifest['counts']=stats
- (output/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,separators=(',',':')))
+ temporary=output/'manifest.json.tmp';temporary.write_text(json.dumps(manifest,ensure_ascii=False,separators=(',',':')));os.replace(temporary,output/'manifest.json')
  print(json.dumps(stats,ensure_ascii=False))
 if __name__=='__main__':main()

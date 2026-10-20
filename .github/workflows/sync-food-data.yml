@@ -1,0 +1,88 @@
+name: Automatically collect, validate and publish food data
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/sync-food-data.yml'
+      - 'config/collection-schedules.json'
+      - 'scripts/refresh-food-data.py'
+      - 'scripts/publish-food-data.py'
+      - 'scripts/collect-foodsafety.py'
+      - 'scripts/build-foodsafety-index.py'
+      - 'scripts/test-food-data-automation.py'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Collection group; validated data is published automatically'
+        required: true
+        default: recalls
+        type: choice
+        options: [recalls, daily, weekly, recipes, nutrition, official-all]
+  schedule:
+    - cron: '17 * * * *'   # KST hourly at :17: recalls
+    - cron: '0 19 * * *'   # KST daily 04:00: I1250 C002 I0580
+    - cron: '0 20 * * 0'   # KST Monday 05:00: I1020 I2520
+    - cron: '20 21 * * *'  # KST daily 06:20: recipes
+    - cron: '35 20 * * 0'  # KST Monday 05:35: nutrition
+permissions:
+  contents: write
+  pages: write
+concurrency:
+  group: foodhannun-data-refresh
+  cancel-in-progress: false
+jobs:
+  sync:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Resolve the scheduled collection group
+        id: group
+        env:
+          REQUESTED_MODE: ${{ inputs.mode }}
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          mode=$(python3 scripts/refresh-food-data.py --mode "$REQUESTED_MODE" --schedule "$SCHEDULE" --resolve-only)
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+      - name: Validate collection and publication safeguards
+        run: |
+          python3 scripts/test-foodsafety-collector.py
+          python3 scripts/test-food-data-automation.py
+      - name: Install workbook reader when needed
+        if: steps.group.outputs.mode == 'nutrition'
+        run: pip install -r scripts/requirements-data.txt
+      - name: Collect in isolation and validate the complete generation
+        id: collection
+        env:
+          FOODSAFETY_API_KEY: ${{ secrets.FOODSAFETY_API_KEY }}
+          COLLECTION_MODE: ${{ steps.group.outputs.mode }}
+        run: python3 scripts/refresh-food-data.py --mode "$COLLECTION_MODE"
+      - name: Publish coherent data and explicitly build GitHub Pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COLLECTION_MODE: ${{ steps.group.outputs.mode }}
+        run: python3 scripts/publish-food-data.py --mode "$COLLECTION_MODE"
+      - name: Retain failed attempts and current collection status
+        if: failure() || steps.collection.outputs.collection_failed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: collection-diagnostics-${{ github.run_id }}
+          path: |
+            data/collection-runs.json
+            data/collection-status.json
+            data/collection/*/status*.json
+            data-status.html
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Report a preserved-source failure after publishing its actual status
+        if: steps.collection.outputs.collection_failed == 'true'
+        run: |
+          echo '::error::A source could not be refreshed. Its last verified snapshot was preserved; see data-status.html and this run.'
+          exit 1
