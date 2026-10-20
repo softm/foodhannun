@@ -6,7 +6,7 @@ import re,unicodedata
 
 ALIASES={
  'name':['PRDLST_NM','PRDTNM','PRDUCT','PRDUCT_NM','RPRSNT_RAWMTRL_NM','RAWMTRL_NM','KOR_NM','KOR_FOOD_NM','FOOD_NM'],
- 'type':['PRDLST_DCNM','PRDLST_CD_NM','PRDLST_TYPE','RAWMTRL_MLSFC_NM','INDUTY_CD_NM','BIZ_TYPE_NM'],
+ 'type':['PRDLST_DCNM','PRDLST_CD_NM','PRDLST_TYPE','RAWMTRL_MLSFC_NM','MLSFC_NM','LCLAS_NM','INDUTY_CD_NM','BIZ_TYPE_NM'],
  'maker':['BSSH_NM','BSSHNM','BSSH_NM1','COMPANY','ENTRPS','BIZ_NM'],
  'report':['PRDLST_REPORT_NO','PRDLST_REPORT_NUM','PRDLSTREPORTNO'],
  'license':['LCNS_NO','LCNSNO','LICENSE_NO'],
@@ -51,7 +51,7 @@ def main():
    for part,offset,row in rows_for(collection,status):
     name,kind,maker=first(row,'name'),first(row,'type'),first(row,'maker')
     report,license,barcode,raw=number(first(row,'report')),number(first(row,'license')),number(first(row,'barcode')),first(row,'raw')
-    identifier=report or barcode or raw or str(row.get('RTRVLDSUSE_SEQ') or row.get('HACCP_CERTI_NO') or count+1)
+    identifier=report or barcode or raw or str(row.get('RTRVLDSUSE_SEQ') or row.get('HACCP_APPN_NO') or row.get('HACCP_CERTI_NO') or count+1)
     index.append([identifier,name or maker or identifier,kind,maker,part,offset,'',report,license,barcode,raw,first(row,'alias')])
     keys=[]
     if report:keys.append('report:'+report)
