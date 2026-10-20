@@ -10,6 +10,10 @@ on:
         description: 'main or an existing data/foodsafety-RUN-ATTEMPT branch to preserve'
         required: true
         default: 'main'
+      reuse_source:
+        description: 'Reprocess preserved official originals without new API requests'
+        type: boolean
+        default: false
 permissions:
   contents: write
 concurrency:
@@ -43,12 +47,15 @@ jobs:
         env:
           FOODSAFETY_API_KEY: ${{ secrets.FOODSAFETY_API_KEY }}
           SELECTED_SERVICES: ${{ inputs.services }}
+          REUSE_SOURCE: ${{ inputs.reuse_source }}
         shell: bash
         run: |
           failed=0
+          extra_flags=()
+          if [ "$REUSE_SOURCE" = 'true' ]; then extra_flags=(--reuse-source); fi
           for service in $SELECTED_SERVICES; do
             case "$service" in I0490|I0580|I1020|I2520|C005|I1250|C002) ;; *) echo 'Unsupported service'; exit 2 ;; esac
-            if python3 scripts/collect-foodsafety.py --service "$service" --output "data/collection/$service"; then
+            if python3 scripts/collect-foodsafety.py --service "$service" --output "data/collection/$service" "${extra_flags[@]}"; then
               python3 scripts/validate-foodsafety.py --service "$service"
             else
               failed=1

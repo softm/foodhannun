@@ -154,7 +154,7 @@ def file_rows(path):
                 dialect = csv.Sniffer().sniff(sample_text, delimiters=',\t|')
             except csv.Error:
                 dialect = csv.excel
-            reader = csv.DictReader(file, dialect=dialect)
+            reader = csv.DictReader(file, dialect=dialect, doublequote=True)
             if not reader.fieldnames or len(reader.fieldnames) < 2:
                 raise CollectionError('전체 파일 CSV 형식 확인 필요')
             for row in reader:
@@ -162,9 +162,10 @@ def file_rows(path):
                     raise CollectionError('전체 파일 CSV 열 개수 불일치')
                 yield row
 
-def collect(service, output):
+def collect(service, output, reuse_source=False):
     output.mkdir(parents=True, exist_ok=True)
     previous = None
+    candidate = {}
     if (output / 'status.json').exists():
         try:
             candidate = json.loads((output / 'status.json').read_text(encoding='utf-8'))
@@ -176,27 +177,40 @@ def collect(service, output):
     if service == 'C005': status['freshnessNote'] = '공식 안내상 2018년 이후 최신화 중단. 현재 바코드 제품 DB로 취급하지 않습니다.'
     key = os.environ.get('FOODSAFETY_API_KEY','').strip()
     try:
-        if not key: raise CollectionError('FOODSAFETY_API_KEY 설정 필요')
-        first, expected = fetch_page(service,key,1,1000)
-        status['sourceTotal'] = expected
-        status['sourceFields'] = sorted({field for row in first for field in row})
-        print(f'{service}: 공식 총 {expected:,}건 / 활용신청 정상 확인',flush=True)
+        if reuse_source:
+            if not (output/'source-original.gz').exists(): raise CollectionError('보관된 공식 원본 파일이 없습니다.')
+            first=[];expected=int(candidate.get('apiTotal',candidate.get('sourceTotal',0)))
+            status['sourceFields']=candidate.get('sourceFields',[])
+            status['originalFetchedAt']=candidate.get('originalFetchedAt',candidate.get('fetchedAt',candidate.get('attemptedAt')))
+            print(f'{service}: 보관된 공식 전체파일 재변환 (API 추가 호출 없음)',flush=True)
+        else:
+            if not key: raise CollectionError('FOODSAFETY_API_KEY 설정 필요')
+            first,expected=fetch_page(service,key,1,1000)
+            status['sourceFields']=sorted({field for row in first for field in row})
+            print(f'{service}: 공식 총 {expected:,}건 / 활용신청 정상 확인',flush=True)
+        status['sourceTotal']=expected
         with tempfile.TemporaryDirectory(dir=output.parent,prefix=f'.{service}-stage-') as directory:
             stage=Path(directory)
             if expected > BULK_THRESHOLD:
                 bulk=stage/'source.bulk'
-                time.sleep(3)
-                with open_api(API_ROOT+quote(key,safe='')+f'/{service}/file') as response, bulk.open('wb') as file:
-                    status['bulkContentType']=response.headers.get('Content-Type','')
-                    status['sourceLastModified']=response.headers.get('Last-Modified','')
-                    size=0
-                    while chunk:=response.read(1024*1024):
-                        size+=len(chunk)
-                        if size>3*1024**3: raise CollectionError('전체 원본 3GiB 크기 제한 초과')
-                        if key.encode() in chunk: raise CollectionError('원본 인증정보 탐지')
-                        file.write(chunk)
+                if reuse_source:
+                    shutil.copyfile(output/'source-original.gz',bulk)
+                    status['bulkContentType']=candidate.get('bulkContentType','application/gzip')
+                    status['sourceLastModified']=candidate.get('sourceLastModified','')
+                else:
+                    time.sleep(3)
+                    with open_api(API_ROOT+quote(key,safe='')+f'/{service}/file') as response, bulk.open('wb') as file:
+                        status['bulkContentType']=response.headers.get('Content-Type','')
+                        status['sourceLastModified']=response.headers.get('Last-Modified','')
+                        size=0
+                        while chunk:=response.read(1024*1024):
+                            size+=len(chunk)
+                            if size>3*1024**3: raise CollectionError('전체 원본 3GiB 크기 제한 초과')
+                            if key.encode() in chunk: raise CollectionError('원본 인증정보 탐지')
+                            file.write(chunk)
                 status['bulkBytes']=bulk.stat().st_size
                 status['apiTotal']=expected
+                with bulk.open('rb') as file: status['originalSha256']=hashlib.file_digest(file,'sha256').hexdigest()
                 original=output/'source-original.gz'
                 if bulk.stat().st_size < 90*1024**2:
                     shutil.copyfile(bulk,original)
@@ -238,7 +252,7 @@ def collect(service, output):
                 if not isinstance(row,dict): raise CollectionError('원본 행의 형식 확인 필요')
                 if status['sourceFields'] and not set(row).intersection(status['sourceFields']): raise CollectionError('공식 전체파일과 API의 열 이름 불일치')
                 encoded=json.dumps(row,ensure_ascii=False,separators=(',',':'),sort_keys=True).encode()
-                if key.encode() in encoded: raise CollectionError('정규화 결과 인증정보 탐지')
+                if key and key.encode() in encoded: raise CollectionError('정규화 결과 인증정보 탐지')
                 batch.append(encoded)
                 db.execute('INSERT OR IGNORE INTO fingerprints VALUES (?)',(hashlib.sha256(encoded).digest(),))
                 count+=1;status['count']=count
@@ -248,13 +262,14 @@ def collect(service, output):
             unique=db.execute('SELECT count(*) FROM fingerprints').fetchone()[0];db.close()
             if count!=expected:
                 if status['method']=='official-bulk-file':
-                    status['countNote']=f'공식 전체파일 {count:,}행 / 실시간 API {expected:,}건: 원본 제공 범위·기준 시각 차이'
+                    status['countNote']=f'공식 전체파일 {count:,}행 / 실시간 API {expected:,}건으로 건수가 다릅니다. 전체파일 기준 수집.'
                     status['sourceTotal']=count
                 else: raise CollectionError(f'원본 {expected:,}건 / 수집 {count:,}건 불일치')
             if status['method']=='official-bulk-file': status['countBasis']='official-file-row-count'
             for path in output.glob('records*.jsonl.gz'): path.unlink()
             for descriptor in chunks: (stage/descriptor['path']).replace(output/descriptor['path'])
-            status.update(status='complete',fetchedAt=now(),uniqueRecords=unique,chunks=chunks,bytes=sum(c['bytes'] for c in chunks))
+            status.update(status='complete',fetchedAt=status.get('originalFetchedAt') or now(),uniqueRecords=unique,chunks=chunks,bytes=sum(c['bytes'] for c in chunks))
+            if reuse_source: status['reprocessedAt']=now()
     except Exception as exc:
         status['status']='partial' if status['count'] else 'blocked'
         status['errorType']=type(exc).__name__
@@ -274,5 +289,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--service', choices=SERVICES, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--reuse-source',action='store_true')
     args = parser.parse_args()
-    sys.exit(0 if collect(args.service, args.output) else 1)
+    sys.exit(0 if collect(args.service, args.output,args.reuse_source) else 1)
