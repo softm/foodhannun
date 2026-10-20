@@ -1,8 +1,42 @@
 {
   "id": "I0490",
   "name": "회수·판매중지 정보",
-  "status": "blocked",
-  "count": 0,
-  "attemptedAt": "2026-10-20T13:20:25+00:00",
-  "reason": "공식 API 응답 INFO-110"
+  "status": "complete",
+  "count": 379,
+  "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490",
+  "attemptedAt": "2026-10-20T14:48:19+00:00",
+  "sourceTotal": 379,
+  "sourceFields": [
+    "ADDR",
+    "BRCDNO",
+    "BSSHNM",
+    "CRET_DTM",
+    "DISTBTMLMT",
+    "FRMLCUNIT",
+    "IMG_FILE_PATH",
+    "LCNS_NO",
+    "MNFDT",
+    "PRDLST_CD",
+    "PRDLST_CD_NM",
+    "PRDLST_REPORT_NO",
+    "PRDLST_TYPE",
+    "PRDTNM",
+    "RTRVLDSUSE_SEQ",
+    "RTRVLPLANDOC_RTRVLMTHD",
+    "RTRVLPRVNS",
+    "RTRVL_GRDCD_NM",
+    "TELNO"
+  ],
+  "method": "official-paginated-full",
+  "fetchedAt": "2026-10-20T14:48:24+00:00",
+  "uniqueRecords": 379,
+  "chunks": [
+    {
+      "path": "records-0000.jsonl.gz",
+      "count": 379,
+      "bytes": 47147,
+      "sha256": "6fc768b13bf413dcf9b8bb9b73413ecf7058b373f501d26f2b53c2d203611734"
+    }
+  ],
+  "bytes": 47147
 }
