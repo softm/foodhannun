@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-20T15:03:27+00:00",
+  "generatedAt": "2026-10-20T15:03:48+00:00",
   "totalCollectedRecords": 349526,
   "completeDatasets": 4,
   "nutritionRecords": 348370,
@@ -2301,11 +2301,36 @@
     {
       "id": "I2520",
       "name": "식품원재료코드",
-      "status": "blocked",
-      "count": 0,
-      "attemptedAt": "2026-10-20T13:20:05+00:00",
-      "reason": "INFO-110: 기존 인증키는 유효하지만 이 서비스의 활용신청 내역이 없습니다.",
-      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I2520"
+      "status": "partial",
+      "count": 20264,
+      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I2520",
+      "attemptedAt": "2026-10-20T15:03:31+00:00",
+      "sourceTotal": 43627,
+      "sourceFields": [
+        "ENG_NM",
+        "LAST_UPDT_DTM",
+        "PRCSS_PROCS_CD",
+        "PRCSS_PROCS_CD_NM",
+        "RAWMTRL_CD",
+        "RAWMTRL_LCLAS_NM",
+        "RAWMTRL_MLSFC_NM",
+        "RAWMTRL_NCKNM",
+        "RAWMTRL_STATS_CD",
+        "RAWMTRL_STATS_CD_NM",
+        "REGN_CD",
+        "REGN_CD_NM",
+        "RPRSNT_RAWMTRL_NM",
+        "SCNM",
+        "USE_YN",
+        "VALD_BGN_DT",
+        "VALD_END_DT"
+      ],
+      "bulkContentType": "application/gzip",
+      "bulkBytes": 1349749,
+      "bulkPrefixHex": "1f8b0800000000000000e4bd6b731cd7",
+      "method": "official-bulk-file",
+      "errorType": "CollectionError",
+      "reason": "전체 파일 CSV 열 개수 불일치"
     },
     {
       "id": "rda",
