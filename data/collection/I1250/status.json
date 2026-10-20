@@ -4,7 +4,7 @@
   "status": "partial",
   "count": 15263,
   "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I1250",
-  "attemptedAt": "2026-10-20T15:04:27+00:00",
+  "attemptedAt": "2026-10-20T15:10:42+00:00",
   "sourceTotal": 1081077,
   "sourceFields": [
     "BSSH_NM",
@@ -27,7 +27,10 @@
     "USAGE"
   ],
   "bulkContentType": "application/gzip",
+  "sourceLastModified": "Mon, 19 Oct 2026 15:18:00 GMT",
   "bulkBytes": 36821769,
+  "apiTotal": 1081077,
+  "originalFile": "source-original.gz",
   "bulkPrefixHex": "1f8b0800000000000000ecbd6b731cd7",
   "method": "official-bulk-file",
   "errorType": "CollectionError",
