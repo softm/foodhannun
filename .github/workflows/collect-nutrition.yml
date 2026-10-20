@@ -19,12 +19,17 @@ jobs:
           python-version: '3.12'
       - run: pip install -r scripts/requirements-data.txt
       - run: python3 scripts/sync-nutrition.py
+      - run: python3 scripts/validate-food-data.py
+      - run: python3 scripts/build-food-links.py
+      - run: python3 scripts/validate-food-links.py
       - run: python3 scripts/build-data-status.py
       - uses: actions/upload-artifact@v4
         with:
           name: foodhannun-complete-nutrition
           path: |
             data/nutrition/
+            data/food-links.json.gz
+            data/integration-status.json
             data/collection-status.json
             data-status.html
           retention-days: 30

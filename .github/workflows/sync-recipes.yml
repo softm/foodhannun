@@ -72,17 +72,24 @@ jobs:
           print(f"validated {len(recipes)} official recipes")
           PY
 
+      - name: Rebuild food connections and collection status
+        if: steps.api-key.outputs.available == 'true'
+        run: |
+          python3 scripts/build-food-links.py
+          python3 scripts/validate-food-links.py
+          python3 scripts/build-data-status.py
+
       - name: Commit refreshed data
         if: steps.api-key.outputs.available == 'true'
         shell: bash
         run: |
-          if git diff --quiet -- assets/data.js data/recipes.json data/raw-full.json; then
+          if git diff --quiet -- assets/data.js data/recipes.json data/raw-full.json data/food-links.json.gz data/integration-status.json data/collection-status.json data-status.html; then
             echo "No recipe data changes."
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/data.js data/recipes.json data/raw-full.json
+          git add assets/data.js data/recipes.json data/raw-full.json data/food-links.json.gz data/integration-status.json data/collection-status.json data-status.html
           git commit -m "chore: refresh FoodSafety recipe snapshot"
           git push
