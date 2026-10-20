@@ -277,12 +277,25 @@
     container.innerHTML = recent.length ? `<span class="recent-label">최근 검색</span>${recent.map(query => `<button type="button" class="recent-chip" data-search="${escape(query)}">${escape(query)}</button>`).join('')}<button type="button" class="text-button" data-clear-recent>지우기</button>` : '';
     container.hidden = !recent.length;
   }
-  function search(query, commit = true) {
-    state.query = query.trim().slice(0, 100);
+  function search(query, commit = true, preserveInput = false) {
+    const input = $('#search-input');
+    const rawQuery = String(query ?? '').slice(0, 100);
+    const selectionStart = preserveInput && input === document.activeElement ? input.selectionStart : null;
+    state.query = rawQuery.trim();
     if (commit && state.query) { recent = [state.query, ...recent.filter(item => item !== state.query)].slice(0, 6); persist(); }
     $('#suggestions').hidden = true;
     $('#search-input').setAttribute('aria-expanded', 'false');
     render(); updateUrl();
+    // Live search must not eat a trailing space while the user is still typing.
+    // Keep the filter state trimmed, but restore the exact visible input and caret.
+    if (preserveInput && input) {
+      input.value = rawQuery;
+      if ($('#clear-search')) $('#clear-search').hidden = !rawQuery;
+      if (selectionStart != null && input === document.activeElement) {
+        const caret = Math.min(selectionStart, rawQuery.length);
+        try { input.setSelectionRange(caret, caret); } catch {}
+      }
+    }
   }
   function suggestions() {
     const query = $('#search-input').value.trim();
@@ -465,18 +478,45 @@
     if (button.dataset.removeFilter) { state[button.dataset.removeFilter] = 'all'; render(); updateUrl(); return; }
     if (button.dataset.share) { shareRecipe(button.dataset.share); return; }
     if (button.hasAttribute('data-clear-recent')) { recent = []; persist(); renderRecent(); return; }
-    if (button.dataset.addIngredient) { const [id, index] = button.dataset.addIngredient.split(':'); addIngredient(id, Number(index)); return; }
+    if (button.dataset.addIngredient) {
+      const [id, indexText] = button.dataset.addIngredient.split(':');
+      const index = Number(indexText);
+      const added = addIngredient(id, index);
+      if (added) requestAnimationFrame(() => {
+        const available = $$('[data-add-ingredient]').filter(item => item.dataset.addIngredient?.startsWith(`${id}:`) && !item.disabled);
+        const next = available.find(item => Number(item.dataset.addIngredient.split(':')[1]) > index) || available[0] || $('[data-shopping-open]');
+        next?.focus({ preventScroll: true });
+      });
+      return;
+    }
     if (button.dataset.addAll) {
       const recipe = recipeById.get(button.dataset.addAll);
       const added = (recipe?.ingredients || []).map((_, index) => addIngredient(recipe.id, index, true)).filter(Boolean).length;
       const didSave = added ? persist() : true;
       updateCounts(); refreshIngredients();
       if (didSave) toast(added ? '재료를 장보기 목록에 담았어요.' : '이미 모든 재료가 장보기 목록에 있어요.');
+      requestAnimationFrame(() => $('[data-shopping-open]')?.focus({ preventScroll: true }));
       return;
     }
     if (button.hasAttribute('data-copy-cart')) { copyText(cartText(), '장보기 목록을 복사했어요.'); return; }
-    if (button.hasAttribute('data-clear-checked')) { cart = cart.filter(item => !item.checked); const didSave = persist(); updateCounts(); renderShopping(); refreshIngredients(); if (didSave) toast('완료한 항목을 정리했어요.'); return; }
-    if (button.dataset.removeCart) { cart = cart.filter(item => item.key !== button.dataset.removeCart); persist(); updateCounts(); renderShopping(); refreshIngredients(); return; }
+    if (button.hasAttribute('data-clear-checked')) {
+      cart = cart.filter(item => !item.checked);
+      const didSave = persist(); updateCounts(); renderShopping(); refreshIngredients();
+      if (didSave) toast('완료한 항목을 정리했어요.');
+      requestAnimationFrame(() => ($('[data-clear-checked]') || $('[data-copy-cart]') || $('#shopping-dialog .modal-close'))?.focus({ preventScroll: true }));
+      return;
+    }
+    if (button.dataset.removeCart) {
+      const removeIndex = $$('[data-remove-cart]').indexOf(button);
+      cart = cart.filter(item => item.key !== button.dataset.removeCart);
+      persist(); updateCounts(); renderShopping(); refreshIngredients();
+      requestAnimationFrame(() => {
+        const remainingRemoveButtons = $$('[data-remove-cart]');
+        const next = remainingRemoveButtons[Math.min(Math.max(removeIndex, 0), Math.max(remainingRemoveButtons.length - 1, 0))] || $('[data-copy-cart]') || $('#shopping-dialog .modal-close');
+        next?.focus({ preventScroll: true });
+      });
+      return;
+    }
     if (button.id === 'shopping-open' || button.hasAttribute('data-shopping-open')) { renderShopping(); showDialog('shopping-dialog'); return; }
   });
   document.addEventListener('change', event => {
@@ -504,7 +544,7 @@
   });
   document.addEventListener('error', event => { if (event.target instanceof HTMLImageElement && !event.target.src.endsWith('food-placeholder.svg')) { event.target.src = fallbackImage; event.target.alt = '음식 사진을 불러올 수 없습니다'; } }, true);
   $('#search-form').addEventListener('submit', event => { event.preventDefault(); clearTimeout(typingTimer); search($('#search-input').value); $('#search-input').blur(); });
-  $('#search-input').addEventListener('input', () => { clearTimeout(typingTimer); const value = $('#search-input').value; if ($('#clear-search')) $('#clear-search').hidden = !value; typingTimer = setTimeout(() => { search(value, false); suggestions(); }, 180); });
+  $('#search-input').addEventListener('input', () => { clearTimeout(typingTimer); const value = $('#search-input').value; if ($('#clear-search')) $('#clear-search').hidden = !value; typingTimer = setTimeout(() => { search(value, false, true); suggestions(); }, 180); });
   $('#search-input').addEventListener('keydown', event => { if (event.key === 'Escape') { $('#suggestions').hidden = true; $('#search-input').setAttribute('aria-expanded', 'false'); } if (event.key === 'ArrowDown' && !$('#suggestions').hidden) { event.preventDefault(); $('#suggestions button')?.focus(); } });
   $('#clear-search')?.addEventListener('click', () => { clearTimeout(typingTimer); search(''); $('#search-input').focus(); });
   $('#filter-toggle')?.addEventListener('click', () => { const panel = $('#filter-panel'); panel.hidden = !panel.hidden; $('#filter-toggle').setAttribute('aria-expanded', String(!panel.hidden)); });
