@@ -80,7 +80,7 @@
 | `data/raw-sample.json` | 최초 공개 샘플 API 원문 5건 |
 | `scripts/sync-recipes.py` | 공개 샘플 또는 인증키로 전체 레시피 수집 |
 | `scripts/deploy-pages.sh` | GitHub 저장소 생성·코드 푸시·Pages 설정을 수행하는 실행 스크립트 |
-| `.nojekyll` | GitHub Pages에서 정적 파일 그대로 제공 |
+| `.github/workflows/sync-recipes.yml` | 매일 공식 레시피 전체 갱신·검증·변경 시 자동 커밋 |\n| `.nojekyll` | GitHub Pages에서 정적 파일 그대로 제공 |
 
 HTML과 CSS/JS의 경로는 상대경로입니다. GitHub Pages 프로젝트 경로에서 별도 라우터 없이 동작하며, `dist` 경로는 사용하지 않습니다.
 
@@ -132,7 +132,11 @@ python3 scripts/sync-recipes.py --sample
 
 `--full`과 `--sample`은 동시에 지정할 수 없습니다. 기존 모드가 `official-full`인데 옵션 없이 실행하면 API 호출과 파일 변경 없이 중단합니다. 처음 실행하거나 기존 모드가 샘플일 때에는 옵션 없는 명령의 기본 샘플 동작을 유지합니다.
 
-인증키를 `assets/app.js`, HTML, 공개 JSON, README에 넣지 마세요. `--full`은 키가 없으면 중단하며 기존 데이터를 보존합니다. 원본 응답·출력 파일에 키가 들어 있지 않은지도 검사합니다. 모든 페이지 수집과 개수 검증을 마친 뒤 정적 파일을 교체합니다. 수집 명령은 로컬 데이터 파일을 갱신하므로 운영 반영 시 변경 파일을 저장소에 게시하고 Pages 배포 완료를 확인해야 합니다. 자동 예약 수집과 GitHub Actions Secret 등록은 설정하지 않았습니다.
+인증키를 `assets/app.js`, HTML, 공개 JSON, README에 넣지 마세요. `--full`은 키가 없으면 중단하며 기존 데이터를 보존합니다. 원본 응답·출력 파일에 키가 들어 있지 않은지도 검사합니다. 모든 페이지 수집과 개수 검증을 마친 뒤 정적 파일을 교체합니다.
+
+`.github/workflows/sync-recipes.yml`을 통해 **매일 06:20(한국 시간)** 자동 갱신을 시도합니다. 저장소의 Actions Secret에 `FOODSAFETY_API_KEY`가 등록되어 있으면 전체 수집 → 건수·고유 ID·브라우저 스냅샷 검증 → 변경된 데이터 파일만 커밋/푸시합니다. Secret이 없으면 기존 데이터를 변경하지 않고 해당 실행을 안전하게 건너뜁니다. GitHub Pages는 `main` 브랜치 루트 배포를 사용하므로 데이터 커밋이 발생하면 기존 Pages 흐름으로 반영됩니다.
+
+Secret 등록 위치: `Settings → Secrets and variables → Actions → New repository secret`. 이름은 반드시 `FOODSAFETY_API_KEY`로 설정합니다. 키 값은 문서나 소스에 커밋하지 않습니다.
 
 초기 5개 대표 사진은 로컬 파일을 사용합니다. 새 레시피는 공식 HTTPS 이미지 주소를 사용하며, 수집 스크립트 자체는 사진을 새로 내려받거나 압축하지 않습니다. 향후 대량 이미지 로컬 수집은 별도 확장 작업입니다. 원재료 텍스트 분리는 비정형 원문 전체를 완벽하게 해석하지 못하므로 수집 후 표본 검토와 원문 확인이 필요합니다.
 
@@ -146,7 +150,7 @@ python3 scripts/sync-recipes.py --sample
 
 ## 검증
 
-자바스크립트 문법, HTML의 필수 ID/중복 ID, 정적 경로, 정규화 JSON과 브라우저 데이터의 일치, 공식 이미지 파일, 키 없는 전체 수집 실패 시 기존 데이터 보존을 점검했습니다.
+자바스크립트 문법, HTML의 필수 ID/중복 ID, 정적 경로, 정규화 JSON과 브라우저 데이터의 일치, 공식 이미지 파일, 키 없는 전체 수집 실패 시 기존 데이터 보존을 점검했습니다. 모바일 검색 입력 중 끝 공백이 자동검색 렌더링으로 사라지지 않도록 보정했고, 재료 담기·전체 담기·장보기 항목 삭제/정리 후 키보드 포커스가 다음 조작 위치로 이어지도록 보완했습니다.
 
 ### 최초 공개 샘플 배포
 
