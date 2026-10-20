@@ -1,6 +1,7 @@
 # 음식한눈 · foodhannun
 
 > 📘 [통합 기획서 · 데이터 수집 · 시스템 · 비즈니스 구조](docs/FOODHANNUN-PLAN.md)
+> 🗓️ [수집 주기·데이터 상세·운영 절차](docs/DATA-COLLECTION-OPERATIONS.md)
 > 📊 [추가 데이터 수집 결과](docs/DATA-COLLECTION-2026-10-20.md) · [수집 현황](data-status.html) · [영양·제품 검색](food-data.html) · [공식 원재료·안전 자료](food-safety.html) · [데이터 연결성 점검](docs/DATA-INTEGRATION-AUDIT.md)
 
 음식명과 재료를 검색하고 레시피·재료·영양 정보·주의 성분·장보기 목록을 함께 살펴보는 모바일 웹입니다.
@@ -39,8 +40,8 @@
 
 | 항목 | 현재 수집본 |
 | --- | --- |
-| 수집 시각 | 2026-10-20 08:37:18, 한국 시간(Asia/Seoul) |
-| 원본 `fetchedAt` | `2026-10-19T23:37:18Z` |
+| 수집 시각 | 2026-10-20 12:04:54, 한국 시간(Asia/Seoul) |
+| 원본 `fetchedAt` | `2026-10-20T03:04:54Z` |
 | 데이터 모드 | `official-full` |
 | 실제 수록 / API 전체 건수 | 1,156 / 1,156건 |
 | 고유 레시피 ID | 1,156개 |
