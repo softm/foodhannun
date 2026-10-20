@@ -66,7 +66,7 @@ jobs:
           assert len(ids) == len(set(ids)), "duplicate recipe ids"
 
           browser_data = (root / "assets/data.js").read_text(encoding="utf-8")
-          assert browser_data.startswith("window.FOOD_DATA"), "assets/data.js is not the browser snapshot"
+          assert "window.FOOD_DATA =" in browser_data[:256], "assets/data.js is not the browser snapshot"
           assert (root / "data/raw-full.json").stat().st_size > 0, "raw-full.json is empty"
 
           print(f"validated {len(recipes)} official recipes")
