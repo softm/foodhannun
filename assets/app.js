@@ -9,9 +9,6 @@
   const $$ = selector => [...document.querySelectorAll(selector)];
   const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
   const normalize = value => String(value ?? '').normalize('NFC').toLowerCase().replace(/[\s·ㆍ,()[\]#&:]/g, '');
-  const aliases = [['계란', '달걀', '알류'], ['두부', '순두부', '연두부'], ['북어국', '북엇국', '북어'], ['토마토', '방울토마토'], ['콩', '대두', '콩가루']];
-  const CHOSEONG = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
-  const initials = text => [...text].map(char => { const code = char.charCodeAt(0) - 44032; return code >= 0 && code <= 11171 ? CHOSEONG[Math.floor(code / 588)] : char; }).join('');
   const storageKey = 'foodhannun:v1';
   const fallbackImage = 'assets/images/food-placeholder.svg';
   const datasetLabel = data.meta?.datasetMode === 'official-sample' ? '공개 샘플' : '공식 레시피';
@@ -25,7 +22,7 @@
   const cartNeedsMigration = JSON.stringify(storedCart) !== JSON.stringify(cart);
   let recent = (Array.isArray(persisted.recent) ? persisted.recent : []).filter(item => typeof item === 'string').slice(0, 6);
   let notes = persisted.notes && typeof persisted.notes === 'object' && !Array.isArray(persisted.notes) ? persisted.notes : {};
-  const state = { query: '', method: 'all', category: 'all', allergen: 'all', sort: 'default', view: 'all' };
+  const state = { kind: 'all', query: '', method: 'all', category: 'all', allergen: 'all', sort: 'default', view: 'all' };
   const RESULTS_BATCH_SIZE = 24;
   let currentResults = [];
   let displayedResults = 0;
@@ -38,6 +35,13 @@
   let typingTimer;
   let recognition;
   let listening = false;
+  let unifiedSequence = 0, unifiedKey = null, productSequence = 0, nutritionSequence = 0;
+  const catalog = window.FoodCatalog;
+  catalog.openRecipe = id => openRecipe(id);
+  catalog.relatedRecipes = item => item.group === 'foods' ? recipes.filter(recipe => window.FoodSearch.relation(recipe.name, item.row[1])).slice(0, 4) : [];
+  const catalogNames = {foods:'음식 영양', 'processed-foods':'가공식품', supplements:'건강기능식품'};
+  const catalogLimits = new Map();
+  let nutritionTotal = null;
 
   function cartKey(recipeId, name, amount) {
     return JSON.stringify([String(recipeId), String(name).normalize('NFC').trim(), String(amount ?? '').normalize('NFC').trim()]);
@@ -145,7 +149,7 @@
   }
   function updateUrl(push = false) {
     const url = new URL(location.href);
-    const params = { q: state.query, method: state.method, category: state.category, allergen: state.allergen, sort: state.sort, view: state.view, recipe: activeRecipe?.id };
+    const params = { kind: state.kind, q: state.query, method: state.method, category: state.category, allergen: state.allergen, sort: state.sort, view: state.view, recipe: activeRecipe?.id };
     for (const [key, value] of Object.entries(params)) { if (value && value !== 'all' && value !== 'default') url.searchParams.set(key, String(value)); else url.searchParams.delete(key); }
     const entry = { ...(history.state || {}), foodhannun: true };
     if (push) entry.foodhannunDetail = true;
@@ -155,6 +159,7 @@
   function readUrl() {
     const params = new URL(location.href).searchParams;
     state.query = (params.get('q') || '').slice(0, 100);
+    state.kind = ['recipes','foods','processed-foods','supplements'].includes(params.get('kind')) ? params.get('kind') : 'all';
     for (const key of ['method', 'category', 'allergen']) {
       const select = $(`#${key}-filter`);
       const candidate = params.get(key) || 'all';
@@ -178,14 +183,7 @@
     $$('[data-view]').forEach(button => { const active = button.dataset.view === state.view; button.classList.toggle('is-active', active); button.setAttribute('aria-pressed', String(active)); });
   }
   function termsMatch(recipe, query) {
-    const haystack = normalize(`${recipe.name} ${recipe.tag || ''} ${recipe.ingredientText} ${recipe.category} ${recipe.method}`);
-    return query.trim().split(/\s+/).every(term => {
-      const termNormalized = normalize(term);
-      const group = aliases.find(items => items.some(item => normalize(item) === termNormalized));
-      if (haystack.includes(termNormalized)) return true;
-      if (group?.some(item => haystack.includes(normalize(item)))) return true;
-      return /^[ㄱ-ㅎ]+$/.test(termNormalized) && initials(normalize(recipe.name)).includes(termNormalized);
-    });
+    return window.FoodSearch.matches(`${recipe.name} ${recipe.tag || ''} ${recipe.ingredientText} ${recipe.category} ${recipe.method}`, window.FoodSearch.terms(query), recipe.name);
   }
   function filteredRecipes() {
     return recipes.filter(recipe =>
@@ -221,7 +219,8 @@
     const sameSearch = renderedSearchState === JSON.stringify(state);
     const result = filteredRecipes();
     currentResults = result;
-    displayedResults = Math.min(sameSearch ? Math.max(RESULTS_BATCH_SIZE, displayedResults) : RESULTS_BATCH_SIZE, result.length);
+    const firstBatch = state.query && state.kind === 'all' && state.view !== 'saved' ? 6 : RESULTS_BATCH_SIZE;
+    displayedResults = Math.min(sameSearch ? Math.max(firstBatch, displayedResults) : firstBatch, result.length);
     $('#recipe-grid').innerHTML = result.slice(0, displayedResults).map(renderCard).join('');
     renderedSearchState = JSON.stringify(state);
     renderPagination();
@@ -231,8 +230,8 @@
     if (!result.length) {
       const heading = $('#empty-state h3');
       const description = $('#empty-state p');
-      if (heading) heading.textContent = state.view === 'saved' && !saved.size ? '마음에 드는 음식을 저장해 보세요' : '조건에 맞는 음식을 찾지 못했어요';
-      if (description) description.textContent = state.view === 'saved' && !saved.size ? '음식 사진의 하트를 누르면 이곳에서 다시 볼 수 있어요.' : `현재 ${recipes.length}종의 공개 레시피를 제공하고 있어요. 다른 재료를 검색하거나 필터를 바꿔 보세요.`;
+      if (heading) heading.textContent = state.view === 'saved' && !saved.size ? '마음에 드는 음식을 저장해 보세요' : '조건에 맞는 레시피가 없어요';
+      if (description) description.textContent = state.view === 'saved' && !saved.size ? '음식 사진의 하트를 누르면 이곳에서 다시 볼 수 있어요.' : `현재 ${recipes.length}종의 레시피에서 찾지 못했습니다. 음식 영양·가공식품 결과도 확인해 보세요.`;
     }
     const active = [];
     if (state.method !== 'all') active.push(['method', `조리법: ${state.method}`]);
@@ -242,7 +241,93 @@
     $('#active-filters').hidden = !active.length;
     const caveat = $('#filter-caveat');
     if (caveat) caveat.hidden = state.allergen === 'all';
-    syncControls(); updateCounts(); renderRecent();
+    syncControls(); updateCounts(); renderRecent(); renderUnified();
+  }
+  function renderUnified() {
+    const savedView = state.view === 'saved';
+    $('#result-kinds').hidden = savedView;
+    $('#recipe-results').hidden = !savedView && !['all','recipes'].includes(state.kind);
+    $('#filter-toggle').hidden = !savedView && !['all','recipes'].includes(state.kind);
+    $('#catalog-scope-note').hidden = savedView || (state.method === 'all' && state.category === 'all' && state.allergen === 'all');
+    $('#kind-recipes').textContent = currentResults.length.toLocaleString('ko-KR');
+    $$('[data-result-kind]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.resultKind === state.kind)));
+    const key = JSON.stringify([state.query,state.kind,state.view]);
+    if (key === unifiedKey) return;
+    unifiedKey = key; catalogLimits.clear();
+    const token = ++unifiedSequence, status = $('#catalog-search-status'), groups = $('#catalog-search-groups');
+    groups.innerHTML = '';
+    $('#integrated-catalog').hidden = savedView || state.kind === 'recipes';
+    if (savedView) { status.textContent = ''; return; }
+    if (!state.query && ['all','recipes'].includes(state.kind)) {
+      status.textContent = '음식명·재료명·제품명·식품코드·제조사로 검색하거나 데이터 종류를 선택해 보세요.';
+      catalog.manifest().then(data => {
+        if (token !== unifiedSequence) return;
+        for (const dataset of data.datasets) $('#kind-'+dataset.id).textContent = dataset.count.toLocaleString('ko-KR');
+        $('#catalog-overview').innerHTML = `레시피 ${recipes.length.toLocaleString('ko-KR')}개와 공식 영양·제품 ${data.count.toLocaleString('ko-KR')}건을 한 번에 검색합니다. <a href="data-status.html">수집·연결 현황 →</a>`;
+      }).catch(error => { if (token === unifiedSequence) status.textContent = error.message; });
+      return;
+    }
+    status.textContent = '공식 음식·제품 데이터를 검색합니다…'; groups.setAttribute('aria-busy','true');
+    for (const id of Object.keys(catalogNames)) $('#kind-'+id).textContent = '…';
+    catalog.search({query:state.query,group:'all',perGroup:6}).then(result => {
+      if (token !== unifiedSequence) return;
+      for (const group of result.groups) $('#kind-'+group.id).textContent = group.total.toLocaleString('ko-KR');
+      const visible = result.groups.filter(group => state.kind === 'all' || state.kind === group.id).sort((a,b) => ['foods','processed-foods','supplements'].indexOf(a.id) - ['foods','processed-foods','supplements'].indexOf(b.id));
+      groups.innerHTML = visible.map(group => catalogGroup(group)).join('');
+      status.textContent = `공식 영양·제품 검색 ${visible.reduce((sum,g) => sum + g.total,0).toLocaleString('ko-KR')}건 · 데이터셋별 건수이며 같은 음식이 여러 자료에 포함될 수 있습니다.`;
+      groups.setAttribute('aria-busy','false');
+    }).catch(error => { if (token === unifiedSequence) { status.textContent = error.message; groups.setAttribute('aria-busy','false'); } });
+  }
+  function catalogGroup(group) {
+    catalogLimits.set(group.id,group.matches.length);
+    const note = group.id === 'foods' ? '음식별 원문 영양 자료 · 기준량과 조리 유형을 확인하세요.' : group.id === 'supplements' ? '건강기능식품 제품별 영양 자료 · 일반 음식과 별도로 표시합니다.' : '제품명·식품코드·제조사를 확인할 수 있는 가공식품 영양 자료입니다.';
+    return `<section class="catalog-section" id="catalog-group-${group.id}" aria-labelledby="catalog-heading-${group.id}"><div class="catalog-section-header"><h3 id="catalog-heading-${group.id}">${catalogNames[group.id]}</h3><span>${group.total.toLocaleString('ko-KR')}건</span></div><p>${note}</p><div class="catalog-grid">${group.matches.map(catalog.card).join('')}</div>${group.total ? '' : '<p>해당 종류에서 일치하는 자료를 찾지 못했습니다.</p>'}${group.matches.length < group.total ? `<button type="button" class="catalog-more" data-catalog-more="${group.id}">${catalogNames[group.id]} 다음 12건 더 보기</button>` : ''}</section>`;
+  }
+  async function loadCatalogMore(group, button) {
+    const token = unifiedSequence, limit = (catalogLimits.get(group) || 6) + 12, query = state.query;
+    button.disabled = true;
+    try {
+      const result = await catalog.search({query,group,limit});
+      if (token !== unifiedSequence) return;
+      const section = $('#catalog-group-'+group);
+      section.outerHTML = catalogGroup(result.groups[0]);
+      // Keep the next action nearby when the existing result list expands.
+      $('#catalog-group-'+group+' [data-catalog-more]')?.focus({preventScroll:true});
+    } catch(error) { if (button.isConnected) { button.disabled = false; toast(error.message); } }
+  }
+  async function loadRecipeNutrition(recipe) {
+    const token = ++nutritionSequence;
+    try {
+      const link = await catalog.recipeLinks(recipe);
+      if (token !== nutritionSequence || activeRecipe?.id !== recipe.id) return;
+      $('#recipe-linked-nutrition').innerHTML = `<h3>연결된 공식 음식 영양 자료</h3><p class="source-note">음식명 일치 또는 관련 후보 ${link.total}건 중 ${link.foods.length}건입니다. 다른 조리법·원료·기준량의 자료일 수 있어 이 레시피의 영양값으로 합산하지 않습니다.</p>${link.foods.length ? `<div class="catalog-grid">${link.foods.map(catalog.card).join('')}</div>` : '<p>현재 기준으로 연결할 음식 영양 후보가 없습니다.</p>'}<button type="button" class="catalog-link" data-nutrition-query="${escape(recipe.name)}">음식명으로 추가 검색</button><div id="recipe-nutrition-search"></div>`;
+    } catch(error) { if (token === nutritionSequence && activeRecipe?.id === recipe.id) $('#recipe-linked-nutrition').textContent = error.message; }
+  }
+  async function searchRecipeNutrition(query) {
+    const recipe = activeRecipe, token = ++nutritionSequence, target = $('#recipe-nutrition-search');
+    if (!target || !recipe) return;
+    target.innerHTML = '<p role="status">음식 영양 자료를 검색합니다…</p>';
+    try {
+      const result = await catalog.search({query,group:'foods',limit:6,mode:'name'});
+      if (token !== nutritionSequence || activeRecipe?.id !== recipe.id) return;
+      target.innerHTML = `<p class="source-note">음식명·별칭 검색 ${result.total}건. 레시피와의 동일성을 확인한 자료는 아닙니다.</p><div class="catalog-grid">${result.matches.map(catalog.card).join('')}</div>`;
+    } catch(error) { if (token === nutritionSequence && target.isConnected) target.textContent = error.message; }
+  }
+  function productsPanel(recipe) {
+    const names = [...new Set([recipe.name, ...(recipe.ingredients || []).map(item => item.name)])];
+    return `<h3>음식·재료로 찾는 관련 제품</h3><p class="source-note">제품명과 별칭으로 찾은 가공식품 영양 자료입니다. 재료의 실제 함유 여부나 같은 음식임을 보증하지 않습니다.</p><div class="catalog-ingredient-buttons" role="group" aria-label="제품 검색에 사용할 음식 또는 재료">${names.map(name => `<button type="button" class="catalog-link" data-product-query="${escape(name)}" aria-pressed="false">${escape(name)}</button>`).join('')}</div><div id="recipe-products-results"></div><p class="catalog-notice">제품 원재료·회수·HACCP API는 활용신청이 필요합니다. 현재 안전·알레르기·인증 여부는 확인할 수 없습니다. <a href="data-status.html">수집 현황 →</a></p>`;
+  }
+  async function searchRecipeProducts(query) {
+    const recipe = activeRecipe, target = $('#recipe-products-results'), token = ++productSequence;
+    if (!recipe || !target) return;
+    target.dataset.loaded = 'true';
+    $$('#panel-products [data-product-query]').forEach(button => button.setAttribute('aria-pressed',String(button.dataset.productQuery === query)));
+    target.innerHTML = '<p role="status">관련 가공식품을 검색합니다…</p>';
+    try {
+      const result = await catalog.search({query,group:'processed-foods',limit:6,mode:'name'});
+      if (token !== productSequence || activeRecipe?.id !== recipe.id) return;
+      target.innerHTML = `<h4>“${escape(query)}” 제품명 검색</h4><p class="source-note">${result.total.toLocaleString('ko-KR')}건 중 ${result.matches.length}건 표시. 찾는 제품의 제조사와 품목번호를 확인하세요.</p>${result.matches.length ? `<div class="catalog-grid">${result.matches.map(catalog.card).join('')}</div>` : '<p>이 이름으로 찾은 제품이 없습니다. 위에서 다른 재료를 선택해 보세요.</p>'}<a class="catalog-link" href="food-data.html?q=${encodeURIComponent(query)}&amp;group=processed-foods">제품 검색에서 더 보기 →</a>`;
+    } catch(error) { if (token === productSequence && target.isConnected) target.textContent = error.message; }
   }
   function renderPagination() {
     let controls = $('#recipe-pagination');
@@ -255,7 +340,7 @@
     }
     const total = currentResults.length;
     const remaining = total - displayedResults;
-    controls.hidden = total <= RESULTS_BATCH_SIZE;
+    controls.hidden = total <= displayedResults;
     $('#results-progress').textContent = `전체 ${total.toLocaleString('ko-KR')}개 중 ${displayedResults.toLocaleString('ko-KR')}개 표시`;
     const button = controls.querySelector('[data-load-more]');
     button.hidden = remaining <= 0;
@@ -346,15 +431,17 @@
     });
     const known = allergens(recipe);
     $('#detail-content').innerHTML = `<div class="detail-hero"><img src="${escape(safeImage(recipe.image))}" alt="${escape(recipe.name)}" width="600" height="440"><div class="detail-heading"><div class="recipe-tags"><span class="tag tag--green">${escape(recipe.category)}</span><span class="tag">${escape(recipe.method)}</span></div><h2 id="recipe-dialog-title">${escape(recipe.name)}</h2><p>식품안전나라의 재료와 만드는 법을 함께 살펴보세요.</p><div class="detail-actions"><button type="button" id="detail-save" class="button button--soft" data-save="${escape(recipe.id)}"></button><button type="button" class="button button--soft" data-share="${escape(recipe.id)}">${icons.share} 공유</button></div></div></div>
-      <div class="detail-tabs" role="tablist" aria-label="음식 상세 정보">${[['recipe', '레시피'], ['ingredients', '재료·장보기'], ['nutrition', '영양'], ['allergy', '알레르기'], ['notes', '내 메모']].map(([key, text]) => `<button type="button" id="tab-${key}" data-tab="${key}" role="tab" aria-selected="${key === 'recipe'}" aria-controls="panel-${key}" tabindex="${key === 'recipe' ? '0' : '-1'}">${text}</button>`).join('')}</div>
+      <div class="detail-tabs" role="tablist" aria-label="음식 상세 정보">${[['recipe', '레시피'], ['ingredients', '재료·장보기'], ['nutrition', '영양'], ['products', '관련 제품'], ['allergy', '알레르기'], ['notes', '내 메모']].map(([key, text]) => `<button type="button" id="tab-${key}" data-tab="${key}" role="tab" aria-selected="${key === 'recipe'}" aria-controls="panel-${key}" tabindex="${key === 'recipe' ? '0' : '-1'}">${text}</button>`).join('')}</div>
       <section class="tab-panel" id="panel-recipe" role="tabpanel" tabindex="0" aria-labelledby="tab-recipe">${recipePanel(recipe)}</section>
       <section class="tab-panel" id="panel-ingredients" role="tabpanel" tabindex="0" aria-labelledby="tab-ingredients" hidden>${ingredientsPanel(recipe)}</section>
-      <section class="tab-panel" id="panel-nutrition" role="tabpanel" tabindex="0" aria-labelledby="tab-nutrition" hidden>${nutritionPanel(recipe)}</section>
+      <section class="tab-panel" id="panel-nutrition" role="tabpanel" tabindex="0" aria-labelledby="tab-nutrition" hidden>${nutritionPanel(recipe)}<div id="recipe-linked-nutrition" class="catalog-related"><h3>연결된 공식 음식 영양 자료</h3><p role="status">음식명 연결 후보를 확인합니다…</p></div></section>
+      <section class="tab-panel" id="panel-products" role="tabpanel" tabindex="0" aria-labelledby="tab-products" hidden>${productsPanel(recipe)}</section>
       <section class="tab-panel" id="panel-allergy" role="tabpanel" tabindex="0" aria-labelledby="tab-allergy" hidden>${allergyPanel(recipe, known)}</section>
       <section class="tab-panel" id="panel-notes" role="tabpanel" tabindex="0" aria-labelledby="tab-notes" hidden>${notesPanel(recipe)}</section>
       <footer class="detail-source source-note">출처: <a href="${escape(sourceUrl())}" target="_blank" rel="noopener noreferrer">식품안전나라 조리식품 레시피 DB</a> · 원문 ID ${escape(recipe.id)}<br>가져온 날짜 ${escape(fetchedDate())} · 원문 개별 갱신일 미제공</footer>`;
     $('#recipe-dialog').setAttribute('aria-labelledby', 'recipe-dialog-title');
     updateDetailSave(); showDialog('recipe-dialog');
+    loadRecipeNutrition(recipe);
     $('#recipe-dialog').scrollTop = 0;
     // Related recipes share the open detail entry, so closing returns directly
     // to the list instead of leaving a stack of dismissed dialogs.
@@ -375,7 +462,7 @@
     return `<div class="panel-heading"><h3>필요한 재료</h3><button type="button" class="button button--primary" data-add-all="${escape(recipe.id)}">${icons.bag} 모두 담기</button></div><p class="source-note">원문에 적힌 분량입니다. 장보기는 판매처의 검색 결과로 연결되며, 가격·재고 정보는 제공하지 않습니다.</p><div class="ingredient-list">${(recipe.ingredients || []).map((ingredient, index) => {
       const key = cartKey(recipe.id, ingredient.name, ingredient.amount);
       const inCart = cart.some(item => item.key === key);
-      return `<div class="ingredient-row"><div><strong class="ingredient-name">${escape(ingredient.name)}</strong><span class="ingredient-amount">${escape(ingredient.amount || '분량 미제공')}</span></div><div class="ingredient-actions"><button type="button" class="button button--soft ingredient-add" data-add-ingredient="${escape(recipe.id)}:${index}" ${inCart ? 'disabled' : ''}>${inCart ? '담음' : '담기'}</button><a class="ingredient-shop" href="https://search.shopping.naver.com/search/all?query=${encodeURIComponent(ingredient.name)}" target="_blank" rel="noopener noreferrer" aria-label="${escape(ingredient.name)} 네이버쇼핑에서 검색">구매처 ↗</a></div></div>`;
+      return `<div class="ingredient-row"><div><strong class="ingredient-name">${escape(ingredient.name)}</strong><span class="ingredient-amount">${escape(ingredient.amount || '분량 미제공')}</span></div><div class="ingredient-actions"><button type="button" class="button button--soft ingredient-add" data-add-ingredient="${escape(recipe.id)}:${index}" ${inCart ? 'disabled' : ''}>${inCart ? '담음' : '담기'}</button><button type="button" class="button button--soft" data-ingredient-products="${index}">관련 제품</button><a class="ingredient-shop" href="https://search.shopping.naver.com/search/all?query=${encodeURIComponent(ingredient.name)}" target="_blank" rel="noopener noreferrer" aria-label="${escape(ingredient.name)} 네이버쇼핑에서 검색">구매처 ↗</a></div></div>`;
     }).join('')}</div><details class="original-ingredients"><summary>재료 원문 보기</summary><p>${escape(recipe.ingredientText)}</p></details><p class="source-note">구매 링크는 일반 검색 링크이며 현재 제휴 수익이 발생하지 않습니다.</p><button type="button" class="button button--soft" data-shopping-open>${icons.bag} 장보기 목록 보기</button>`;
   }
   function nutritionPanel(recipe) {
@@ -404,8 +491,9 @@
     return recipes.filter(other => String(other.id) !== String(recipe.id)).map(other => ({ recipe: other, overlap: (other.ingredients || []).filter(item => names.includes(ingredientIdentity(item.name))).length })).filter(item => item.overlap).sort((a, b) => b.overlap - a.overlap).slice(0, 3).map(item => item.recipe);
   }
   function setTab(key, focus = false) {
-    if (!['recipe', 'ingredients', 'nutrition', 'allergy', 'notes'].includes(key)) return;
+    if (!['recipe', 'ingredients', 'nutrition', 'products', 'allergy', 'notes'].includes(key)) return;
     activeTab = key;
+    if (key === 'products' && activeRecipe && !$('#recipe-products-results').dataset.loaded) searchRecipeProducts(activeRecipe.name);
     $$('.detail-tabs [role="tab"]').forEach(tab => { const selected = tab.dataset.tab === key; tab.setAttribute('aria-selected', String(selected)); tab.tabIndex = selected ? 0 : -1; });
     $$('.tab-panel').forEach(panel => { panel.hidden = panel.id !== `panel-${key}`; });
     if (focus) $(`#tab-${key}`)?.focus();
@@ -454,7 +542,7 @@
     await copyText(`${recipe.name} · 음식한눈\n${shareUrl}`, '음식 공유 링크를 복사했어요.');
   }
   function renderSources() {
-    $('#sources-content').innerHTML = `<p class="eyebrow">ABOUT THE DATA</p><h2 id="sources-dialog-title">어디에서 온 정보인가요?</h2><p>음식한눈은 식품안전나라의 공개 레시피를 활용한 민간 음식 탐색 서비스입니다.</p><dl class="source-definition"><div><dt>현재 수록</dt><dd>${datasetLabel} ${recipes.length}종</dd></div><div><dt>가져온 날짜</dt><dd>${escape(fetchedDate())}</dd></div><div><dt>레시피·재료·사진·영양</dt><dd>식품의약품안전처 COOKRCP01</dd></div><div><dt>알레르기 표시</dt><dd>재료명 단서 분석 · 안전 판정 아님</dd></div><div><dt>저장한 음식·메모·장보기</dt><dd>현재 브라우저에 보관</dd></div><div><dt>구매처</dt><dd>네이버쇼핑 일반 검색 링크 · 제휴 아님</dd></div></dl><div class="source-links"><a href="${escape(sourceUrl())}" target="_blank" rel="noopener noreferrer">식품안전나라 API 원문 ↗</a><a href="https://www.data.go.kr/data/15060073/openapi.do" target="_blank" rel="noopener noreferrer">공공데이터포털 데이터·이용 조건 ↗</a>${data.meta?.datasetMode === 'official-sample' ? '<a href="https://openapi.foodsafetykorea.go.kr/api/sample/COOKRCP01/json/1/5" target="_blank" rel="noopener noreferrer">공개 샘플 데이터 ↗</a>' : ''}</div><p class="notice">검색 시에는 마지막에 가져온 레시피 데이터를 조회합니다. 공개 리뷰, 가격·재고 조회, 이미지 인식은 아직 연결되지 않았습니다.</p><p class="source-note">기준 중량이 없는 영양값을 환산하지 않습니다. 원문 데이터에도 누락이나 오류가 있을 수 있습니다.</p>`;
+    $('#sources-content').innerHTML = `<p class="eyebrow">ABOUT THE DATA</p><h2 id="sources-dialog-title">어디에서 온 정보인가요?</h2><p>음식한눈은 공식 레시피와 K-FCDB 음식·가공식품·건강기능식품 영양 자료를 연결하는 민간 음식 통합검색 서비스입니다.</p><dl class="source-definition"><div><dt>현재 수록</dt><dd>${datasetLabel} ${recipes.length}종</dd></div><div><dt>가져온 날짜</dt><dd>${escape(fetchedDate())}</dd></div><div><dt>레시피·재료·사진·영양</dt><dd>식품의약품안전처 COOKRCP01</dd></div><div><dt>공식 영양·제품 DB</dt><dd>K-FCDB ${nutritionTotal == null ? '수집본' : nutritionTotal.toLocaleString('ko-KR')+'건'} · <a href="data-status.html">수집·연결 현황</a></dd></div><div><dt>데이터 연결</dt><dd>음식명·별칭·음식명 포함 후보를 구분. 기관 간 동일 레시피 식별키 없음.</dd></div><div><dt>알레르기 표시</dt><dd>재료명 단서 분석 · 안전 판정 아님</dd></div><div><dt>저장한 음식·메모·장보기</dt><dd>현재 브라우저에 보관</dd></div><div><dt>구매처</dt><dd>네이버쇼핑 일반 검색 링크 · 제휴 아님</dd></div></dl><div class="source-links"><a href="${escape(sourceUrl())}" target="_blank" rel="noopener noreferrer">식품안전나라 API 원문 ↗</a><a href="https://www.data.go.kr/data/15060073/openapi.do" target="_blank" rel="noopener noreferrer">공공데이터포털 데이터·이용 조건 ↗</a>${data.meta?.datasetMode === 'official-sample' ? '<a href="https://openapi.foodsafetykorea.go.kr/api/sample/COOKRCP01/json/1/5" target="_blank" rel="noopener noreferrer">공개 샘플 데이터 ↗</a>' : ''}</div><p class="notice">검색 시 마지막 검증된 레시피·음식·제품 스냅샷을 조회합니다. 회수·HACCP·제품 원재료 API는 활용신청 대기 상태입니다. 공개 리뷰, 가격·재고 조회, 이미지 인식은 아직 연결되지 않았습니다.</p><p class="source-note">기준 중량이 없는 영양값을 환산하지 않습니다. 원문 데이터에도 누락이나 오류가 있을 수 있습니다.</p>`;
     $('#sources-dialog').setAttribute('aria-labelledby', 'sources-dialog-title');
   }
   function initVoice() {
@@ -483,6 +571,11 @@
       return;
     }
     if (!button) { if (!event.target.closest('#search-form')) { $('#suggestions').hidden = true; $('#search-input').setAttribute('aria-expanded', 'false'); } return; }
+    if (button.dataset.resultKind) { state.kind = button.dataset.resultKind; render(); updateUrl(); return; }
+    if (button.dataset.catalogMore) { loadCatalogMore(button.dataset.catalogMore, button); return; }
+    if (button.hasAttribute('data-ingredient-products') && activeRecipe) { searchRecipeProducts(activeRecipe.ingredients[Number(button.dataset.ingredientProducts)]?.name || activeRecipe.name); setTab('products'); return; }
+    if (button.dataset.productQuery) { searchRecipeProducts(button.dataset.productQuery); return; }
+    if (button.dataset.nutritionQuery) { searchRecipeNutrition(button.dataset.nutritionQuery); return; }
     if (button.hasAttribute('data-load-more')) { loadMoreResults(); return; }
     if (button.hasAttribute('data-show-all')) { loadMoreResults(true); return; }
     if (button.dataset.save) { toggleSaved(button.dataset.save); return; }
@@ -551,7 +644,7 @@
   });
   document.addEventListener('keydown', event => {
     if (event.target.getAttribute('role') !== 'tab' || !event.target.closest('.detail-tabs')) return;
-    const keys = ['recipe', 'ingredients', 'nutrition', 'allergy', 'notes']; let index = keys.indexOf(activeTab);
+    const keys = ['recipe', 'ingredients', 'nutrition', 'products', 'allergy', 'notes']; let index = keys.indexOf(activeTab);
     if (event.key === 'ArrowRight') index = (index + 1) % keys.length;
     else if (event.key === 'ArrowLeft') index = (index + keys.length - 1) % keys.length;
     else if (event.key === 'Home') index = 0;
@@ -590,5 +683,6 @@
   initializeDataControls(); renderSources(); readUrl(); initVoice();
   if (cartNeedsMigration) persist();
   initializeHero();
+  catalog.manifest().then(snapshot => { nutritionTotal = snapshot.count; renderSources(); }).catch(() => {});
   if (!persistenceAvailable) toast('현재 브라우저에서는 저장 기능이 이번 화면에만 유지될 수 있어요.');
 })();
