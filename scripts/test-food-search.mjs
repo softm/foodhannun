@@ -32,7 +32,9 @@ const manufacturer=await query({group:'processed-foods',query:'주식회사 더�
 const namesOnly=await query({group:'processed-foods',query:'주식회사 더스타푸드',mode:'name'});assert.equal(namesOnly.total,0,'ingredient exploration must not match manufacturer metadata');
 const links=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(root,'data/food-links.json.gz'))));
 let checked=0;
-for(const link of Object.values(links.recipes))for(const item of link.foods){const evidence=context.FoodSearch.relation(link.name,item.row[1]);assert.equal(evidence.kind,item.evidence.kind);assert.equal(evidence.term,item.evidence.term);checked++;}
+const recipes=JSON.parse(fs.readFileSync(path.join(root,'data/recipes.json'))).recipes;
+for(const [id,link] of Object.entries(links.recipes))for(const item of link.foods){const recipe=recipes.find(r=>String(r.id)===id);const evidence=context.FoodSearch.relation(link.name,item.row[1],recipe.ingredients.map(i=>i.name));assert.equal(evidence.kind,item.evidence.kind);assert.equal(evidence.term,item.evidence.term);checked++;}
+assert.equal(context.FoodSearch.relation('닭고기김치찌개','김치찌개_햄',['닭가슴살']),null,'unsupported ingredient variants must not be linked');
 assert.equal(context.FoodSearch.relation('두부','순두부'),null,'search aliases must not establish identity');
 assert.equal(context.FoodSearch.relation('토마토','방울토마토'),null);
 console.log(`Actual worker: full counts, ranked names, aliases, initials, code, supplement basis, missing results, manufacturer scope passed. ${checked} JS/Python relationship rules agree.`);

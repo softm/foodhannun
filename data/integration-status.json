@@ -3,15 +3,16 @@
   "counts": {
     "recipes": 1156,
     "withNameMatch": 26,
-    "withRelatedCandidates": 496,
-    "withoutCandidates": 634,
-    "shownCandidates": 2408
+    "withRelatedCandidates": 371,
+    "withoutCandidates": 759,
+    "shownCandidates": 1284
   },
   "recipeSha256": "121ed4b9f7f0ed69b125ea8f3d4652fb219777cf2e53e09a7510d1e656d7cbfa",
   "foodIndexSha256": "0d30bf6c87dfa917514b98b4914ee4ff88fc39d50183e9977d0976eeb3ee895e",
   "rules": [
     "이름 일치·별칭 일치·가장 구체적인 음식명 포함 후보를 구분",
     "계란/달걀, 북엇국/북어국만 연결용 별칭으로 취급",
+    "원문 음식명의 원료 변형은 레시피명·재료명에도 단서가 있을 때만 후보로 연결",
     "공통 식별키 없음: 동일 레시피 또는 영양값 동등성을 보증하지 않음",
     "제품은 제품명·제조사 검색 결과이며 재료 함유·안전·인증을 추정하지 않음",
     "건강기능식품은 일반 음식·가공식품과 별도 분류"

@@ -12,14 +12,18 @@ def normalize(value):
     return re.sub(r'[\s·ㆍ,()[\]#&:_-]', '', unicodedata.normalize('NFC', str(value))).lower()
 def identity(value):
     return normalize(value).replace('계란', '달걀').replace('북엇국', '북어국')
-def relation(recipe_name, food_name):
+def relation(recipe_name, food_name, ingredient_names=()):
     if normalize(recipe_name) == normalize(food_name):
         return {'kind':'name-exact','term':food_name,'label':'음식명 일치'}
     if identity(recipe_name) == identity(food_name):
         return {'kind':'alias-exact','term':food_name,'label':'별칭 일치'}
     family = food_name.split('_')[0].strip()
     if len(identity(family)) >= 3 and identity(family) in identity(recipe_name):
-        return {'kind':'name-in-title','term':family,'label':'음식명 포함 후보'}
+        variants = [part.strip() for part in food_name.split('_')[1:] if part.strip()]
+        context = identity(recipe_name) + '|' + '|'.join(identity(name) for name in ingredient_names)
+        if variants and not all(identity(part) in context for part in variants):
+            return None
+        return {'kind':'name-in-title','term':family,'label':'음식·재료명 포함 후보' if variants else '음식명 포함 후보'}
     return None
 
 def build():
@@ -42,11 +46,11 @@ def build():
             if family != title and (len(family) < 3 or family not in title):
                 continue
             for row in items:
-                evidence = relation(recipe['name'], row[1])
+                evidence = relation(recipe['name'], row[1], [i['name'] for i in recipe.get('ingredients',[])])
                 if evidence:
                     candidates.append({'group':'foods', 'source':dataset['name'], 'row':row, 'evidence':evidence})
         rank = {'name-exact':0,'alias-exact':1,'name-in-title':2}
-        candidates.sort(key=lambda c:(rank[c['evidence']['kind']], -len(identity(c['evidence']['term']))))
+        candidates.sort(key=lambda c:(rank[c['evidence']['kind']], -len(identity(c['evidence']['term'])), 0 if '_' not in c['row'][1] else 1))
         # Only show the most specific family, while keeping all exact/alias name matches.
         best = max((len(identity(c['evidence']['term'])) for c in candidates if c['evidence']['kind'] == 'name-in-title'),default=0)
         candidates = [c for c in candidates if c['evidence']['kind'] != 'name-in-title' or len(identity(c['evidence']['term'])) == best]
@@ -59,7 +63,7 @@ def build():
     result = {'schemaVersion':1,'recipeSha256':hashlib.sha256(recipes_path.read_bytes()).hexdigest(),'foodIndexSha256':dataset['index']['sha256'],'counts':counts,'recipes':links}
     encoded = json.dumps(result,ensure_ascii=False,separators=(',',':')).encode()
     (ROOT / 'data/food-links.json.gz').write_bytes(gzip.compress(encoded,mtime=0))
-    audit = {'schemaVersion':1, 'counts':counts, 'recipeSha256':result['recipeSha256'], 'foodIndexSha256':result['foodIndexSha256'], 'rules':['이름 일치·별칭 일치·가장 구체적인 음식명 포함 후보를 구분','계란/달걀, 북엇국/북어국만 연결용 별칭으로 취급','공통 식별키 없음: 동일 레시피 또는 영양값 동등성을 보증하지 않음','제품은 제품명·제조사 검색 결과이며 재료 함유·안전·인증을 추정하지 않음','건강기능식품은 일반 음식·가공식품과 별도 분류'], 'linksPath':'data/food-links.json.gz'}
+    audit = {'schemaVersion':1, 'counts':counts, 'recipeSha256':result['recipeSha256'], 'foodIndexSha256':result['foodIndexSha256'], 'rules':['이름 일치·별칭 일치·가장 구체적인 음식명 포함 후보를 구분','계란/달걀, 북엇국/북어국만 연결용 별칭으로 취급','원문 음식명의 원료 변형은 레시피명·재료명에도 단서가 있을 때만 후보로 연결','공통 식별키 없음: 동일 레시피 또는 영양값 동등성을 보증하지 않음','제품은 제품명·제조사 검색 결과이며 재료 함유·안전·인증을 추정하지 않음','건강기능식품은 일반 음식·가공식품과 별도 분류'], 'linksPath':'data/food-links.json.gz'}
     (ROOT / 'data/integration-status.json').write_text(json.dumps(audit,ensure_ascii=False,indent=2)+'\n')
     print(json.dumps(counts,ensure_ascii=False))
 if __name__ == '__main__': build()

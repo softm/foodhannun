@@ -17,11 +17,16 @@
     const initialName = initials(normalize(name));
     return queryTerms.every(group => group.some(word => fields.some(field => field.plain.includes(word) || field.equivalent.includes(identity(word))) || (/^[ㄱ-ㅎ]+$/.test(word) && initialName.includes(word))));
   }
-  function relation(recipeName, foodName) {
+  function relation(recipeName, foodName, ingredients = []) {
     if (normalize(recipeName) === normalize(foodName)) return {kind:'name-exact', term:foodName, label:'음식명 일치'};
     if (identity(recipeName) === identity(foodName)) return {kind:'alias-exact', term:foodName, label:'별칭 일치'};
     const family = String(foodName).split('_')[0].trim();
-    if (identity(family).length >= 3 && identity(recipeName).includes(identity(family))) return {kind:'name-in-title', term:family, label:'음식명 포함 후보'};
+    if (identity(family).length >= 3 && identity(recipeName).includes(identity(family))) {
+      const variants = String(foodName).split('_').slice(1).map(part => part.trim()).filter(Boolean);
+      const context = [recipeName, ...ingredients].map(identity).join('|');
+      if (variants.length && !variants.every(part => context.includes(identity(part)))) return null;
+      return {kind:'name-in-title', term:family, label:variants.length ? '음식·재료명 포함 후보' : '음식명 포함 후보'};
+    }
     return null;
   }
   root.FoodSearch = {normalize, identity, initials, terms, matches, relation};

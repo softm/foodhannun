@@ -30,7 +30,7 @@
   function runSearch(options) {
     try {
       if (!worker) {
-        worker = new Worker(new URL('assets/food-data-worker.js?v=20261020-integration3', base));
+        worker = new Worker(new URL('assets/food-data-worker.js?v=20261020-integration4', base));
         worker.onmessage = ({data}) => {
           const request = pending.get(data.requestId);
           if (!request) return;
@@ -55,7 +55,7 @@
     return `<button type="button" class="catalog-card" data-food-ref="${esc(JSON.stringify(item))}" aria-haspopup="dialog"><span class="catalog-source">${esc(item.source)}</span><strong>${esc(item.row[1])}</strong><span>${esc(item.row[2])}${item.row[3] ? ' · '+esc(item.row[3]) : ''}</span><small>${esc(item.row[0])} · 영양 기준량 ${esc(item.row[6] || '미제공')}</small>${evidence}</button>`;
   }
   async function recipeLinks(recipe) {
-    if (!linksPromise) linksPromise = json('data/food-links.json.gz',true).catch(error => { linksPromise = null; throw error; });
+    if (!linksPromise) linksPromise = json('data/food-links.json.gz?v=20261020-integration4',true).catch(error => { linksPromise = null; throw error; });
     const [links, data] = await Promise.all([linksPromise,manifest()]);
     const current = data.datasets.find(d => d.id === 'foods');
     if (links.foodIndexSha256 !== current.index.sha256) throw new Error('연결 데이터가 갱신 중입니다. 음식명으로 다시 검색해 주세요.');

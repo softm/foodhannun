@@ -38,7 +38,7 @@
   let unifiedSequence = 0, unifiedKey = null, productSequence = 0, nutritionSequence = 0;
   const catalog = window.FoodCatalog;
   catalog.openRecipe = id => openRecipe(id);
-  catalog.relatedRecipes = item => item.group === 'foods' ? recipes.filter(recipe => window.FoodSearch.relation(recipe.name, item.row[1])).slice(0, 4) : [];
+  catalog.relatedRecipes = item => item.group === 'foods' ? recipes.filter(recipe => window.FoodSearch.relation(recipe.name, item.row[1], (recipe.ingredients || []).map(i => i.name))).slice(0, 4) : [];
   const catalogNames = {foods:'음식 영양', 'processed-foods':'가공식품', supplements:'건강기능식품'};
   const catalogLimits = new Map();
   let nutritionTotal = null;
