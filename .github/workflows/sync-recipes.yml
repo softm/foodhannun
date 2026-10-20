@@ -1,33 +1,88 @@
-name: Build review nutrition snapshot
+name: Sync FoodSafety recipes
+
 on:
   workflow_dispatch:
+  schedule:
+    # 06:20 Asia/Seoul (21:20 UTC, previous day)
+    - cron: "20 21 * * *"
+
 permissions:
   contents: write
+
+concurrency:
+  group: foodhannun-recipe-sync
+  cancel-in-progress: false
+
 jobs:
-  nutrition:
-    if: github.ref == 'refs/heads/feat/complete-food-data-collection'
+  sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v5
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-      - run: pip install -r scripts/requirements-data.txt
-      - run: python3 scripts/sync-nutrition.py
-      - run: python3 scripts/validate-food-data.py
-      - run: python3 scripts/build-data-status.py
-      - name: Save verified data to the isolated review branch
+          python-version: "3.12"
+
+      - name: Check API secret
+        id: api-key
+        env:
+          FOODSAFETY_API_KEY: ${{ secrets.FOODSAFETY_API_KEY }}
         shell: bash
         run: |
-          test "$GITHUB_REF" = "refs/heads/feat/complete-food-data-collection"
+          if [ -n "$FOODSAFETY_API_KEY" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::FOODSAFETY_API_KEY secret is not configured. Sync skipped safely."
+          fi
+
+      - name: Refresh official recipe snapshot
+        if: steps.api-key.outputs.available == 'true'
+        env:
+          FOODSAFETY_API_KEY: ${{ secrets.FOODSAFETY_API_KEY }}
+        run: python3 scripts/sync-recipes.py --full
+
+      - name: Validate generated snapshot
+        if: steps.api-key.outputs.available == 'true'
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path(".")
+          normalized = json.loads((root / "data/recipes.json").read_text(encoding="utf-8"))
+          recipes = normalized.get("recipes")
+          meta = normalized.get("meta") or {}
+
+          assert meta.get("datasetMode") == "official-full", meta.get("datasetMode")
+          assert isinstance(recipes, list) and recipes, "recipes must be a non-empty list"
+          assert meta.get("count") == len(recipes), (meta.get("count"), len(recipes))
+          assert meta.get("totalAvailable") == len(recipes), (meta.get("totalAvailable"), len(recipes))
+
+          ids = [str(item.get("id")) for item in recipes]
+          assert len(ids) == len(set(ids)), "duplicate recipe ids"
+
+          browser_data = (root / "assets/data.js").read_text(encoding="utf-8")
+          assert "window.FOOD_DATA =" in browser_data[:256], "assets/data.js is not the browser snapshot"
+          assert (root / "data/raw-full.json").stat().st_size > 0, "raw-full.json is empty"
+
+          print(f"validated {len(recipes)} official recipes")
+          PY
+
+      - name: Commit refreshed data
+        if: steps.api-key.outputs.available == 'true'
+        shell: bash
+        run: |
+          if git diff --quiet -- assets/data.js data/recipes.json data/raw-full.json; then
+            echo "No recipe data changes."
+            exit 0
+          fi
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/nutrition data/collection-status.json data-status.html
-          git commit -m "data: collect and validate 348k official nutrition records" || exit 0
-          git push origin HEAD:refs/heads/feat/complete-food-data-collection
-      - uses: actions/upload-artifact@v4
-        with:
-          name: complete-official-nutrition
-          path: data/nutrition/
-          retention-days: 30
+          git add assets/data.js data/recipes.json data/raw-full.json
+          git commit -m "chore: refresh FoodSafety recipe snapshot"
+          git push
