@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-20T14:26:50+00:00",
-  "totalCollectedRecords": 349526,
-  "completeDatasets": 4,
+  "generatedAt": "2026-10-20T15:09:05+00:00",
+  "totalCollectedRecords": 609697,
+  "completeDatasets": 6,
   "nutritionRecords": 348370,
   "datasets": [
     {
@@ -2183,66 +2183,393 @@
     {
       "id": "C002",
       "name": "품목제조보고 원재료",
-      "status": "blocked",
-      "count": 0,
-      "attemptedAt": "2026-10-20T13:20:16+00:00",
-      "reason": "INFO-110: 기존 인증키는 유효하지만 이 서비스의 활용신청 내역이 없습니다.",
-      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=C002"
+      "status": "partial",
+      "count": 1080827,
+      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=C002",
+      "attemptedAt": "2026-10-20T15:04:58+00:00",
+      "sourceTotal": 1081077,
+      "sourceFields": [
+        "BSSH_NM",
+        "CHNG_DT",
+        "ETQTY_XPORT_PRDLST_YN",
+        "LCNS_NO",
+        "PRDLST_DCNM",
+        "PRDLST_NM",
+        "PRDLST_REPORT_NO",
+        "PRMS_DT",
+        "RAWMTRL_NM",
+        "RAWMTRL_ORDNO"
+      ],
+      "bulkContentType": "application/gzip",
+      "bulkBytes": 60122027,
+      "bulkPrefixHex": "1f8b0800000000000000dcbd6d735c47",
+      "method": "official-bulk-file",
+      "errorType": "CollectionError",
+      "reason": "원본 1,081,077건 / 수집 1,080,827건 불일치"
     },
     {
       "id": "C005",
       "name": "바코드 연계제품 정보 (2018년 이후 갱신 중단)",
-      "status": "blocked",
-      "count": 0,
-      "attemptedAt": "2026-10-20T13:20:35+00:00",
+      "status": "complete",
+      "count": 259793,
+      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=C005",
+      "attemptedAt": "2026-10-20T15:03:52+00:00",
       "freshnessNote": "공식 안내상 2018년 이후 최신화 중단. 현재 바코드 제품 DB로 취급하지 않습니다.",
-      "reason": "INFO-110: 기존 인증키는 유효하지만 이 서비스의 활용신청 내역이 없습니다.",
-      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=C005"
+      "sourceTotal": 259793,
+      "sourceFields": [
+        "BAR_CD",
+        "BSSH_NM",
+        "CLSBIZ_DT",
+        "END_DT",
+        "INDUTY_NM",
+        "POG_DAYCNT",
+        "PRDLST_DCNM",
+        "PRDLST_NM",
+        "PRDLST_REPORT_NO",
+        "PRMS_DT",
+        "SITE_ADDR"
+      ],
+      "bulkContentType": "application/gzip",
+      "bulkBytes": 16468603,
+      "bulkPrefixHex": "1f8b0800000000000000e4bd6d6f1cd9",
+      "method": "official-bulk-file",
+      "fetchedAt": "2026-10-20T15:04:19+00:00",
+      "uniqueRecords": 259741,
+      "chunks": [
+        {
+          "path": "records-0000.jsonl.gz",
+          "count": 10000,
+          "bytes": 722460,
+          "sha256": "91d558e6629286132c7b99b568f28600360d8c3af2208b71e30ceed4e7cc312e"
+        },
+        {
+          "path": "records-0001.jsonl.gz",
+          "count": 10000,
+          "bytes": 725567,
+          "sha256": "e9f086742d3d926b85cefd98d8f4277c4c0d2caa2115889a18d6b001a9cdb8a3"
+        },
+        {
+          "path": "records-0002.jsonl.gz",
+          "count": 10000,
+          "bytes": 722601,
+          "sha256": "5baed8deb76fcc3b91f96c665566311d7f4dd9b3790ef113503a268de93a5d13"
+        },
+        {
+          "path": "records-0003.jsonl.gz",
+          "count": 10000,
+          "bytes": 723405,
+          "sha256": "9c8b1b047a7f82f3fb34e779a80db6858d13bd9d8fd3265be4558e75ffb32784"
+        },
+        {
+          "path": "records-0004.jsonl.gz",
+          "count": 10000,
+          "bytes": 726034,
+          "sha256": "98147c08dae9f0a28f82a72d515cdc0035fc7ce03565358cba42262fcfa2fe70"
+        },
+        {
+          "path": "records-0005.jsonl.gz",
+          "count": 10000,
+          "bytes": 727852,
+          "sha256": "a2777bb37ac199f6b21074ce3a3dafa65119b916243af2562aed7f8461383708"
+        },
+        {
+          "path": "records-0006.jsonl.gz",
+          "count": 10000,
+          "bytes": 734456,
+          "sha256": "79daf8b330dcbc37ab854f0ba0a1a5a9632ec2cba14dd5bf36cc1cf9232e09b4"
+        },
+        {
+          "path": "records-0007.jsonl.gz",
+          "count": 10000,
+          "bytes": 725897,
+          "sha256": "3730d731f0c577d9e8e3a90902187a999f4c0d7174bd6acef213ef19a980acb6"
+        },
+        {
+          "path": "records-0008.jsonl.gz",
+          "count": 10000,
+          "bytes": 728500,
+          "sha256": "d1c109da9f75bd78b9eff75ddc323d0e64ed44eb2a93e1177b4cc81a4fb37517"
+        },
+        {
+          "path": "records-0009.jsonl.gz",
+          "count": 10000,
+          "bytes": 735061,
+          "sha256": "ae3be0be967b0317752e13a5ed95b4d18bb4a7647ce2739640be173f060db6e9"
+        },
+        {
+          "path": "records-0010.jsonl.gz",
+          "count": 10000,
+          "bytes": 771175,
+          "sha256": "5f5bcb21bf2918184e0083692c4be390c261e814a57469231f8fae5923501c74"
+        },
+        {
+          "path": "records-0011.jsonl.gz",
+          "count": 10000,
+          "bytes": 775069,
+          "sha256": "996d260771c1345f45d6734d24b380021b26f035b4754b32d142dc5a63adbc13"
+        },
+        {
+          "path": "records-0012.jsonl.gz",
+          "count": 10000,
+          "bytes": 774803,
+          "sha256": "818bf49f9f81638aa2a107a68d023b8c71706acd6f681493f2ce6217d59e185e"
+        },
+        {
+          "path": "records-0013.jsonl.gz",
+          "count": 10000,
+          "bytes": 773985,
+          "sha256": "ad78e8e0dfb7f451ff21f4cc9d68785eecea9bc3b9c8f96eb2d68584aa987af7"
+        },
+        {
+          "path": "records-0014.jsonl.gz",
+          "count": 10000,
+          "bytes": 775206,
+          "sha256": "fe67529486ae9421dd611a258b8de6dbe721d3dee8cef749656920b00fb07e01"
+        },
+        {
+          "path": "records-0015.jsonl.gz",
+          "count": 10000,
+          "bytes": 773434,
+          "sha256": "2208a16dbfc389eab0aa4835e3819e39953368f41cf86a04ce560dd057f3c4d2"
+        },
+        {
+          "path": "records-0016.jsonl.gz",
+          "count": 10000,
+          "bytes": 776279,
+          "sha256": "3907c6fb2f41b15eaa798f318212af13c7d5c996cb8eb2d9fb1fe2f6156abb21"
+        },
+        {
+          "path": "records-0017.jsonl.gz",
+          "count": 10000,
+          "bytes": 779228,
+          "sha256": "1cf4239d2ae8a873c75603279a2464b083d21d8a7d61ba37327df98bad535d8b"
+        },
+        {
+          "path": "records-0018.jsonl.gz",
+          "count": 10000,
+          "bytes": 773686,
+          "sha256": "5d337236d840cd4f5f38d3a8e6e94193b79e610b29e88cf4f63ea0365560a329"
+        },
+        {
+          "path": "records-0019.jsonl.gz",
+          "count": 10000,
+          "bytes": 777190,
+          "sha256": "b61e19743c86822ec4f0e9e561521c83d28e1483b7b1acbfae662279d196fdb2"
+        },
+        {
+          "path": "records-0020.jsonl.gz",
+          "count": 10000,
+          "bytes": 776920,
+          "sha256": "cd4993e53f612914fd695167c8a143f74a58d047631c5d14bd0f9dc6d677b41b"
+        },
+        {
+          "path": "records-0021.jsonl.gz",
+          "count": 10000,
+          "bytes": 773583,
+          "sha256": "5fb72ebab656a06177697920bc42c3a63d1b8b57b7068a008ebb5435c7e2f9b1"
+        },
+        {
+          "path": "records-0022.jsonl.gz",
+          "count": 10000,
+          "bytes": 776741,
+          "sha256": "fcfd469fb7fd7333180c0a8c22a701fa2878ad4229e149e9e1e062ee3c82074f"
+        },
+        {
+          "path": "records-0023.jsonl.gz",
+          "count": 10000,
+          "bytes": 777578,
+          "sha256": "73c43b13b15aa6674c7a73cbe4ccad6b97810a90658a33b24d94aefe08cf6121"
+        },
+        {
+          "path": "records-0024.jsonl.gz",
+          "count": 10000,
+          "bytes": 454439,
+          "sha256": "343e2de2709131d8f4657230a1bb67bc998a292d0b7240a04178d7001a370b07"
+        },
+        {
+          "path": "records-0025.jsonl.gz",
+          "count": 9793,
+          "bytes": 341550,
+          "sha256": "592fa95849f8bd38112893935fb30b27b94f902c175561944e5c367c2fa7b73a"
+        }
+      ],
+      "bytes": 18922699
     },
     {
       "id": "I0490",
       "name": "회수·판매중지 정보",
-      "status": "blocked",
-      "count": 0,
-      "attemptedAt": "2026-10-20T13:20:25+00:00",
-      "reason": "INFO-110: 기존 인증키는 유효하지만 이 서비스의 활용신청 내역이 없습니다.",
-      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490"
+      "status": "complete",
+      "count": 378,
+      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490",
+      "attemptedAt": "2026-10-20T15:08:55+00:00",
+      "sourceTotal": 378,
+      "sourceFields": [
+        "ADDR",
+        "BRCDNO",
+        "BSSHNM",
+        "CRET_DTM",
+        "DISTBTMLMT",
+        "FRMLCUNIT",
+        "IMG_FILE_PATH",
+        "LCNS_NO",
+        "MNFDT",
+        "PRDLST_CD",
+        "PRDLST_CD_NM",
+        "PRDLST_REPORT_NO",
+        "PRDLST_TYPE",
+        "PRDTNM",
+        "RTRVLDSUSE_SEQ",
+        "RTRVLPLANDOC_RTRVLMTHD",
+        "RTRVLPRVNS",
+        "RTRVL_GRDCD_NM",
+        "TELNO"
+      ],
+      "bulkContentType": "application/gzip",
+      "sourceLastModified": "Tue, 20 Oct 2026 15:08:49 GMT",
+      "bulkBytes": 43754,
+      "apiTotal": 379,
+      "originalFile": "source-original.gz",
+      "bulkPrefixHex": "1f8b0800000000000000ecbd5b735b57",
+      "method": "official-bulk-file",
+      "countNote": "공식 전체파일 378행 / 실시간 API 379건: 원본 제공 범위·기준 시각 차이",
+      "countBasis": "official-file-row-count",
+      "fetchedAt": "2026-10-20T15:09:05+00:00",
+      "uniqueRecords": 378,
+      "chunks": [
+        {
+          "path": "records-0000.jsonl.gz",
+          "count": 378,
+          "bytes": 46979,
+          "sha256": "d3c0058477743406b599c8c930df35eb168bba9c163d3feb4859fd9dfb901166"
+        }
+      ],
+      "bytes": 46979
     },
     {
       "id": "I0580",
       "name": "HACCP 적용업소 지정 현황",
-      "status": "blocked",
-      "count": 0,
-      "attemptedAt": "2026-10-20T13:20:29+00:00",
-      "reason": "INFO-110: 기존 인증키는 유효하지만 이 서비스의 활용신청 내역이 없습니다.",
-      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0580"
+      "status": "partial",
+      "count": 39460,
+      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0580",
+      "attemptedAt": "2026-10-20T15:02:48+00:00",
+      "sourceTotal": 39406,
+      "sourceFields": [
+        "ASGN_CANCL_DT",
+        "BSSH_NM",
+        "CLSBIZ_DT",
+        "CLSBIZ_DVS_CD_NM",
+        "CRTFC_ENDDT",
+        "CRTFC_RETN_DT",
+        "HACCP_APPN_DT",
+        "HACCP_APPN_NO",
+        "INDUTY_CD_NM",
+        "LCNS_NO",
+        "PRDLST_NM",
+        "PRSDNT_NM",
+        "SITE_ADDR"
+      ],
+      "bulkContentType": "application/gzip",
+      "bulkBytes": 1413797,
+      "bulkPrefixHex": "1f8b0800000000000000e4bddd6f1b59",
+      "method": "official-bulk-file",
+      "errorType": "CollectionError",
+      "reason": "원본 39,406건 / 수집 39,460건 불일치"
     },
     {
       "id": "I1020",
       "name": "식품원재료 정보",
-      "status": "blocked",
-      "count": 0,
-      "attemptedAt": "2026-10-20T13:20:06+00:00",
-      "reason": "INFO-110: 기존 인증키는 유효하지만 이 서비스의 활용신청 내역이 없습니다.",
-      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I1020"
+      "status": "partial",
+      "count": 14825,
+      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I1020",
+      "attemptedAt": "2026-10-20T15:03:14+00:00",
+      "sourceTotal": 24887,
+      "sourceFields": [
+        "ENG_NM",
+        "LCLAS_NM",
+        "MLSFC_NM",
+        "RAWMTRL_NCKNM",
+        "RAWMTRL_STATS_CD_NM",
+        "REGN_CD_NM",
+        "RPRSNT_RAWMTRL_NM",
+        "SCNM",
+        "USE_CND_NM",
+        "USE_CND_STDR_CN"
+      ],
+      "bulkContentType": "application/gzip",
+      "bulkBytes": 607130,
+      "bulkPrefixHex": "1f8b0800000000000000ecbd6b6f1c47",
+      "method": "official-bulk-file",
+      "errorType": "CollectionError",
+      "reason": "전체 파일 CSV 열 개수 불일치"
     },
     {
       "id": "I1250",
       "name": "식품 품목제조보고",
-      "status": "blocked",
-      "count": 0,
-      "attemptedAt": "2026-10-20T13:20:15+00:00",
-      "reason": "INFO-110: 기존 인증키는 유효하지만 이 서비스의 활용신청 내역이 없습니다.",
-      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I1250"
+      "status": "partial",
+      "count": 15263,
+      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I1250",
+      "attemptedAt": "2026-10-20T15:04:27+00:00",
+      "sourceTotal": 1081077,
+      "sourceFields": [
+        "BSSH_NM",
+        "CHILD_CRTFC_YN",
+        "DISPOS",
+        "ETQTY_XPORT_PRDLST_YN",
+        "FRMLC_MTRQLT",
+        "HIENG_LNTRT_DVS_NM",
+        "INDUTY_CD_NM",
+        "LAST_UPDT_DTM",
+        "LCNS_NO",
+        "POG_DAYCNT",
+        "PRDLST_DCNM",
+        "PRDLST_NM",
+        "PRDLST_REPORT_NO",
+        "PRMS_DT",
+        "PRODUCTION",
+        "PRPOS",
+        "QLITY_MNTNC_TMLMT_DAYCNT",
+        "USAGE"
+      ],
+      "bulkContentType": "application/gzip",
+      "bulkBytes": 36821769,
+      "bulkPrefixHex": "1f8b0800000000000000ecbd6b731cd7",
+      "method": "official-bulk-file",
+      "errorType": "CollectionError",
+      "reason": "전체 파일 CSV 열 개수 불일치"
     },
     {
       "id": "I2520",
       "name": "식품원재료코드",
-      "status": "blocked",
-      "count": 0,
-      "attemptedAt": "2026-10-20T13:20:05+00:00",
-      "reason": "INFO-110: 기존 인증키는 유효하지만 이 서비스의 활용신청 내역이 없습니다.",
-      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I2520"
+      "status": "partial",
+      "count": 20264,
+      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I2520",
+      "attemptedAt": "2026-10-20T15:03:31+00:00",
+      "sourceTotal": 43627,
+      "sourceFields": [
+        "ENG_NM",
+        "LAST_UPDT_DTM",
+        "PRCSS_PROCS_CD",
+        "PRCSS_PROCS_CD_NM",
+        "RAWMTRL_CD",
+        "RAWMTRL_LCLAS_NM",
+        "RAWMTRL_MLSFC_NM",
+        "RAWMTRL_NCKNM",
+        "RAWMTRL_STATS_CD",
+        "RAWMTRL_STATS_CD_NM",
+        "REGN_CD",
+        "REGN_CD_NM",
+        "RPRSNT_RAWMTRL_NM",
+        "SCNM",
+        "USE_YN",
+        "VALD_BGN_DT",
+        "VALD_END_DT"
+      ],
+      "bulkContentType": "application/gzip",
+      "bulkBytes": 1349749,
+      "bulkPrefixHex": "1f8b0800000000000000e4bd6b731cd7",
+      "method": "official-bulk-file",
+      "errorType": "CollectionError",
+      "reason": "전체 파일 CSV 열 개수 불일치"
     },
     {
       "id": "rda",
@@ -2295,5 +2622,6 @@
       "건강기능식품은 일반 음식·가공식품과 별도 분류"
     ],
     "linksPath": "data/food-links.json.gz"
-  }
+  },
+  "officialSourceIntegration": null
 }

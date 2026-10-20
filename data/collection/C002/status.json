@@ -1,8 +1,27 @@
 {
   "id": "C002",
   "name": "품목제조보고 원재료",
-  "status": "blocked",
-  "count": 0,
-  "attemptedAt": "2026-10-20T13:20:16+00:00",
-  "reason": "공식 API 응답 INFO-110"
+  "status": "partial",
+  "count": 1080827,
+  "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=C002",
+  "attemptedAt": "2026-10-20T15:04:58+00:00",
+  "sourceTotal": 1081077,
+  "sourceFields": [
+    "BSSH_NM",
+    "CHNG_DT",
+    "ETQTY_XPORT_PRDLST_YN",
+    "LCNS_NO",
+    "PRDLST_DCNM",
+    "PRDLST_NM",
+    "PRDLST_REPORT_NO",
+    "PRMS_DT",
+    "RAWMTRL_NM",
+    "RAWMTRL_ORDNO"
+  ],
+  "bulkContentType": "application/gzip",
+  "bulkBytes": 60122027,
+  "bulkPrefixHex": "1f8b0800000000000000dcbd6d735c47",
+  "method": "official-bulk-file",
+  "errorType": "CollectionError",
+  "reason": "원본 1,081,077건 / 수집 1,080,827건 불일치"
 }

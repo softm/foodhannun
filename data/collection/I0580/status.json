@@ -1,8 +1,30 @@
 {
   "id": "I0580",
   "name": "HACCP 적용업소 지정 현황",
-  "status": "blocked",
-  "count": 0,
-  "attemptedAt": "2026-10-20T13:20:29+00:00",
-  "reason": "공식 API 응답 INFO-110"
+  "status": "partial",
+  "count": 39460,
+  "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0580",
+  "attemptedAt": "2026-10-20T15:02:48+00:00",
+  "sourceTotal": 39406,
+  "sourceFields": [
+    "ASGN_CANCL_DT",
+    "BSSH_NM",
+    "CLSBIZ_DT",
+    "CLSBIZ_DVS_CD_NM",
+    "CRTFC_ENDDT",
+    "CRTFC_RETN_DT",
+    "HACCP_APPN_DT",
+    "HACCP_APPN_NO",
+    "INDUTY_CD_NM",
+    "LCNS_NO",
+    "PRDLST_NM",
+    "PRSDNT_NM",
+    "SITE_ADDR"
+  ],
+  "bulkContentType": "application/gzip",
+  "bulkBytes": 1413797,
+  "bulkPrefixHex": "1f8b0800000000000000e4bddd6f1b59",
+  "method": "official-bulk-file",
+  "errorType": "CollectionError",
+  "reason": "원본 39,406건 / 수집 39,460건 불일치"
 }
