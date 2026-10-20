@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-20T15:26:55+00:00",
+  "generatedAt": "2026-10-20T15:30:40+00:00",
   "totalCollectedRecords": 2879537,
   "completeDatasets": 11,
   "nutritionRecords": 348370,
@@ -4058,5 +4058,9 @@
     ],
     "linksPath": "data/food-links.json.gz"
   },
-  "officialSourceIntegration": null
+  "officialSourceIntegration": {
+    "sourceRecords": 2530011,
+    "indexedRecords": 2530011,
+    "lookupPointers": 2929902
+  }
 }
