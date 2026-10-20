@@ -6,6 +6,10 @@ on:
         description: 'Services, separated by spaces; all seven by default'
         required: true
         default: 'I0490 I0580 I1020 I2520 C005 I1250 C002'
+      source_snapshot:
+        description: 'main or an existing data/foodsafety-RUN-ATTEMPT branch to preserve'
+        required: true
+        default: 'main'
 permissions:
   contents: write
 concurrency:
@@ -24,9 +28,15 @@ jobs:
       - name: Prepare isolated data snapshot branch
         env:
           DATA_BRANCH: data/foodsafety-${{ github.run_id }}-${{ github.run_attempt }}
+          SOURCE_SNAPSHOT: ${{ inputs.source_snapshot }}
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if [ "$SOURCE_SNAPSHOT" != 'main' ]; then
+            if [[ ! "$SOURCE_SNAPSHOT" =~ ^data/foodsafety-[0-9]+-[0-9]+$ ]]; then exit 2; fi
+            git fetch origin "$SOURCE_SNAPSHOT"
+            git restore --source=FETCH_HEAD --staged --worktree -- data/collection
+          fi
           git switch -c "$DATA_BRANCH"
           echo "DATA_BRANCH=$DATA_BRANCH" >> "$GITHUB_ENV"
       - name: Collect sequentially with one existing API key

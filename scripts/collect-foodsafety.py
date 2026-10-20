@@ -36,7 +36,7 @@ SERVICES = {
     'C005': '바코드 연계제품 정보 (2018년 이후 갱신 중단)',
 }
 API_ROOT = 'https://openapi.foodsafetykorea.go.kr/api/'
-BULK_THRESHOLD = 1000
+BULK_THRESHOLD = 0
 
 class CollectionError(Exception):
     pass
@@ -188,6 +188,7 @@ def collect(service, output):
                 time.sleep(3)
                 with open_api(API_ROOT+quote(key,safe='')+f'/{service}/file') as response, bulk.open('wb') as file:
                     status['bulkContentType']=response.headers.get('Content-Type','')
+                    status['sourceLastModified']=response.headers.get('Last-Modified','')
                     size=0
                     while chunk:=response.read(1024*1024):
                         size+=len(chunk)
@@ -195,6 +196,17 @@ def collect(service, output):
                         if key.encode() in chunk: raise CollectionError('원본 인증정보 탐지')
                         file.write(chunk)
                 status['bulkBytes']=bulk.stat().st_size
+                status['apiTotal']=expected
+                original=output/'source-original.gz'
+                if bulk.stat().st_size < 90*1024**2:
+                    shutil.copyfile(bulk,original)
+                    status['originalFile']=original.name
+                else:
+                    with bulk.open('rb') as file:
+                        part=0; source_parts=[]
+                        while blob:=file.read(50*1024**2):
+                            name=f'source-original-{part:03d}.bin';(output/name).write_bytes(blob);source_parts.append(name);part+=1
+                    status['originalParts']=source_parts
                 with bulk.open('rb') as file: status['bulkPrefixHex']=file.read(16).hex()
                 rows=file_rows(bulk)
                 status['method']='official-bulk-file'
@@ -234,7 +246,12 @@ def collect(service, output):
                 if count%50000==0: print(f'{service}: {count:,}/{expected:,}건 변환',flush=True)
             flush()
             unique=db.execute('SELECT count(*) FROM fingerprints').fetchone()[0];db.close()
-            if count!=expected: raise CollectionError(f'원본 {expected:,}건 / 수집 {count:,}건 불일치')
+            if count!=expected:
+                if status['method']=='official-bulk-file':
+                    status['countNote']=f'공식 전체파일 {count:,}행 / 실시간 API {expected:,}건: 원본 제공 범위·기준 시각 차이'
+                    status['sourceTotal']=count
+                else: raise CollectionError(f'원본 {expected:,}건 / 수집 {count:,}건 불일치')
+            if status['method']=='official-bulk-file': status['countBasis']='official-file-row-count'
             for path in output.glob('records*.jsonl.gz'): path.unlink()
             for descriptor in chunks: (stage/descriptor['path']).replace(output/descriptor['path'])
             status.update(status='complete',fetchedAt=now(),uniqueRecords=unique,chunks=chunks,bytes=sum(c['bytes'] for c in chunks))

@@ -26,7 +26,7 @@ class CollectorTests(unittest.TestCase):
             latest=json.loads((p/'status.json').read_text());self.assertEqual(latest['count'],10001);self.assertEqual(latest['status'],'complete');self.assertEqual((p/old['chunks'][0]['path']).read_bytes(),raw)
             self.assertNotIn('dummy-private-key',(p/'status.json').read_text())
     def test_mismatched_count_is_partial(self):
-        with tempfile.TemporaryDirectory() as d,patch.dict(os.environ,{'FOODSAFETY_API_KEY':'dummy-key'}),patch.object(module.time,'sleep'),contextlib.redirect_stdout(io.StringIO()):
+        with tempfile.TemporaryDirectory() as d,patch.dict(os.environ,{'FOODSAFETY_API_KEY':'dummy-key'}),patch.object(module.time,'sleep'),patch.object(module,'BULK_THRESHOLD',95000),contextlib.redirect_stdout(io.StringIO()):
             p=Path(d)/'I2520'
             with patch.object(module,'fetch_page',side_effect=[([{'CODE':'1'}],2),([],2)]):self.assertFalse(module.collect('I2520',p))
             self.assertEqual(json.loads((p/'status.json').read_text())['status'],'partial');self.assertFalse(list(p.glob('records*.gz')))

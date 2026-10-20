@@ -3,9 +3,10 @@
 from datetime import datetime, timezone
 from html import escape
 import json
+import os
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(os.environ.get('FOODHANNUN_ROOT', Path(__file__).resolve().parents[1]))
 def main():
     recipes = json.loads((ROOT / 'data/recipes.json').read_text())
     nutrition = json.loads((ROOT / 'data/nutrition/manifest.json').read_text())
@@ -30,8 +31,10 @@ def main():
     ])
     integration_path = ROOT / 'data/integration-status.json'
     integration = json.loads(integration_path.read_text()) if integration_path.exists() else None
+    safety_path = ROOT / 'data/food-safety/manifest.json'
+    safety = json.loads(safety_path.read_text()) if safety_path.exists() else None
     completed = [d for d in datasets if d['status'] == 'complete']
-    summary = {'generatedAt':datetime.now(timezone.utc).isoformat(timespec='seconds'), 'totalCollectedRecords':sum(d['count'] for d in completed), 'completeDatasets':len(completed), 'nutritionRecords':nutrition['count'], 'datasets':datasets, 'integration':integration}
+    summary = {'generatedAt':datetime.now(timezone.utc).isoformat(timespec='seconds'), 'totalCollectedRecords':sum(d['count'] for d in completed), 'completeDatasets':len(completed), 'nutritionRecords':nutrition['count'], 'datasets':datasets, 'integration':integration, 'officialSourceIntegration':safety.get('counts') if safety else None}
     (ROOT / 'data/collection-status.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding='utf-8')
     labels = {'complete':'전체 수집 완료', 'blocked':'수집 재시도 필요', 'partial':'일부 수집', 'not-collected':'미수집', 'not-connected':'미연동'}
     rows = []
@@ -40,6 +43,9 @@ def main():
         if d.get('sourceUrl'):
             name = f'<a href="{escape(d["sourceUrl"])}" target="_blank" rel="noopener">{name} ↗</a>'
         note = d.get('reason') or f"원본 {d.get('sourceTotal',d['count']):,}건 대조 완료"
+        if d.get('countBasis') == 'official-file-row-count':
+            note = f"공식 전체파일 {d['count']:,}행 변환·전수 검증 완료"
+            if d.get('countNote'): note += ' · ' + d['countNote']
         if d.get('columnCount'):
             note += f" · 원본 {d['columnCount']}개 열 보존"
         if d.get('freshnessNote'):
@@ -52,7 +58,11 @@ def main():
     connected = ''
     if integration:
         c = integration['counts']
-        connected = f'<section><h2>수집 데이터 연결 현황</h2><p>레시피 {c["recipes"]:,}개 중 음식명·별칭 일치 {c["withNameMatch"]:,}개, 음식명 포함 후보 {c["withRelatedCandidates"]:,}개, 연결 후보 없음 {c["withoutCandidates"]:,}개입니다. 이는 공식 동일 식품 식별자에 의한 결합이 아닌 이름 기반 탐색입니다.</p><p>레시피 상세의 영양 탭에서 근거와 기준량을 확인하고, 재료·장보기 또는 관련 제품 탭에서 재료명으로 가공식품을 탐색할 수 있습니다. 제품 원재료·회수·HACCP는 미연결 상태입니다.</p><p><a href="./?q=김치찌개">통합검색 예시 →</a> · <a href="data/integration-status.json">연결 기준·검증 현황 JSON</a></p></section>'
+        connected = f'<section><h2>수집 데이터 연결 현황</h2><p>레시피 {c["recipes"]:,}개 중 음식명·별칭 일치 {c["withNameMatch"]:,}개, 음식명 포함 후보 {c["withRelatedCandidates"]:,}개, 연결 후보 없음 {c["withoutCandidates"]:,}개입니다. 이는 공식 동일 식품 식별자에 의한 결합이 아닌 이름 기반 탐색입니다.</p><p>레시피 상세의 영양 탭에서 근거와 기준량을 확인하고, 재료·장보기 또는 관련 제품 탭에서 재료명으로 가공식품을 탐색할 수 있습니다. 제품 원재료·회수·HACCP의 연결 상태는 아래 공식 번호 연결 현황을 확인하세요.</p><p><a href="./?q=김치찌개">통합검색 예시 →</a> · <a href="data/integration-status.json">연결 기준·검증 현황 JSON</a></p></section>'
+    if safety:
+        connected += f'<section><h2>공식 번호 연결 현황</h2><p>공식 API {safety["counts"]["indexedRecords"]:,}건의 검색 포인터와 {safety["counts"]["lookupPointers"]:,}개 번호·원료명 조회 포인터를 검증했습니다. 제품은 품목제조번호, 제조업소 HACCP는 인허가번호, 원료 자료는 원료코드·공식 이름으로 연결합니다.</p><p>회수 공고는 제조일·소비기한을 확인하고, HACCP는 적용 업소·품목·유효기간을 확인해야 합니다. C005는 2018년 이후 갱신 중단 자료입니다.</p><p><a href="food-safety.html">공식 원재료·안전 자료 검색 →</a></p></section>'
+    if not any('INFO-110' in d.get('reason','') for d in datasets):
+        page = page.replace('INFO-110은 새 인증키 발급이 필요한 오류가 아닙니다. 식품안전나라 로그인 후 해당 서비스의 OpenAPI 이용신청을 추가한 다음 수집을 다시 실행해야 합니다.', '공식 API 원본은 검증된 전체 수집본만 연결합니다. 수집 실패·일부 수집은 별도로 표시하며 마지막 정상 수집본을 보존합니다.')
     page = page.replace('INTEGRATION_SECTION', connected)
     (ROOT / 'data-status.html').write_text(page, encoding='utf-8')
     print(f"수집 현황: {len(completed)}종 / {summary['totalCollectedRecords']:,}개 레코드")

@@ -1,0 +1,49 @@
+name: Build official food identifier links
+on:
+  workflow_dispatch:
+    inputs:
+      snapshot_branch:
+        description: 'Completed data/foodsafety-RUN-ATTEMPT branch'
+        required: true
+permissions:
+  contents: write
+concurrency:
+  group: foodsafety-index-${{ inputs.snapshot_branch }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preserve current compiler and load verified snapshot branch
+        env:
+          SNAPSHOT_BRANCH: ${{ inputs.snapshot_branch }}
+        shell: bash
+        run: |
+          if [[ ! "$SNAPSHOT_BRANCH" =~ ^data/foodsafety-[0-9]+-[0-9]+$ ]]; then exit 2; fi
+          mkdir -p "$RUNNER_TEMP/food-tools"
+          cp scripts/build-foodsafety-index.py scripts/validate-foodsafety-index.py scripts/build-data-status.py "$RUNNER_TEMP/food-tools/"
+          git fetch origin "$SNAPSHOT_BRANCH"
+          git switch -c "$SNAPSHOT_BRANCH" FETCH_HEAD
+      - name: Compile source search and exact identifier lookup shards
+        env:
+          FOODHANNUN_ROOT: ${{ github.workspace }}
+        run: |
+          python3 "$RUNNER_TEMP/food-tools/build-foodsafety-index.py" --root "$GITHUB_WORKSPACE"
+          python3 "$RUNNER_TEMP/food-tools/validate-foodsafety-index.py" --root "$GITHUB_WORKSPACE"
+          python3 "$RUNNER_TEMP/food-tools/build-data-status.py"
+      - name: Commit validated derived data to isolated snapshot branch
+        env:
+          SNAPSHOT_BRANCH: ${{ inputs.snapshot_branch }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/food-safety data/collection-status.json data-status.html
+          if ! git diff --cached --quiet; then
+            git commit -m 'data: build official source search and exact identifier links'
+            git push origin "HEAD:$SNAPSHOT_BRANCH"
+          fi
