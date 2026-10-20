@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-20T15:30:40+00:00",
+  "generatedAt": "2026-10-20T23:12:14+00:00",
   "totalCollectedRecords": 2879537,
   "completeDatasets": 11,
   "nutritionRecords": 348370,
@@ -3065,7 +3065,7 @@
       "status": "complete",
       "count": 378,
       "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490",
-      "attemptedAt": "2026-10-20T15:23:59+00:00",
+      "attemptedAt": "2026-10-20T23:12:01+00:00",
       "sourceFields": [
         "ADDR",
         "BRCDNO",
@@ -3087,19 +3087,11 @@
         "RTRVL_GRDCD_NM",
         "TELNO"
       ],
-      "originalFetchedAt": "2026-10-20T15:09:05+00:00",
       "sourceTotal": 378,
-      "bulkContentType": "application/gzip",
-      "sourceLastModified": "Tue, 20 Oct 2026 15:08:49 GMT",
-      "bulkBytes": 43754,
-      "apiTotal": 379,
-      "originalSha256": "c40a3cdf4bcdb1ba779fa8f4035a9ee2a664061eb8e6a094cd7331e6a7c3f154",
-      "originalFile": "source-original.gz",
-      "bulkPrefixHex": "1f8b0800000000000000ecbd5b735b57",
-      "method": "official-bulk-file",
-      "countNote": "공식 전체파일 378행 / 실시간 API 379건으로 건수가 다릅니다. 전체파일 기준 수집.",
-      "countBasis": "official-file-row-count",
-      "fetchedAt": "2026-10-20T15:09:05+00:00",
+      "apiTotal": 378,
+      "method": "official-paginated-full",
+      "countBasis": "api-row-count",
+      "fetchedAt": "2026-10-20T23:12:05+00:00",
       "uniqueRecords": 378,
       "chunks": [
         {
@@ -3109,8 +3101,7 @@
           "sha256": "d3c0058477743406b599c8c930df35eb168bba9c163d3feb4859fd9dfb901166"
         }
       ],
-      "bytes": 46979,
-      "reprocessedAt": "2026-10-20T15:23:59+00:00"
+      "bytes": 46979
     },
     {
       "id": "I0580",
@@ -4062,5 +4053,84 @@
     "sourceRecords": 2530011,
     "indexedRecords": 2530011,
     "lookupPointers": 2929902
+  },
+  "automation": {
+    "timeZone": "Asia/Seoul",
+    "schedules": {
+      "recalls": {
+        "name": "회수·판매중지",
+        "cronUtc": "17 * * * *",
+        "scheduleKst": "매시 17분",
+        "services": [
+          "I0490"
+        ],
+        "intervalHours": 1
+      },
+      "daily": {
+        "name": "품목·원재료·HACCP",
+        "cronUtc": "0 19 * * *",
+        "scheduleKst": "매일 04:00",
+        "services": [
+          "I1250",
+          "C002",
+          "I0580"
+        ],
+        "intervalHours": 24
+      },
+      "weekly": {
+        "name": "식품원료 정보·코드",
+        "cronUtc": "0 20 * * 0",
+        "scheduleKst": "매주 월요일 05:00",
+        "services": [
+          "I1020",
+          "I2520"
+        ],
+        "intervalHours": 168
+      },
+      "recipes": {
+        "name": "조리식품 레시피",
+        "cronUtc": "20 21 * * *",
+        "scheduleKst": "매일 06:20",
+        "services": [
+          "COOKRCP01"
+        ],
+        "intervalHours": 24
+      },
+      "nutrition": {
+        "name": "음식·가공식품·건강기능식품 영양",
+        "cronUtc": "35 20 * * 0",
+        "scheduleKst": "매주 월요일 05:35",
+        "services": [
+          "foods",
+          "processed-foods",
+          "supplements"
+        ],
+        "intervalHours": 168
+      }
+    },
+    "historical": [
+      {
+        "id": "C005",
+        "name": "과거 바코드",
+        "reason": "2018년 이후 갱신 중단 자료. 검증된 기존 수집본을 보존하며 정기 재수집에서 제외."
+      }
+    ],
+    "runs": {
+      "recalls": {
+        "mode": "recalls",
+        "status": "success",
+        "startedAt": "2026-10-20T23:12:01+00:00",
+        "completedAt": "2026-10-20T23:12:14+00:00",
+        "services": [
+          "I0490"
+        ],
+        "failedServices": [],
+        "bulkFallbackServices": [],
+        "error": null,
+        "runId": "39513385566",
+        "runUrl": "https://github.com/softm/foodhannun/actions/runs/39513385566",
+        "lastSuccessAt": "2026-10-20T23:12:14+00:00"
+      }
+    }
   }
 }

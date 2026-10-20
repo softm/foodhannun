@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "runs": {
+    "recalls": {
+      "mode": "recalls",
+      "status": "success",
+      "startedAt": "2026-10-20T23:12:01+00:00",
+      "completedAt": "2026-10-20T23:12:14+00:00",
+      "services": [
+        "I0490"
+      ],
+      "failedServices": [],
+      "bulkFallbackServices": [],
+      "error": null,
+      "runId": "39513385566",
+      "runUrl": "https://github.com/softm/foodhannun/actions/runs/39513385566",
+      "lastSuccessAt": "2026-10-20T23:12:14+00:00"
+    }
+  }
+}
