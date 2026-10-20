@@ -1,8 +1,53 @@
 {
   "id": "I0490",
   "name": "회수·판매중지 정보",
-  "status": "blocked",
-  "count": 0,
-  "attemptedAt": "2026-10-20T13:20:25+00:00",
-  "reason": "공식 API 응답 INFO-110"
+  "status": "complete",
+  "count": 378,
+  "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490",
+  "attemptedAt": "2026-10-20T15:23:59+00:00",
+  "sourceFields": [
+    "ADDR",
+    "BRCDNO",
+    "BSSHNM",
+    "CRET_DTM",
+    "DISTBTMLMT",
+    "FRMLCUNIT",
+    "IMG_FILE_PATH",
+    "LCNS_NO",
+    "MNFDT",
+    "PRDLST_CD",
+    "PRDLST_CD_NM",
+    "PRDLST_REPORT_NO",
+    "PRDLST_TYPE",
+    "PRDTNM",
+    "RTRVLDSUSE_SEQ",
+    "RTRVLPLANDOC_RTRVLMTHD",
+    "RTRVLPRVNS",
+    "RTRVL_GRDCD_NM",
+    "TELNO"
+  ],
+  "originalFetchedAt": "2026-10-20T15:09:05+00:00",
+  "sourceTotal": 378,
+  "bulkContentType": "application/gzip",
+  "sourceLastModified": "Tue, 20 Oct 2026 15:08:49 GMT",
+  "bulkBytes": 43754,
+  "apiTotal": 379,
+  "originalSha256": "c40a3cdf4bcdb1ba779fa8f4035a9ee2a664061eb8e6a094cd7331e6a7c3f154",
+  "originalFile": "source-original.gz",
+  "bulkPrefixHex": "1f8b0800000000000000ecbd5b735b57",
+  "method": "official-bulk-file",
+  "countNote": "공식 전체파일 378행 / 실시간 API 379건으로 건수가 다릅니다. 전체파일 기준 수집.",
+  "countBasis": "official-file-row-count",
+  "fetchedAt": "2026-10-20T15:09:05+00:00",
+  "uniqueRecords": 378,
+  "chunks": [
+    {
+      "path": "records-0000.jsonl.gz",
+      "count": 378,
+      "bytes": 46979,
+      "sha256": "d3c0058477743406b599c8c930df35eb168bba9c163d3feb4859fd9dfb901166"
+    }
+  ],
+  "bytes": 46979,
+  "reprocessedAt": "2026-10-20T15:23:59+00:00"
 }
