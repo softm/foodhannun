@@ -31,6 +31,7 @@
   let displayedResults = 0;
   let renderedSearchState = null;
   let activeRecipe = null;
+  let selectedRecipeId = null;
   let activeTab = 'recipe';
   let returnFocus = null;
   let toastTimer;
@@ -201,24 +202,26 @@
   }
   function renderCard(recipe) {
     const isSaved = saved.has(String(recipe.id));
+    const isSelected = selectedRecipeId === String(recipe.id);
     const ingredients = (recipe.ingredients || []).slice(0, 3).map(item => item.name).join(' · ') || '원문 재료 정보 미제공';
-    return `<article class="recipe-card" data-card-id="${escape(recipe.id)}">
+    return `<article class="recipe-card${isSelected ? ' is-selected' : ''}" data-card-id="${escape(recipe.id)}">
       <div class="recipe-visual">
         <button type="button" class="recipe-image-button" data-recipe-id="${escape(recipe.id)}" aria-label="${escape(recipe.name)} 레시피 보기"><img class="recipe-image" src="${escape(safeImage(recipe.image))}" alt="${escape(recipe.name)} 완성 사진" width="600" height="440" loading="lazy" decoding="async"></button>
         <span class="recipe-origin">식품안전나라</span>
         <button type="button" class="save-button ${isSaved ? 'is-saved' : ''}" data-save="${escape(recipe.id)}" aria-label="${escape(recipe.name)} ${isSaved ? '저장 취소' : '저장'}" aria-pressed="${isSaved}">${icons.heart}</button>
       </div>
-      <div class="recipe-body"><div class="recipe-tags"><span class="tag tag--green">${escape(recipe.category)}</span><span class="tag">${escape(recipe.method)}</span></div>
-        <h3 class="recipe-title"><button type="button" class="card-open" data-recipe-id="${escape(recipe.id)}">${escape(recipe.name)}</button></h3>
+      <div class="recipe-body"><div class="recipe-tags"><span class="tag tag--green">${escape(recipe.category)}</span><span class="tag">${escape(recipe.method)}</span><span class="tag tag--selected" data-selection-label${isSelected ? '' : ' hidden'}>최근 선택</span></div>
+        <h3 class="recipe-title"><button type="button" class="card-open" data-recipe-id="${escape(recipe.id)}" aria-haspopup="dialog" aria-controls="recipe-dialog">${escape(recipe.name)}</button></h3>
         <p class="recipe-ingredients">${escape(ingredients)}</p>
         <div class="recipe-meta"><span>${recipe.steps?.length ? `조리 단계 <strong>${recipe.steps.length}</strong>개` : '조리 순서 미제공'}</span><span>${recipe.ingredients?.length ? '영양 · 재료 정보' : '재료 미제공'}</span></div>
         <div class="card-footer"><span>재료부터 만드는 법까지</span><button class="card-arrow icon-button" type="button" data-recipe-id="${escape(recipe.id)}" aria-label="${escape(recipe.name)} 상세 보기">${icons.arrow}</button></div>
       </div></article>`;
   }
   function render() {
+    const sameSearch = renderedSearchState === JSON.stringify(state);
     const result = filteredRecipes();
     currentResults = result;
-    displayedResults = Math.min(RESULTS_BATCH_SIZE, result.length);
+    displayedResults = Math.min(sameSearch ? Math.max(RESULTS_BATCH_SIZE, displayedResults) : RESULTS_BATCH_SIZE, result.length);
     $('#recipe-grid').innerHTML = result.slice(0, displayedResults).map(renderCard).join('');
     renderedSearchState = JSON.stringify(state);
     renderPagination();
@@ -247,7 +250,7 @@
       controls = document.createElement('div');
       controls.id = 'recipe-pagination';
       controls.className = 'recipe-pagination';
-      controls.innerHTML = '<p id="results-progress" class="results-progress" role="status" aria-live="polite" aria-atomic="true"></p><button type="button" class="button button--outline load-more-button" data-load-more aria-controls="recipe-grid" aria-describedby="results-progress"></button>';
+      controls.innerHTML = '<p id="results-progress" class="results-progress" role="status" aria-live="polite" aria-atomic="true"></p><div class="pagination-actions"><button type="button" class="button button--outline load-more-button" data-load-more aria-controls="recipe-grid" aria-describedby="results-progress"></button><button type="button" class="button button--soft" data-show-all aria-controls="recipe-grid" aria-describedby="results-progress">검색 결과 전체 보기</button></div>';
       $('#recipe-grid').insertAdjacentElement('afterend', controls);
     }
     const total = currentResults.length;
@@ -256,13 +259,14 @@
     $('#results-progress').textContent = `전체 ${total.toLocaleString('ko-KR')}개 중 ${displayedResults.toLocaleString('ko-KR')}개 표시`;
     const button = controls.querySelector('[data-load-more]');
     button.hidden = remaining <= 0;
+    controls.querySelector('[data-show-all]').hidden = remaining <= 0;
     button.textContent = `다음 ${Math.min(RESULTS_BATCH_SIZE, Math.max(0, remaining))}개 더 보기`;
   }
-  function loadMoreResults() {
+  function loadMoreResults(all = false) {
     if (displayedResults >= currentResults.length) return;
     const grid = $('#recipe-grid');
     const start = displayedResults;
-    const next = Math.min(start + RESULTS_BATCH_SIZE, currentResults.length);
+    const next = all ? currentResults.length : Math.min(start + RESULTS_BATCH_SIZE, currentResults.length);
     // Append only the next batch; existing card nodes, images, and handlers survive.
     grid.insertAdjacentHTML('beforeend', currentResults.slice(start, next).map(renderCard).join(''));
     displayedResults = next;
@@ -334,6 +338,12 @@
     const wasOpen = $('#recipe-dialog').open;
     if (!wasOpen) returnFocus = document.activeElement;
     activeRecipe = recipe; activeTab = 'recipe';
+    selectedRecipeId = String(recipe.id);
+    $$('#recipe-grid [data-card-id]').forEach(card => {
+      const selected = card.dataset.cardId === selectedRecipeId;
+      card.classList.toggle('is-selected', selected);
+      card.querySelector('[data-selection-label]').hidden = !selected;
+    });
     const known = allergens(recipe);
     $('#detail-content').innerHTML = `<div class="detail-hero"><img src="${escape(safeImage(recipe.image))}" alt="${escape(recipe.name)}" width="600" height="440"><div class="detail-heading"><div class="recipe-tags"><span class="tag tag--green">${escape(recipe.category)}</span><span class="tag">${escape(recipe.method)}</span></div><h2 id="recipe-dialog-title">${escape(recipe.name)}</h2><p>식품안전나라의 재료와 만드는 법을 함께 살펴보세요.</p><div class="detail-actions"><button type="button" id="detail-save" class="button button--soft" data-save="${escape(recipe.id)}"></button><button type="button" class="button button--soft" data-share="${escape(recipe.id)}">${icons.share} 공유</button></div></div></div>
       <div class="detail-tabs" role="tablist" aria-label="음식 상세 정보">${[['recipe', '레시피'], ['ingredients', '재료·장보기'], ['nutrition', '영양'], ['allergy', '알레르기'], ['notes', '내 메모']].map(([key, text]) => `<button type="button" id="tab-${key}" data-tab="${key}" role="tab" aria-selected="${key === 'recipe'}" aria-controls="panel-${key}" tabindex="${key === 'recipe' ? '0' : '-1'}">${text}</button>`).join('')}</div>
@@ -466,8 +476,15 @@
 
   document.addEventListener('click', event => {
     const button = event.target.closest('button, [data-recipe-id]');
+    const card = event.target.closest('#recipe-grid [data-card-id]');
+    if (!button && card) {
+      card.querySelector('.card-open')?.focus({ preventScroll: true });
+      openRecipe(card.dataset.cardId);
+      return;
+    }
     if (!button) { if (!event.target.closest('#search-form')) { $('#suggestions').hidden = true; $('#search-input').setAttribute('aria-expanded', 'false'); } return; }
     if (button.hasAttribute('data-load-more')) { loadMoreResults(); return; }
+    if (button.hasAttribute('data-show-all')) { loadMoreResults(true); return; }
     if (button.dataset.save) { toggleSaved(button.dataset.save); return; }
     if (button.dataset.recipeId) { openRecipe(button.dataset.recipeId); return; }
     if (button.dataset.search) { clearTimeout(typingTimer); $('#search-input').value = button.dataset.search; state.view = 'all'; search(button.dataset.search); return; }

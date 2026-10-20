@@ -146,11 +146,14 @@ select { min-height: 42px; padding: 9px 30px 9px 12px; border: 1px solid #dbe0d1
 /* Recipe cards */
 .recipe-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
 .recipe-pagination { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 28px; }
+.pagination-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 .results-progress { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
 .load-more-button { min-height: 44px; min-width: 220px; background: var(--surface); }
 .load-more-button:hover { background: var(--green-soft); }
-.recipe-card { position: relative; min-width: 0; overflow: hidden; border: 1px solid #e1e5d9; border-radius: var(--radius); background: var(--surface); box-shadow: 0 3px 10px rgb(36 61 50 / 2%); transition: transform .2s, box-shadow .2s, border-color .2s; }
+.recipe-card { position: relative; min-width: 0; overflow: hidden; border: 1px solid #e1e5d9; border-radius: var(--radius); background: var(--surface); box-shadow: 0 3px 10px rgb(36 61 50 / 2%); transition: transform .2s, box-shadow .2s, border-color .2s; cursor: pointer; }
 .recipe-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: #ccd6bf; }
+.recipe-card.is-selected { border-color: var(--green); box-shadow: 0 0 0 2px var(--green); }
+.recipe-card:focus-within { border-color: var(--accent); }
 .recipe-visual { position: relative; overflow: hidden; background: #e8e9dd; }
 .recipe-image { display: block; width: 100%; height: auto; aspect-ratio: 1.65; object-fit: cover; background: #e8e9dd; }
 .recipe-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
@@ -165,6 +168,7 @@ select { min-height: 42px; padding: 9px 30px 9px 12px; border: 1px solid #dbe0d1
 .recipe-tags { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 .tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 7px; border-radius: 5px; background: #f0f1e9; color: #81866f; font-size: 10px; font-weight: 500; line-height: 1.65; }
 .tag--green { background: #eaf0e2; color: #648055; }
+.tag--selected { background: var(--green); color: white; }
 .tag--orange { background: #fbede2; color: #a36340; }
 .tag--neutral { background: #edece6; color: #767465; }
 .recipe-title { margin: 0; color: var(--ink); font-size: 19px; font-weight: 750; line-height: 1.5; letter-spacing: -.55px; }

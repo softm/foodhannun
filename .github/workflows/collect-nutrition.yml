@@ -1,0 +1,30 @@
+name: Collect complete K-FIND nutrition DB
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '35 20 * * 0'
+permissions:
+  contents: read
+concurrency:
+  group: foodhannun-nutrition-collection
+  cancel-in-progress: false
+jobs:
+  nutrition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r scripts/requirements-data.txt
+      - run: python3 scripts/sync-nutrition.py
+      - run: python3 scripts/build-data-status.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: foodhannun-complete-nutrition
+          path: |
+            data/nutrition/
+            data/collection-status.json
+            data-status.html
+          retention-days: 30
