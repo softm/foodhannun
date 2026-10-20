@@ -12,7 +12,7 @@ const context=vm.createContext({Response,Blob,DecompressionStream,TextDecoder,Ui
   postMessage:message=>output.set(message.requestId,message)
 });
 context.self=context;
-context.importScripts=filename=>vm.runInContext(fs.readFileSync(path.join(root,'assets',filename),'utf8'),context);
+context.importScripts=filename=>vm.runInContext(fs.readFileSync(path.join(root,'assets',filename.split('?')[0]),'utf8'),context);
 vm.runInContext(fs.readFileSync(path.join(root,'assets/food-data-worker.js'),'utf8'),context);
 let id=0;
 async function query(args){const requestId=++id;await context.self.onmessage({data:{requestId,...args}});const result=output.get(requestId);assert(!result.error,result.error);return result;}

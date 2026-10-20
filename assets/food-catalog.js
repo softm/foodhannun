@@ -30,7 +30,7 @@
   function runSearch(options) {
     try {
       if (!worker) {
-        worker = new Worker(new URL('assets/food-data-worker.js', base));
+        worker = new Worker(new URL('assets/food-data-worker.js?v=20261020-integration2', base));
         worker.onmessage = ({data}) => {
           const request = pending.get(data.requestId);
           if (!request) return;
