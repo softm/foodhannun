@@ -11,11 +11,11 @@
   <title>음식한눈 — 오늘의 한 끼를 한눈에</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="stylesheet" href="assets/styles.css">
-  <link rel="stylesheet" href="assets/food-catalog.css?v=20261020-integration4">
-  <script src="assets/food-search.js?v=20261020-integration4" defer></script>
-  <script src="assets/food-catalog.js?v=20261020-integration4" defer></script>
+  <link rel="stylesheet" href="assets/food-catalog.css?v=20261020-api1">
+  <script src="assets/food-search.js?v=20261020-api1" defer></script>
+  <script src="assets/food-catalog.js?v=20261020-api1" defer></script><script src="assets/food-safety.js?v=20261020-api1" defer></script>
   <script src="assets/data.js" defer></script>
-  <script src="assets/app.js?v=20261020-integration4" defer></script>
+  <script src="assets/app.js?v=20261020-api1" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#discover">레시피 목록으로 바로가기</a>
@@ -134,6 +134,7 @@
         <button type="button" data-result-kind="supplements" aria-pressed="false">건강기능식품 <small id="kind-supplements"></small></button>
       </div>
       <p id="catalog-scope-note" class="catalog-scope-note" hidden>조리법·음식 종류·주의 성분 제외 필터와 정렬은 레시피에 적용됩니다. 제품의 원재료·알레르기 표시는 별도 확인이 필요합니다.</p>
+      <div id="safety-number-results" class="catalog-related"></div>
       <div id="recipe-results">
       <h3 class="sr-only">레시피 검색 결과</h3>
       <div class="results-toolbar">
@@ -163,7 +164,7 @@
   <footer class="site-footer">
     <div class="footer-inner page-width">
       <div><a class="footer-brand" href="./">음식한눈</a><p>오늘의 한 끼를 고르는 작은 도움.</p></div>
-      <div class="footer-links"><a href="food-data.html">영양·제품 검색</a><a href="data-status.html">데이터 수집 현황</a><button type="button" data-open="sources-dialog">데이터와 출처</button><a href="https://github.com/softm/foodhannun" target="_blank" rel="noopener noreferrer">GitHub <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg></a></div>
+      <div class="footer-links"><a href="food-data.html">영양·제품 검색</a><a href="food-safety.html">공식 원재료·안전 자료</a><a href="data-status.html">데이터 수집 현황</a><button type="button" data-open="sources-dialog">데이터와 출처</button><a href="https://github.com/softm/foodhannun" target="_blank" rel="noopener noreferrer">GitHub <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg></a></div>
     </div>
   </footer>
 

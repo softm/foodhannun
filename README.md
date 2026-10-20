@@ -1,7 +1,7 @@
 # 음식한눈 · foodhannun
 
 > 📘 [통합 기획서 · 데이터 수집 · 시스템 · 비즈니스 구조](docs/FOODHANNUN-PLAN.md)
-> 📊 [추가 데이터 수집 결과](docs/DATA-COLLECTION-2026-10-20.md) · [수집 현황](data-status.html) · [영양·제품 검색](food-data.html) · [데이터 연결성 점검](docs/DATA-INTEGRATION-AUDIT.md)
+> 📊 [추가 데이터 수집 결과](docs/DATA-COLLECTION-2026-10-20.md) · [수집 현황](data-status.html) · [영양·제품 검색](food-data.html) · [공식 원재료·안전 자료](food-safety.html) · [데이터 연결성 점검](docs/DATA-INTEGRATION-AUDIT.md)
 
 음식명과 재료를 검색하고 레시피·재료·영양 정보·주의 성분·장보기 목록을 함께 살펴보는 모바일 웹입니다.
 
@@ -166,3 +166,10 @@ Secret 등록 위치: `Settings → Secrets and variables → Actions → New re
 ### 전체 수집 및 변환 점검
 
 전체 응답·정규화 목록·고유 ID가 모두 1,156건임을 확인했습니다. 개선한 파서로 전체 원문을 메모리에서 재변환해 577개 레시피의 재료 6,537항목 분리를 개선했고, 재료별 `raw`, 전체 `ingredientText`, 영양값과 조리 단계가 보존됨을 대조했습니다. 실제 데이터와 네트워크에 접근하지 않는 별도 모드 검사로 기존 전체 데이터의 무옵션 덮어쓰기 차단, 명시적 `--sample` 전환, 초기 샘플 기본값, 옵션 배타 적용과 키 없는 `--full` 중단을 확인했습니다.
+
+### 승인된 공식 원재료·안전 데이터 연결
+
+- 7개 OpenAPI 원본은 `data/collection/{서비스}/`에 보존하며, 원본별 검색과 정확한 번호 조회 인덱스는 `data/food-safety/`에 둡니다. 실제 검증 건수는 [수집 현황](data-status.html)을 기준으로 합니다.
+- 제품의 품목제조보고번호 → I1250·C002·I0490·과거 C005, I1250의 업소 인허가번호 → I0580을 정확히 연결합니다. HACCP 업소 자료는 개별 제품 인증 판정이 아닙니다.
+- 레시피 재료의 **원료 정보**는 공식 원료명·이명에 맞는 I1020·I2520 자료와 사용 부위·조건을 표시합니다. C005는 2018년 이후 갱신 중단 자료입니다.
+- [공식 자료 검색](food-safety.html)에서 원본 종류별 전체 자료를 검색합니다. 브라우저에 인증키를 넣지 않습니다.
