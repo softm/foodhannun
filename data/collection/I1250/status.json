@@ -1,0 +1,8 @@
+{
+  "id": "I1250",
+  "name": "식품 품목제조보고",
+  "status": "blocked",
+  "count": 0,
+  "attemptedAt": "2026-10-20T13:20:15+00:00",
+  "reason": "공식 API 응답 INFO-110"
+}

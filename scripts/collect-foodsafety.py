@@ -60,7 +60,8 @@ def fetch_page(service, key, start, end):
         code = str(result.get('CODE', ''))
         if code != 'INFO-000':
             safe_code = code if re.fullmatch('[A-Z0-9-]{1,32}', code) else 'UNKNOWN'
-            raise CollectionError(f'공식 API 응답 {safe_code}')
+            explanation = ': 기존 키의 해당 서비스 활용신청 필요' if safe_code == 'INFO-110' else ''
+            raise CollectionError(f'공식 API 응답 {safe_code}{explanation}')
         rows, total = body.get('row', []), int(body['total_count'])
         if not isinstance(rows, list) or not all(isinstance(row, dict) for row in rows):
             raise ValueError()
@@ -134,6 +135,14 @@ def file_rows(path):
 
 def collect(service, output):
     output.mkdir(parents=True, exist_ok=True)
+    previous = None
+    if (output / 'status.json').exists():
+        try:
+            candidate = json.loads((output / 'status.json').read_text(encoding='utf-8'))
+            if candidate.get('status') == 'complete' and (output / 'records.jsonl.gz').exists():
+                previous = candidate
+        except (ValueError, OSError):
+            pass
     status = {'id': service, 'name': SERVICES[service], 'status': 'not-collected', 'count': 0, 'sourceUrl': f'https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no={service}', 'attemptedAt': now()}
     if service == 'C005':
         status['freshnessNote'] = '공식 안내상 2018년 이후 최신화 중단. 현재 바코드 제품 DB로 취급하지 않습니다.'
@@ -194,6 +203,12 @@ def collect(service, output):
         status['reason'] = str(exc) if isinstance(exc, CollectionError) else '원본 응답 형식 또는 변환 오류 (기존 수집본 보존)'
         if key:
             status['reason'] = status['reason'].replace(key, '[redacted]')
+        if previous:
+            (output / 'status-last-attempt.json').write_text(json.dumps(status, ensure_ascii=False, indent=2), encoding='utf-8')
+            previous.update(lastAttemptAt=status['attemptedAt'], lastAttemptStatus=status['status'], lastAttemptReason=status['reason'])
+            (output / 'status.json').write_text(json.dumps(previous, ensure_ascii=False, indent=2), encoding='utf-8')
+            print(json.dumps(status, ensure_ascii=False))
+            return False
     (output / 'status.json').write_text(json.dumps(status, ensure_ascii=False, indent=2), encoding='utf-8')
     print(json.dumps({key: value for key, value in status.items() if key not in ('sourceUrl',)}, ensure_ascii=False))
     return status['status'] == 'complete'

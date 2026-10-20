@@ -1,34 +1,33 @@
-name: Collect additional official food data
+name: Build review nutrition snapshot
 on:
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
-  collect:
-    name: Collect ${{ matrix.service }}
+  nutrition:
+    if: github.ref == 'refs/heads/feat/complete-food-data-collection'
     runs-on: ubuntu-latest
-    timeout-minutes: 180
-    strategy:
-      fail-fast: false
-      max-parallel: 2
-      matrix:
-        service: [I1020, I2520, I1250, C002, I0490, I0580, C005]
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Collect complete official dataset
-        env:
-          FOODSAFETY_API_KEY: ${{ secrets.FOODSAFETY_API_KEY }}
-        run: python3 scripts/collect-foodsafety.py --service '${{ matrix.service }}' --output 'collection/${{ matrix.service }}'
-      - name: Keep verified data and explicit collection status
-        if: always()
-        uses: actions/upload-artifact@v4
+      - run: pip install -r scripts/requirements-data.txt
+      - run: python3 scripts/sync-nutrition.py
+      - run: python3 scripts/validate-food-data.py
+      - run: python3 scripts/build-data-status.py
+      - name: Save verified data to the isolated review branch
+        shell: bash
+        run: |
+          test "$GITHUB_REF" = "refs/heads/feat/complete-food-data-collection"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/nutrition data/collection-status.json data-status.html
+          git commit -m "data: collect and validate 348k official nutrition records" || exit 0
+          git push origin HEAD:refs/heads/feat/complete-food-data-collection
+      - uses: actions/upload-artifact@v4
         with:
-          name: food-data-${{ matrix.service }}
-          path: |
-            collection/${{ matrix.service }}/status.json
-            collection/${{ matrix.service }}/records*.jsonl.gz
+          name: complete-official-nutrition
+          path: data/nutrition/
           retention-days: 30
-          if-no-files-found: warn

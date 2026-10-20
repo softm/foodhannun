@@ -1,0 +1,8 @@
+{
+  "id": "I2520",
+  "name": "식품원재료코드",
+  "status": "blocked",
+  "count": 0,
+  "attemptedAt": "2026-10-20T13:20:05+00:00",
+  "reason": "공식 API 응답 INFO-110"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "I0490",
+  "name": "회수·판매중지 정보",
+  "status": "blocked",
+  "count": 0,
+  "attemptedAt": "2026-10-20T13:20:25+00:00",
+  "reason": "공식 API 응답 INFO-110"
+}
