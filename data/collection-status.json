@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-20T15:24:00+00:00",
+  "generatedAt": "2026-10-20T15:24:06+00:00",
   "totalCollectedRecords": 1730196,
   "completeDatasets": 8,
   "nutritionRecords": 348370,
@@ -3115,8 +3115,7 @@
       "status": "complete",
       "count": 39422,
       "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0580",
-      "attemptedAt": "2026-10-20T15:09:10+00:00",
-      "sourceTotal": 39422,
+      "attemptedAt": "2026-10-20T15:24:05+00:00",
       "sourceFields": [
         "ASGN_CANCL_DT",
         "BSSH_NM",
@@ -3132,14 +3131,17 @@
         "PRSDNT_NM",
         "SITE_ADDR"
       ],
+      "originalFetchedAt": "2026-10-20T15:09:29+00:00",
+      "sourceTotal": 39422,
       "bulkContentType": "application/gzip",
       "sourceLastModified": "Tue, 20 Oct 2026 15:08:53 GMT",
       "bulkBytes": 1413001,
       "apiTotal": 39406,
+      "originalSha256": "b78e96a420f3ced40c496c7466f27b3005c37c154c57d94692b5a4f31922f750",
       "originalFile": "source-original.gz",
       "bulkPrefixHex": "1f8b0800000000000000e4bd5f6f2359",
       "method": "official-bulk-file",
-      "countNote": "공식 전체파일 39,422행 / 실시간 API 39,406건: 원본 제공 범위·기준 시각 차이",
+      "countNote": "공식 전체파일 39,422행 / 실시간 API 39,406건으로 건수가 다릅니다. 전체파일 기준 수집.",
       "countBasis": "official-file-row-count",
       "fetchedAt": "2026-10-20T15:09:29+00:00",
       "uniqueRecords": 39422,
@@ -3169,7 +3171,8 @@
           "sha256": "5c8909157b41c2197d9582af1d3331261f8e7a52b033f65d4cf2ce4ab0ef4615"
         }
       ],
-      "bytes": 1645102
+      "bytes": 1645102,
+      "reprocessedAt": "2026-10-20T15:24:06+00:00"
     },
     {
       "id": "I1020",
