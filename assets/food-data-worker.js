@@ -1,5 +1,5 @@
 'use strict';
-importScripts('food-search.js?v=20261020-integration2');
+importScripts('food-search.js?v=20261020-integration3');
 let manifestPromise;
 function manifest() {
   if (!manifestPromise) {
@@ -37,7 +37,7 @@ self.onmessage = async event => {
       const found = [], cap = Math.max(1, Number(perGroup ?? limit) || 50);
       let total = 0;
       for (const row of await readIndex(dataset)) {
-        if (queryTerms.length && !FoodSearch.matches(mode === 'name' ? row[1] : row.slice(0, 4).join(' '), queryTerms, row[1])) continue;
+        if (queryTerms.length && !FoodSearch.matches(mode === 'name' ? row[1] : row.slice(0, 4), queryTerms, row[1])) continue;
         total++;
         const name = FoodSearch.identity(row[1]);
         const score = !needle ? 0 : name === needle ? 4 : name.startsWith(needle) ? 3 : name.includes(needle) ? 2 : 1;

@@ -13,8 +13,9 @@
     });
   }
   function matches(text, queryTerms, name = text) {
-    const haystack = normalize(text), comparable = identity(text), initialName = initials(normalize(name));
-    return queryTerms.every(group => group.some(word => haystack.includes(word) || comparable.includes(identity(word)) || (/^[ㄱ-ㅎ]+$/.test(word) && initialName.includes(word))));
+    const fields = (Array.isArray(text) ? text : [text]).map(value => ({plain:normalize(value), equivalent:identity(value)}));
+    const initialName = initials(normalize(name));
+    return queryTerms.every(group => group.some(word => fields.some(field => field.plain.includes(word) || field.equivalent.includes(identity(word))) || (/^[ㄱ-ㅎ]+$/.test(word) && initialName.includes(word))));
   }
   function relation(recipeName, foodName) {
     if (normalize(recipeName) === normalize(foodName)) return {kind:'name-exact', term:foodName, label:'음식명 일치'};

@@ -19,7 +19,8 @@ async function query(args){const requestId=++id;await context.self.onmessage({da
 const all=await query({group:'all',perGroup:6});
 assert.equal(all.total,348370);assert.equal(all.groups.length,3);assert.equal(all.matches.length,18);
 const kimchi=await query({group:'foods',query:'김치찌개',limit:50});
-assert.equal(kimchi.total,42);assert.equal(kimchi.matches.length,42);
+assert.equal(kimchi.total,34);assert.equal(kimchi.matches.length,34);
+assert(!context.FoodSearch.matches(["청국장찌개_배추김치","찌개 및 전골류"],context.FoodSearch.terms("김치찌개"),"청국장찌개_배추김치"),"query tokens must not cross field boundaries");
 assert(context.FoodSearch.identity(kimchi.matches[0].row[1])==='김치찌개','exact names should rank before related dishes');
 const eggs=await query({group:'foods',query:'계란찜',limit:20});
 assert(eggs.total>0);assert(eggs.matches.some(m=>m.row[1].includes('달걀')),'egg aliases must work');

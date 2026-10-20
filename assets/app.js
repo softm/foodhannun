@@ -183,7 +183,7 @@
     $$('[data-view]').forEach(button => { const active = button.dataset.view === state.view; button.classList.toggle('is-active', active); button.setAttribute('aria-pressed', String(active)); });
   }
   function termsMatch(recipe, query) {
-    return window.FoodSearch.matches(`${recipe.name} ${recipe.tag || ''} ${recipe.ingredientText} ${recipe.category} ${recipe.method}`, window.FoodSearch.terms(query), recipe.name);
+    return window.FoodSearch.matches([recipe.name, recipe.tag || '', recipe.ingredientText, recipe.category, recipe.method], window.FoodSearch.terms(query), recipe.name);
   }
   function filteredRecipes() {
     return recipes.filter(recipe =>
