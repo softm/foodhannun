@@ -1,34 +1,66 @@
 name: Collect additional official food data
 on:
   workflow_dispatch:
+    inputs:
+      services:
+        description: 'Services, separated by spaces; all seven by default'
+        required: true
+        default: 'I0490 I0580 I1020 I2520 C005 I1250 C002'
 permissions:
-  contents: read
+  contents: write
+concurrency:
+  group: foodhannun-additional-api
+  cancel-in-progress: false
 jobs:
   collect:
-    name: Collect ${{ matrix.service }}
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 180
-    strategy:
-      fail-fast: false
-      max-parallel: 2
-      matrix:
-        service: [I1020, I2520, I1250, C002, I0490, I0580, C005]
+    timeout-minutes: 360
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Collect complete official dataset
+      - name: Prepare isolated data snapshot branch
+        env:
+          DATA_BRANCH: data/foodsafety-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$DATA_BRANCH"
+          echo "DATA_BRANCH=$DATA_BRANCH" >> "$GITHUB_ENV"
+      - name: Collect sequentially with one existing API key
         env:
           FOODSAFETY_API_KEY: ${{ secrets.FOODSAFETY_API_KEY }}
-        run: python3 scripts/collect-foodsafety.py --service '${{ matrix.service }}' --output 'collection/${{ matrix.service }}'
-      - name: Keep verified data and explicit collection status
+          SELECTED_SERVICES: ${{ inputs.services }}
+        shell: bash
+        run: |
+          failed=0
+          for service in $SELECTED_SERVICES; do
+            case "$service" in I0490|I0580|I1020|I2520|C005|I1250|C002) ;; *) echo 'Unsupported service'; exit 2 ;; esac
+            if python3 scripts/collect-foodsafety.py --service "$service" --output "data/collection/$service"; then
+              python3 scripts/validate-foodsafety.py --service "$service"
+            else
+              failed=1
+            fi
+            python3 scripts/build-data-status.py
+            git add "data/collection/$service" data/collection-status.json data-status.html
+            if ! git diff --cached --quiet; then
+              git commit -m "data: collect verified $service snapshot and actual status"
+              git push origin "HEAD:$DATA_BRANCH"
+            fi
+            sleep 3
+          done
+          echo "Collected snapshots are on $DATA_BRANCH; production main is unchanged."
+          exit "$failed"
+      - name: Keep raw snapshots and explicit collection status
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: food-data-${{ matrix.service }}
+          name: food-safety-complete-snapshots
           path: |
-            collection/${{ matrix.service }}/status.json
-            collection/${{ matrix.service }}/records*.jsonl.gz
+            data/collection/
+            data/collection-status.json
+            data-status.html
           retention-days: 30
           if-no-files-found: warn

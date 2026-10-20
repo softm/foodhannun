@@ -33,7 +33,7 @@ def main():
     completed = [d for d in datasets if d['status'] == 'complete']
     summary = {'generatedAt':datetime.now(timezone.utc).isoformat(timespec='seconds'), 'totalCollectedRecords':sum(d['count'] for d in completed), 'completeDatasets':len(completed), 'nutritionRecords':nutrition['count'], 'datasets':datasets, 'integration':integration}
     (ROOT / 'data/collection-status.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding='utf-8')
-    labels = {'complete':'전체 수집 완료', 'blocked':'활용신청 필요', 'partial':'일부 수집', 'not-collected':'미수집', 'not-connected':'미연동'}
+    labels = {'complete':'전체 수집 완료', 'blocked':'수집 재시도 필요', 'partial':'일부 수집', 'not-collected':'미수집', 'not-connected':'미연동'}
     rows = []
     for d in datasets:
         name = escape(d['name'])
@@ -45,7 +45,8 @@ def main():
         if d.get('freshnessNote'):
             note += ' · ' + d['freshnessNote']
         date = d.get('version') or d.get('fetchedAt') or d.get('attemptedAt') or '—'
-        rows.append(f'<tr><th scope="row">{name}<small>{escape(d["id"])}</small></th><td><span class="badge {d["status"]}">{labels.get(d["status"],d["status"])}</span></td><td class="num">{d["count"]:,}</td><td>{escape(date)}</td><td>{escape(note)}</td></tr>')
+        label = '활용신청 필요' if d['status'] == 'blocked' and 'INFO-110' in d.get('reason','') else labels.get(d['status'],d['status'])
+        rows.append(f'<tr><th scope="row">{name}<small>{escape(d["id"])}</small></th><td><span class="badge {d["status"]}">{label}</span></td><td class="num">{d["count"]:,}</td><td>{escape(date)}</td><td>{escape(note)}</td></tr>')
     page = '''<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>데이터 수집 현황 · 음식한눈</title><link rel="stylesheet" href="assets/data-browser.css"><body><main class="data-page"><nav><a href="./">← 음식한눈</a><a href="food-data.html">영양·제품 검색 →</a></nav><p class="eyebrow">DATA COLLECTION</p><h1>데이터 수집 현황</h1><p>확보한 공식 원본과 검증된 실제 수집 건수입니다. 데이터 종류별 레코드 합계이며, 서로 다른 DB의 동일 음식이 중복될 수 있습니다.</p><div class="metrics"><div><span>레시피</span><strong>RECIPE_COUNT</strong></div><div><span>추가 영양·제품 데이터</span><strong>NUTRITION_COUNT</strong></div><div><span>전체 수집 완료 데이터셋</span><strong>COMPLETE_COUNT종</strong></div></div><p class="notice">메인 통합검색에서 레시피·음식 영양·가공식품·건강기능식품을 함께 찾을 수 있습니다. 영양값은 원본의 함량기준량 또는 제공단위량에 따라 표시합니다. 이름 기반 연결 후보를 레시피의 영양값으로 합산하지 않습니다.</p>INTEGRATION_SECTION<div class="table-scroll"><table><thead><tr><th>데이터</th><th>상태</th><th>수집 건수</th><th>버전 / 수집·시도 시각(UTC)</th><th>검증 결과·남은 조건</th></tr></thead><tbody>TABLE_ROWS</tbody></table></div><p class="notice">INFO-110은 새 인증키 발급이 필요한 오류가 아닙니다. 식품안전나라 로그인 후 해당 서비스의 OpenAPI 이용신청을 추가한 다음 수집을 다시 실행해야 합니다.</p><p><a href="data/collection-status.json">전체 수집 상태 JSON</a> · <a href="data/nutrition/manifest.json">영양 데이터 구성·검증값</a></p><footer>식품영양성분 데이터베이스 (K-FCDB), 식품의약품안전처 · 식품안전나라 COOKRCP01<br>음식한눈은 정부기관이 운영하는 공식 서비스가 아닙니다.</footer></main></body></html>'''
     page = page.replace('RECIPE_COUNT',f"{len(recipes['recipes']):,}").replace('NUTRITION_COUNT', f"{nutrition['count']:,}").replace('COMPLETE_COUNT',str(len(completed))).replace('TABLE_ROWS',''.join(rows))
     connected = ''
