@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-20T14:26:50+00:00",
+  "generatedAt": "2026-10-20T15:02:44+00:00",
   "totalCollectedRecords": 349526,
   "completeDatasets": 4,
   "nutritionRecords": 348370,
@@ -2202,11 +2202,35 @@
     {
       "id": "I0490",
       "name": "회수·판매중지 정보",
-      "status": "blocked",
-      "count": 0,
-      "attemptedAt": "2026-10-20T13:20:25+00:00",
-      "reason": "INFO-110: 기존 인증키는 유효하지만 이 서비스의 활용신청 내역이 없습니다.",
-      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490"
+      "status": "partial",
+      "count": 378,
+      "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490",
+      "attemptedAt": "2026-10-20T15:02:39+00:00",
+      "sourceTotal": 379,
+      "sourceFields": [
+        "ADDR",
+        "BRCDNO",
+        "BSSHNM",
+        "CRET_DTM",
+        "DISTBTMLMT",
+        "FRMLCUNIT",
+        "IMG_FILE_PATH",
+        "LCNS_NO",
+        "MNFDT",
+        "PRDLST_CD",
+        "PRDLST_CD_NM",
+        "PRDLST_REPORT_NO",
+        "PRDLST_TYPE",
+        "PRDTNM",
+        "RTRVLDSUSE_SEQ",
+        "RTRVLPLANDOC_RTRVLMTHD",
+        "RTRVLPRVNS",
+        "RTRVL_GRDCD_NM",
+        "TELNO"
+      ],
+      "method": "official-paginated-full",
+      "errorType": "CollectionError",
+      "reason": "수집 중 전체 건수 변동 또는 빈 페이지"
     },
     {
       "id": "I0580",
