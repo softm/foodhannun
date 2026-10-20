@@ -36,6 +36,7 @@ SERVICES = {
     'C005': '바코드 연계제품 정보 (2018년 이후 갱신 중단)',
 }
 API_ROOT = 'https://openapi.foodsafetykorea.go.kr/api/'
+BULK_THRESHOLD = 1000
 
 class CollectionError(Exception):
     pass
@@ -92,6 +93,7 @@ def fetch_page(service, key, start, end):
 def file_rows(path):
     with path.open('rb') as file:
         prefix = file.read(1000).lstrip()
+        if prefix.startswith(codecs.BOM_UTF8): prefix=prefix[3:].lstrip()
     if prefix.startswith(b'\x1f\x8b'):
         temporary = path.with_name('bulk-uncompressed.tmp')
         try:
@@ -139,7 +141,7 @@ def file_rows(path):
     else:
         with path.open('rb') as file:
             sample = file.read(65536)
-        encoding = 'utf-8-sig'
+        encoding = 'utf-16' if sample.startswith((codecs.BOM_UTF16_LE,codecs.BOM_UTF16_BE)) else 'utf-8-sig'
         try:
             codecs.getincrementaldecoder(encoding)().decode(sample, final=False)
         except UnicodeError:
@@ -181,8 +183,9 @@ def collect(service, output):
         print(f'{service}: 공식 총 {expected:,}건 / 활용신청 정상 확인',flush=True)
         with tempfile.TemporaryDirectory(dir=output.parent,prefix=f'.{service}-stage-') as directory:
             stage=Path(directory)
-            if expected > 95000:
+            if expected > BULK_THRESHOLD:
                 bulk=stage/'source.bulk'
+                time.sleep(3)
                 with open_api(API_ROOT+quote(key,safe='')+f'/{service}/file') as response, bulk.open('wb') as file:
                     status['bulkContentType']=response.headers.get('Content-Type','')
                     size=0

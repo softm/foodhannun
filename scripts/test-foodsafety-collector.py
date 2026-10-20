@@ -15,7 +15,7 @@ class CollectorTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/'bulk';p.write_bytes(gzip.compress(b'A,B\nx,y\n'));self.assertEqual(list(module.file_rows(p)),[{'A':'x','B':'y'}])
     def test_complete_shards_and_failed_retry_preserves_previous(self):
-        with tempfile.TemporaryDirectory() as d,patch.dict(os.environ,{'FOODSAFETY_API_KEY':'dummy-private-key'}),patch.object(module.time,'sleep'),contextlib.redirect_stdout(io.StringIO()):
+        with tempfile.TemporaryDirectory() as d,patch.dict(os.environ,{'FOODSAFETY_API_KEY':'dummy-private-key'}),patch.object(module.time,'sleep'),patch.object(module,'BULK_THRESHOLD',95000),contextlib.redirect_stdout(io.StringIO()):
             p=Path(d)/'I2520';rows=[{'CODE':str(i)} for i in range(10001)]
             with patch.object(module,'fetch_page',side_effect=[(rows[:1000],10001)]+[(rows[i:i+1000],10001) for i in range(1000,10001,1000)]):
                 self.assertTrue(module.collect('I2520',p))
