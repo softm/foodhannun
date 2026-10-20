@@ -1,5 +1,5 @@
 'use strict';
-importScripts('food-search.js?v=20261020-api1');
+importScripts('food-search.js?v=20261020-api2');
 let manifestPromise;
 function manifest() {
   if (!manifestPromise) {

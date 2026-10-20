@@ -1,5 +1,5 @@
 'use strict';
-importScripts('food-search.js?v=20261020-api1');
+importScripts('food-search.js?v=20261020-api2');
 let manifestPromise;
 const indexes=new Map();
 async function manifest(){if(!manifestPromise)manifestPromise=fetch('../data/food-safety/manifest.json').then(r=>{if(!r.ok)throw Error('공식 API 검색 인덱스가 준비되지 않았습니다. 수집 현황을 확인해 주세요.');return r.json();}).catch(e=>{manifestPromise=null;throw e;});return manifestPromise;}

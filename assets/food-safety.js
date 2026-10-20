@@ -21,7 +21,16 @@
  async function record(ref){const data=await manifest(),source=data.services[ref[0]];const chunk=source.chunks?.[ref[1]]||(source.path?{path:source.path}:null);if(!chunk)throw Error('공식 원문 위치를 확인하지 못했습니다.');const rows=await cached('data/collection/'+ref[0]+'/'+chunk.path+'?v='+(chunk.sha256||source.fetchedAt),true,chunk.sha256);if(!rows[ref[2]])throw Error('선택한 자료의 원문이 없습니다.');const row=rows[ref[2]];const id=numeric(first(row,'report'))||numeric(first(row,'barcode'))||row.RAWMTRL_CD||row.RTRVLDSUSE_SEQ||row.HACCP_APPN_NO||String(ref[1]*10000+ref[2]+1);if(ref[3]&&String(id)!==String(ref[3]))throw Error('선택한 자료와 원문의 식별자가 일치하지 않습니다. 새로 검색해 주세요.');return {service:ref[0],source,row:rows[ref[2]],ref};}
  function table(row){return '<div class="catalog-table"><table><tbody>'+Object.entries(row).filter(([,v])=>v!=null&&String(v).trim()).map(([k,v])=>`<tr><th scope="row">${esc(labels[k]||k)}</th><td>${esc(v)}</td></tr>`).join('')+'</tbody></table></div>';}
  function sourceNote(source){return `<p class="source-note"><a href="${esc(source.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(source.name)} 원본 ↗</a> · 수집 시각(UTC): ${esc(source.originalFetchedAt||source.fetchedAt||source.attemptedAt||'미제공')}${source.sourceLastModified?' · 원본 파일 갱신(HTTP): '+esc(source.sourceLastModified):''}${source.countNote?' · '+esc(source.countNote):''}</p>`;}
- function rawCard(item){return `<section class="safety-source-record"><h4>${esc(first(item.row,'name')||item.row.BSSH_NM||item.row.BSSHNM||item.service)}</h4>${item.service==='C005'?'<p class="catalog-notice">2018년 이후 갱신 중단 자료입니다. 현재 제품의 바코드로 확정하지 않습니다.</p>':''}${table(item.row)}${sourceNote(item.source)}</section>`;}
+ const priority={
+  I0490:['PRDTNM','RTRVLPRVNS','MNFDT','DISTBTMLMT','RTRVL_GRDCD_NM','CRET_DTM','PRDLST_REPORT_NO','BSSHNM','BRCDNO','RTRVLPLANDOC_RTRVLMTHD'],
+  I1250:['PRDLST_NM','PRDLST_DCNM','BSSH_NM','PRDLST_REPORT_NO','LCNS_NO','PRMS_DT','LAST_UPDT_DTM','PRODUCTION','POG_DAYCNT','USAGE'],
+  C002:['PRDLST_NM','PRDLST_REPORT_NO','BSSH_NM','RAWMTRL_NM','RAWMTRL_ORDNO','CHNG_DT'],
+  I0580:['BSSH_NM','PRDLST_NM','LCNS_NO','HACCP_APPN_NO','HACCP_APPN_DT','CRTFC_ENDDT','CRTFC_RETN_DT','ASGN_CANCL_DT','CLSBIZ_DT','CLSBIZ_DVS_CD_NM'],
+  I1020:['RPRSNT_RAWMTRL_NM','RAWMTRL_NCKNM','REGN_CD_NM','USE_CND_NM','USE_CND_STDR_CN','RAWMTRL_STATS_CD_NM','SCNM','ENG_NM'],
+  I2520:['RPRSNT_RAWMTRL_NM','RAWMTRL_CD','RAWMTRL_NCKNM','REGN_CD_NM','USE_YN','PRCSS_PROCS_CD_NM','RAWMTRL_STATS_CD_NM','VALD_BGN_DT','VALD_END_DT','LAST_UPDT_DTM'],
+  C005:['PRDLST_NM','BAR_CD','PRDLST_REPORT_NO','BSSH_NM','PRMS_DT','END_DT','CLSBIZ_DT','POG_DAYCNT']
+ };
+ function rawCard(item){const summary=Object.fromEntries((priority[item.service]||Object.keys(item.row)).map(key=>[key,item.row[key]]));return `<section class="safety-source-record"><h4>${esc(first(item.row,'name')||item.row.BSSH_NM||item.row.BSSHNM||item.service)}</h4>${item.service==='C005'?'<p class="catalog-notice">2018년 이후 갱신 중단 자료입니다. 현재 제품의 바코드로 확정하지 않습니다.</p>':''}${table(summary)}<details><summary>값이 제공된 원문 항목 전체</summary>${table(item.row)}</details>${sourceNote(item.source)}</section>`;}
  async function records(refs){return Promise.all(refs.map(record));}
  async function productHTML(report){
   const number=numeric(report);if(!number)return '<p class="source-note">원문 품목제조보고번호가 없거나 형식을 확인할 수 없어 공식 번호 연결을 제공하지 않습니다.</p>';
@@ -34,7 +43,7 @@
   return `<h3>공식 신고·원재료·안전 자료</h3><p>연결 기준: 품목제조보고번호 <strong>${esc(number)}</strong></p>`+sections.map(([service,title,note])=>{
    const source=data.services[service],found=byService[service]||[];
    const noData=source?.status==='complete'?'현재 수집본에서 이 번호와 일치하는 자료를 찾지 못했습니다.':`이 자료는 아직 전체 수집을 완료하지 못했습니다. ${source?.reason||''}`;
-   return `<details class="safety-source" ${service==='I0490'&&found.length?'open':''}><summary>${esc(title)} · ${found.length?found.length+'건 연결':'연결 자료 없음'}</summary><p class="${service==='I0490'&&found.length?'catalog-notice':'source-note'}">${esc(note)}</p>${found.length?found.map(rawCard).join(''):`<p>${esc(noData)}</p>`}${service==='I0490'?'<p class="source-note">연결된 공고가 없어도 안전을 보증하지 않습니다.</p>':''}${source?sourceNote(source):''}<a href="food-safety.html?service=${service}&amp;q=${encodeURIComponent(service==='I0580'?(licenses[0]||number):number)}">해당 원본에서 더 검색 →</a></details>`;
+   return `<details class="safety-source" ${service==='I0490'&&found.length?'open':''}><summary>${esc(title)} · ${found.length?found.length+'건 연결':'연결 자료 없음'}</summary><p class="${service==='I0490'&&found.length?'catalog-notice':'source-note'}">${esc(note)}</p>${found.length?found.map(rawCard).join(''):`<p>${esc(noData)}</p>`}${service==='I0490'?'<p class="source-note">연결된 공고가 없어도 안전을 보증하지 않습니다.</p>':''}${source&&!found.length?sourceNote(source):''}<a href="food-safety.html?service=${service}&amp;q=${encodeURIComponent(service==='I0580'?(licenses[0]||number):number)}">해당 원본에서 더 검색 →</a></details>`;
   }).join('')+'<p class="source-note">알레르기 성분과 교차 접촉 여부는 실제 제품 표시를 별도로 확인하세요.</p>';
  }
  async function mountProduct(target,report){if(!target)return;target.innerHTML='<p role="status">공식 번호로 원재료·안전 자료를 연결합니다…</p>';try{const html=await productHTML(report);if(target.isConnected)target.innerHTML=html;}catch(error){if(target.isConnected)target.innerHTML=`<p>${esc(error.message)}</p><a href="data-status.html">수집 현황 →</a>`;}}
