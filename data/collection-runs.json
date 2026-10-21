@@ -15,6 +15,23 @@
       "runId": "39654386371",
       "runUrl": "https://github.com/softm/foodhannun/actions/runs/39654386371",
       "lastSuccessAt": "2026-10-21T18:38:15+00:00"
+    },
+    "daily": {
+      "mode": "daily",
+      "status": "success",
+      "startedAt": "2026-10-21T22:02:22+00:00",
+      "completedAt": "2026-10-21T22:06:51+00:00",
+      "services": [
+        "I1250",
+        "C002",
+        "I0580"
+      ],
+      "failedServices": [],
+      "bulkFallbackServices": [],
+      "error": null,
+      "runId": "39683467060",
+      "runUrl": "https://github.com/softm/foodhannun/actions/runs/39683467060",
+      "lastSuccessAt": "2026-10-21T22:06:51+00:00"
     }
   }
 }
