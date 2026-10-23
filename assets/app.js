@@ -92,18 +92,51 @@
     $$('[data-dataset-label]').forEach(element => { element.textContent = datasetLabel; });
     $$('[data-dataset-count]').forEach(element => { element.textContent = recipes.length; });
   }
+  function koreaDateKey(date = new Date()) {
+    const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Seoul',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).formatToParts(date).map(part => [part.type, part.value]));
+    return `${parts.year}-${parts.month}-${parts.day}`;
+  }
+  function dailyRecipe(date = new Date()) {
+    if (!recipes.length) return null;
+    const dateKey = koreaDateKey(date);
+    const [year, month, day] = dateKey.split('-').map(Number);
+    const epochDay = Math.floor(Date.UTC(year, month - 1, day) / 86400000);
+    const eligible = recipes.filter(recipe => recipe?.name && recipe?.image);
+    const pool = eligible.length ? eligible : recipes;
+    return pool[((epochDay % pool.length) + pool.length) % pool.length] || pool[0];
+  }
   function initializeHero() {
-    const recipe = recipeById.get('28') || recipes[0];
+    const recipe = dailyRecipe();
     const button = $('.hero-recipe');
     const image = $('#hero-image');
+    const title = $('.hero-recipe-caption strong');
+    const link = $('.hero-recipe-link');
     if (!recipe) {
       if ($('.hero-visual')) $('.hero-visual').hidden = true;
       return;
     }
-    if (button) { button.dataset.recipeId = String(recipe.id); button.setAttribute('aria-label', `${recipe.name} 레시피 보기`); }
-    if (image) { image.src = safeImage(recipe.image); image.alt = recipe.name; }
-    if ($('.hero-recipe-caption strong')) $('.hero-recipe-caption strong').textContent = recipe.name;
-    if (String(recipe.id) !== '28' && $('.hero-recipe-link')) $('.hero-recipe-link').textContent = '재료와 만드는 법 살펴보기 →';
+    if (button) {
+      button.dataset.recipeId = String(recipe.id);
+      button.setAttribute('aria-label', `${recipe.name} 레시피 보기`);
+      button.dataset.dailyDate = koreaDateKey();
+    }
+    if (image) {
+      image.src = safeImage(recipe.image);
+      image.alt = recipe.name;
+    }
+    if (title) title.textContent = recipe.name;
+    if (link) {
+      const arrow = link.querySelector('svg')?.cloneNode(true);
+      const category = String(recipe.category || '').replace(/&/g, '·').trim();
+      const method = String(recipe.method || '').trim();
+      link.textContent = [category, method].filter(Boolean).join(' · ') || '재료와 만드는 법 살펴보기';
+      if (arrow) link.append(' ', arrow);
+    }
   }
 
   const icons = {
