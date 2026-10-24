@@ -50,5 +50,8 @@
   "bytes": 47542,
   "apiPageAttemptStatus": "failed",
   "apiPageAttemptReason": "수집 중 전체 건수 변동 또는 빈 페이지",
-  "freshnessNote": "실시간 API 전체 건수 대조 실패로 공식 전체파일 기준 조회. 수집 중 전체 건수 변동 또는 빈 페이지"
+  "freshnessNote": "실시간 API 전체 건수 대조 실패로 공식 전체파일 기준 조회. 수집 중 전체 건수 변동 또는 빈 페이지",
+  "lastAttemptAt": "2026-10-24T21:22:09+00:00",
+  "lastAttemptStatus": "failed",
+  "lastAttemptReason": "공식 API 연결 실패 또는 응답 시간 초과"
 }
