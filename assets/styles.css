@@ -192,8 +192,9 @@ select { min-height: 42px; padding: 9px 30px 9px 12px; border: 1px solid #dbe0d1
 .collection-note svg { color: #819572; }
 .collection-note .inline-link { margin-left: 4px; white-space: nowrap; }
 
-/* AdFit content-bottom banner */
-.adfit-zone { position: relative; width: 100%; min-height: 118px; margin: 0 auto 30px; padding: 17px 0 1px; overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: #f2f3eb; }
+/* AdFit floating bottom banner */
+body.has-adfit-floating { padding-bottom: 118px; }
+.adfit-zone { position: fixed; z-index: 19; bottom: 0; left: 50%; width: min(100%, 760px); min-height: 118px; margin: 0; padding: 17px 16px 1px; overflow: hidden; border: 1px solid var(--line); border-bottom: 0; border-radius: 14px 14px 0 0; background: rgb(242 243 235 / 98%); box-shadow: 0 -8px 28px rgb(36 61 50 / 12%); transform: translateX(-50%); backdrop-filter: blur(12px); }
 .adfit-zone[hidden] { display: none; }
 .adfit-label { position: absolute; top: 3px; left: 50%; width: min(728px, 100%); transform: translateX(-50%); color: var(--muted); font-size: 9px; font-weight: 700; }
 .adfit-host { display: grid; place-items: center; width: 100%; min-height: 100px; }
@@ -454,6 +455,8 @@ body.dialog-open { overflow: hidden; }
 @media (max-width: 620px) {
   html { scroll-padding-top: 80px; }
   body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); font-size: 14px; }
+  body.has-adfit-floating { padding-bottom: calc(182px + env(safe-area-inset-bottom, 0px)); }
+  .adfit-zone { bottom: calc(64px + env(safe-area-inset-bottom, 0px)); width: 100%; padding-inline: 0; border-right: 0; border-left: 0; border-radius: 0; }
   .page-width, .header-inner { width: calc(100% - 40px); }
   .header-inner { height: 66px; justify-content: space-between; }
   .brand { gap: 8px; font-size: 22px; letter-spacing: -.9px; }

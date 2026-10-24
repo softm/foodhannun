@@ -26,6 +26,7 @@
     const {zone, host} = elements();
     root.clearTimeout(timeout);
     failed = true;
+    root.document.body?.classList.remove("has-adfit-floating");
     if (zone) zone.hidden = true;
     if (host) host.replaceChildren();
   }
@@ -69,6 +70,7 @@
       hide();
       return;
     }
+    root.document.body?.classList.add("has-adfit-floating");
     zone.hidden = false;
     if (!root.IntersectionObserver) { load(); return; }
     const observer = new root.IntersectionObserver(entries => {
