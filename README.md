@@ -28,6 +28,7 @@
 | 내 요리 메모 | 음식별 메모를 현재 브라우저에 저장 |
 | 공유 | 음식 ID를 포함한 URL; Web Share 지원 시 공유창, 그 외 복사 |
 | 음성 검색 | HTTPS와 지원 브라우저에서 사용자 클릭 후 브라우저 음성 인식 사용 |
+| 광고 | 콘텐츠 하단 카카오 AdFit 배너; PC 728×90·모바일 320×100, 화면 근처에서 한 번만 지연 요청 |
 | 출처 | 공식 출처 링크, 데이터 범위, 가져온 날짜, 제공하지 않는 항목 안내 |
 
 검색어 예: `두부`, `달걀`, `계란찜`, `새우`, `오이`, `토마토`, `북어국`, `ㄷㅂ`.
@@ -78,6 +79,7 @@
 | `index.html` | 검색 홈, 필터, 카드 목록, 상세·장보기·출처 모달의 기본 HTML |
 | `assets/styles.css` | 모바일 및 데스크톱 반응형 스타일 |
 | `assets/app.js` | 검색·필터·저장·장보기·메모·공유 동작 |
+| `assets/adfit-config.js` · `assets/adfit.js` | 웹 AdFit 전용 단위 설정과 반응형 지연 로딩 |
 | `assets/data.js` | 브라우저가 바로 읽는 `window.FOOD_DATA` |
 | `assets/images/` | 공식 대표 사진 5장과 이미지 실패 시 대체 SVG |
 | `assets/favicon.svg` | 서비스 아이콘 |
@@ -86,6 +88,7 @@
 | `data/raw-sample.json` | 최초 공개 샘플 API 원문 5건 |
 | `scripts/sync-recipes.py` | 공개 샘플 또는 인증키로 전체 레시피 수집 |
 | `scripts/deploy-pages.sh` | GitHub 저장소 생성·코드 푸시·Pages 설정을 수행하는 실행 스크립트 |
+| `docs/ADFIT_SETUP.md` | 음식한눈 광고 배치·단위·검증·출시 기준 |
 | `.github/workflows/sync-recipes.yml` | 매일 공식 레시피 전체 갱신·검증·변경 시 자동 커밋 |\n| `.nojekyll` | GitHub Pages에서 정적 파일 그대로 제공 |
 
 HTML과 CSS/JS의 경로는 상대경로입니다. GitHub Pages 프로젝트 경로에서 별도 라우터 없이 동작하며, `dist` 경로는 사용하지 않습니다.
