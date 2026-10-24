@@ -20,19 +20,23 @@
     },
     "daily": {
       "mode": "daily",
-      "status": "success",
-      "startedAt": "2026-10-23T21:47:05+00:00",
-      "completedAt": "2026-10-23T21:52:52+00:00",
+      "status": "partial",
+      "startedAt": "2026-10-24T21:24:14+00:00",
+      "completedAt": "2026-10-24T22:16:53+00:00",
       "services": [
         "I1250",
         "C002",
         "I0580"
       ],
-      "failedServices": [],
+      "failedServices": [
+        "I1250",
+        "C002",
+        "I0580"
+      ],
       "bulkFallbackServices": [],
       "error": null,
-      "runId": "40029182440",
-      "runUrl": "https://github.com/softm/foodhannun/actions/runs/40029182440",
+      "runId": "40133692140",
+      "runUrl": "https://github.com/softm/foodhannun/actions/runs/40133692140",
       "lastSuccessAt": "2026-10-23T21:52:52+00:00"
     },
     "recipes": {
