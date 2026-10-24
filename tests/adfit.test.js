@@ -20,8 +20,10 @@ function setup({clientWidth = 360, userAgent = "Browser/1", mobileUnit = "DAN-mo
   const zone = new Element("aside");
   zone.host = host;
   const head = new Element("head");
+  const bodyClasses = new Set();
+  const body = {classList: {add: value => bodyClasses.add(value), remove: value => bodyClasses.delete(value)}};
   const listeners = new Map();
-  const document = {hidden: false, head, getElementById: id => id === "content-bottom-ad" ? zone : null, createElement: tagName => new Element(tagName)};
+  const document = {hidden: false, head, body, getElementById: id => id === "content-bottom-ad" ? zone : null, createElement: tagName => new Element(tagName)};
   class IntersectionObserver { constructor(callback) { this.callback = callback; } observe() { this.callback([{isIntersecting: true}]); } disconnect() {} }
   const scope = {
     document, navigator: {userAgent}, IntersectionObserver, Object,
@@ -34,7 +36,7 @@ function setup({clientWidth = 360, userAgent = "Browser/1", mobileUnit = "DAN-mo
   scope.globalThis = scope;
   vm.runInContext(runtime, vm.createContext(scope));
   listeners.get("DOMContentLoaded")();
-  return {zone, host, head};
+  return {zone, host, head, bodyClasses};
 }
 
 test("모바일에서는 전용 320x100 단위를 한 번 요청한다", () => {
@@ -43,6 +45,7 @@ test("모바일에서는 전용 320x100 단위를 한 번 요청한다", () => {
   assert.equal(state.host.children[0].dataset.adUnit, "DAN-mobile1");
   assert.equal(state.host.children[0].dataset.adWidth, "320");
   assert.equal(state.head.children.length, 1);
+  assert.equal(state.bodyClasses.has("has-adfit-floating"), true);
 });
 test("넓은 화면에서는 전용 728x90 단위를 요청한다", () => {
   const state = setup({clientWidth: 900});
@@ -54,4 +57,5 @@ test("네이티브 광고 WebView와 빈 광고 ID에서는 요청하지 않는�
   const empty = setup({mobileUnit: ""});
   assert.equal(empty.zone.hidden, true);
   assert.equal(empty.head.children.length, 0);
+  assert.equal(empty.bodyClasses.has("has-adfit-floating"), false);
 });
