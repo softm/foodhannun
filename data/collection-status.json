@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-25T16:16:02+00:00",
+  "generatedAt": "2026-10-25T19:05:25+00:00",
   "totalCollectedRecords": 2882525,
   "completeDatasets": 11,
   "nutritionRecords": 348370,
@@ -3066,7 +3066,7 @@
       "status": "complete",
       "count": 386,
       "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490",
-      "attemptedAt": "2026-10-25T16:15:47+00:00",
+      "attemptedAt": "2026-10-25T19:05:11+00:00",
       "sourceFields": [
         "ADDR",
         "BRCDNO",
@@ -3092,7 +3092,7 @@
       "apiTotal": 386,
       "method": "official-paginated-full",
       "countBasis": "api-row-count",
-      "fetchedAt": "2026-10-25T16:15:50+00:00",
+      "fetchedAt": "2026-10-25T19:05:15+00:00",
       "uniqueRecords": 386,
       "chunks": [
         {
@@ -4120,17 +4120,17 @@
       "recalls": {
         "mode": "recalls",
         "status": "success",
-        "startedAt": "2026-10-25T16:15:47+00:00",
-        "completedAt": "2026-10-25T16:16:02+00:00",
+        "startedAt": "2026-10-25T19:05:11+00:00",
+        "completedAt": "2026-10-25T19:05:25+00:00",
         "services": [
           "I0490"
         ],
         "failedServices": [],
         "bulkFallbackServices": [],
         "error": null,
-        "runId": "40210791336",
-        "runUrl": "https://github.com/softm/foodhannun/actions/runs/40210791336",
-        "lastSuccessAt": "2026-10-25T16:16:02+00:00"
+        "runId": "40224294674",
+        "runUrl": "https://github.com/softm/foodhannun/actions/runs/40224294674",
+        "lastSuccessAt": "2026-10-25T19:05:25+00:00"
       },
       "daily": {
         "mode": "daily",
