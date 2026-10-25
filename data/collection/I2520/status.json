@@ -2,9 +2,9 @@
   "id": "I2520",
   "name": "식품원재료코드",
   "status": "complete",
-  "count": 43627,
+  "count": 43631,
   "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I2520",
-  "attemptedAt": "2026-10-20T15:24:17+00:00",
+  "attemptedAt": "2026-10-25T22:10:39+00:00",
   "sourceFields": [
     "ENG_NM",
     "LAST_UPDT_DTM",
@@ -24,19 +24,18 @@
     "VALD_BGN_DT",
     "VALD_END_DT"
   ],
-  "originalFetchedAt": "2026-10-20T15:10:18+00:00",
-  "sourceTotal": 43627,
+  "sourceTotal": 43631,
+  "apiTotal": 43631,
   "bulkContentType": "application/gzip",
-  "sourceLastModified": "Mon, 19 Oct 2026 15:26:41 GMT",
-  "bulkBytes": 1349749,
-  "apiTotal": 43627,
-  "originalSha256": "125c1707a3a05c3783a242ca7dc0f3b17a31677f5bcb022aaf2675c293ab19dd",
+  "sourceLastModified": "Sun, 25 Oct 2026 15:28:19 GMT",
+  "bulkBytes": 1350003,
+  "originalSha256": "9367840edf5d27ceb3d11d4e17ad0ee74a156f7adf4e2d64163ba9d9a35cb552",
   "originalFile": "source-original.gz",
   "bulkPrefixHex": "1f8b0800000000000000e4bd6b731cd7",
   "method": "official-bulk-file",
   "countBasis": "official-file-row-count",
-  "fetchedAt": "2026-10-20T15:10:18+00:00",
-  "uniqueRecords": 43627,
+  "fetchedAt": "2026-10-25T22:10:58+00:00",
+  "uniqueRecords": 43631,
   "chunks": [
     {
       "path": "records-0000.jsonl.gz",
@@ -53,22 +52,21 @@
     {
       "path": "records-0002.jsonl.gz",
       "count": 10000,
-      "bytes": 472187,
-      "sha256": "3e9b5e5730c99eadb5c6d5aaf66c21993089c48d372a51d8afa76c8afe3ca93b"
+      "bytes": 472494,
+      "sha256": "2f23ca0135e936467448e3684742816e413677e3bb9829e960b7d3f700ad5ef0"
     },
     {
       "path": "records-0003.jsonl.gz",
       "count": 10000,
-      "bytes": 175731,
-      "sha256": "34ff12c0ea63142ac8ac651fd7d824c7260c0b089b949991c6beeefe9d37250c"
+      "bytes": 175670,
+      "sha256": "7ab75b1b689c39f54fd5f8dfee384e8da45348d033c44c4e99e454abc1823dcd"
     },
     {
       "path": "records-0004.jsonl.gz",
-      "count": 3627,
-      "bytes": 68676,
-      "sha256": "6620d2bfc1cf7c3975b1d0a7f7faf795f8aa19195182c21f41dcb67aaf264a13"
+      "count": 3631,
+      "bytes": 68810,
+      "sha256": "a87c49327b8b75dc2747b9f42b30e00cf73a956e1dc887c22ba3ee8ce87d4b8f"
     }
   ],
-  "bytes": 1497011,
-  "reprocessedAt": "2026-10-20T15:24:19+00:00"
+  "bytes": 1497391
 }

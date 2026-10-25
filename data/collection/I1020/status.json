@@ -2,9 +2,9 @@
   "id": "I1020",
   "name": "식품원재료 정보",
   "status": "complete",
-  "count": 24887,
+  "count": 24890,
   "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I1020",
-  "attemptedAt": "2026-10-20T15:24:11+00:00",
+  "attemptedAt": "2026-10-25T22:10:21+00:00",
   "sourceFields": [
     "ENG_NM",
     "LCLAS_NM",
@@ -17,19 +17,18 @@
     "USE_CND_NM",
     "USE_CND_STDR_CN"
   ],
-  "originalFetchedAt": "2026-10-20T15:09:58+00:00",
-  "sourceTotal": 24887,
+  "sourceTotal": 24890,
+  "apiTotal": 24890,
   "bulkContentType": "application/gzip",
-  "sourceLastModified": "Tue, 20 Oct 2026 15:09:40 GMT",
-  "bulkBytes": 607130,
-  "apiTotal": 24887,
-  "originalSha256": "832bf9b1b588ec936b826933c0c91f417008d0ebac4207d05d654bfdd8761dda",
+  "sourceLastModified": "Sun, 25 Oct 2026 15:10:23 GMT",
+  "bulkBytes": 607300,
+  "originalSha256": "698e0ace3bdc50ccdb5cf8d4c373685ac302003e48db22249855455a90467f83",
   "originalFile": "source-original.gz",
   "bulkPrefixHex": "1f8b0800000000000000ecbd6b6f1c47",
   "method": "official-bulk-file",
   "countBasis": "official-file-row-count",
-  "fetchedAt": "2026-10-20T15:09:58+00:00",
-  "uniqueRecords": 24887,
+  "fetchedAt": "2026-10-25T22:10:36+00:00",
+  "uniqueRecords": 24890,
   "chunks": [
     {
       "path": "records-0000.jsonl.gz",
@@ -40,16 +39,15 @@
     {
       "path": "records-0001.jsonl.gz",
       "count": 10000,
-      "bytes": 360035,
-      "sha256": "97613e223d12718941c45643888a7611a1f40746112f37e8cd1ecfe339acd923"
+      "bytes": 360179,
+      "sha256": "b6e43af411945abe92215b4a23ec4599f5a1ac7e831b33ba104596555dcaeb3b"
     },
     {
       "path": "records-0002.jsonl.gz",
-      "count": 4887,
-      "bytes": 58879,
-      "sha256": "3f943307bfe4590ebdc90978a3c5ea000380533e533125c56797b2bfc81c94a5"
+      "count": 4890,
+      "bytes": 58903,
+      "sha256": "94661c7a4457e78371f405f7bc7a47faafb373651244b4fb0158cab806b20913"
     }
   ],
-  "bytes": 671497,
-  "reprocessedAt": "2026-10-20T15:24:11+00:00"
+  "bytes": 671665
 }
