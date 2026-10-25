@@ -50,9 +50,33 @@
       });
     } catch (error) { return Promise.reject(error); }
   }
+  function relatedRecipes(item) {
+    return window.FoodCatalog?.relatedRecipes?.(item) || [];
+  }
+  function visual(item) {
+    const related = relatedRecipes(item);
+    const recipe = related.find(recipe => recipe?.image) || related[0];
+    if (recipe?.image) return {src: recipe.image, label: '연결 레시피 이미지', actual: true};
+    const group = item.group || 'foods';
+    const label = group === 'processed-foods' ? '가공식품' : group === 'supplements' ? '건강기능식품' : '음식 영양';
+    return {src: 'assets/images/food-placeholder.svg', label: label + ' 대표 이미지', actual: false};
+  }
+  function insight(item) {
+    const related = relatedRecipes(item);
+    if (item.group === 'foods') {
+      if (related.length) return `관련 레시피 ${related.length}개와 연결 · 영양 기준량 ${esc(item.row[6] || '미제공')}`;
+      return `공식 음식 영양 자료 · 영양 기준량 ${esc(item.row[6] || '미제공')}`;
+    }
+    if (item.group === 'processed-foods') return `${item.row[3] ? esc(item.row[3]) + ' · ' : ''}제품 영양정보 비교 가능`;
+    return `${item.row[3] ? esc(item.row[3]) + ' · ' : ''}기능성 제품 영양정보 확인`;
+  }
   function card(item) {
     const evidence = item.evidence ? `<span class="catalog-evidence">${esc(item.evidence.label)} · ${esc(item.evidence.term)}</span>` : '';
-    return `<button type="button" class="catalog-card" data-food-ref="${esc(JSON.stringify(item))}" aria-haspopup="dialog"><span class="catalog-source">${esc(item.source)}</span><strong>${esc(item.row[1])}</strong><span>${esc(item.row[2])}${item.row[3] ? ' · '+esc(item.row[3]) : ''}</span><small>${esc(item.row[0])} · 영양 기준량 ${esc(item.row[6] || '미제공')}</small>${evidence}</button>`;
+    const image = visual(item);
+    return `<button type="button" class="catalog-card" data-food-ref="${esc(JSON.stringify(item))}" aria-haspopup="dialog">
+      <span class="catalog-card-visual"><img src="${esc(image.src)}" alt="${esc(item.row[1])} ${esc(image.label)}" loading="lazy" decoding="async" onerror="this.src='assets/images/food-placeholder.svg'"><span>${esc(image.label)}</span></span>
+      <span class="catalog-card-content"><span class="catalog-source">${esc(item.source)}</span><strong>${esc(item.row[1])}</strong><span>${esc(item.row[2])}${item.row[3] ? ' · '+esc(item.row[3]) : ''}</span><small>${esc(item.row[0])} · 영양 기준량 ${esc(item.row[6] || '미제공')}</small>${evidence}<span class="catalog-insight"><b>한눈 인사이트</b> ${insight(item)}</span></span>
+    </button>`;
   }
   async function recipeLinks(recipe) {
     if (!linksPromise) linksPromise = json('data/food-links.json.gz?v=20261020-api2',true).catch(error => { linksPromise = null; throw error; });
@@ -92,8 +116,22 @@
       const sourceRows = Object.entries(row).map(([column,content]) => `<tr><th scope="row">${esc(chunk.columns[Number(column)])}</th><td>${esc(content)}</td></tr>`).join('');
       const nutrients = ['에너지(kcal)','탄수화물(g)','단백질(g)','지방(g)','당류(g)','나트륨(mg)'].map(name => `<div><span>${esc(name)}</span><strong>${esc(value(name) ?? '미제공')}</strong></div>`).join('');
       const product = item.group !== 'foods';
-      const related = window.FoodCatalog.relatedRecipes?.(item) || [];
-      target.innerHTML = `<p class="catalog-source">${esc(dataset.name)}</p><h2 id="catalog-title">${esc(item.row[1])}</h2><p>${esc(item.row[0])} · ${esc(value('제조사명') || value('출처명') || '')}</p>${item.evidence ? `<p class="catalog-notice">연결 근거: ${esc(item.evidence.label)} · ${esc(item.evidence.term)}. 같은 레시피의 영양값으로 확정된 자료는 아닙니다.</p>` : ''}<p class="catalog-notice">영양 기준량: <strong>${esc(basis)}</strong> · 식품중량: ${esc(value('식품중량') || value('식품중량/부피') || '원문 미제공')}<br>1회 섭취참고량: ${esc(value('1회 섭취참고량') || '원문 미제공')} · 원본 기준량 그대로 표시</p><div class="catalog-nutrients">${nutrients}</div>${product ? `<p>품목제조보고번호: ${esc(value('품목제조보고번호') || '원문 미제공')}</p><p class="source-note">${item.group === 'supplements' ? '건강기능식품의 제품별 영양 자료입니다. 일반 음식과 구분하여 표시합니다. ' : ''}공식 신고·원재료·회수·업소 HACCP 자료는 아래 품목번호 연결에서 확인하세요.</p><a class="catalog-link" href="https://search.shopping.naver.com/search/all?query=${encodeURIComponent(item.row[1]+' '+(item.row[3] || ''))}" target="_blank" rel="noopener noreferrer">이 제품 구매처 검색 ↗</a><p class="source-note">일반 쇼핑 검색 링크입니다. 동일 제품·가격·재고를 보장하지 않습니다.</p><section data-safety-product class="catalog-related"></section>` : ''}${related.length ? `<section class="catalog-related"><h3>음식명으로 연결된 레시피</h3><p class="source-note">이름이 일치하거나 해당 음식명을 포함한 후보입니다. 조리법·분량은 각각 확인하세요.</p>${related.map(recipe => `<button type="button" class="catalog-link" data-catalog-recipe="${esc(recipe.id)}">${esc(recipe.name)} 레시피 보기 →</button>`).join('')}</section>` : ''}<details><summary>제공된 원문 전체 항목</summary><div class="catalog-table"><table><tbody>${sourceRows}</tbody></table></div></details><footer class="source-note">${esc(dataset.sourceAttribution)} · 원본 버전 ${esc(dataset.version)}<br>수집 시각(UTC): ${esc(dataset.fetchedAt)}<br><a href="${esc(dataset.sourceUrl)}" target="_blank" rel="noopener noreferrer">공식 원본 다운로드 ↗</a></footer>`;
+      const related = relatedRecipes(item);
+      const fallbackVisual = visual(item);
+      const sourceImage = chunk.columns.map((name,index) => ({name,value:row?.[index]})).find(entry => /이미지|사진|image|img/i.test(entry.name) && /^https?:\/\//i.test(String(entry.value || '')));
+      const detailImage = sourceImage ? {src:String(sourceImage.value),label:'공식 원문 이미지'} : fallbackVisual;
+      const numberValue = name => {
+        const raw = String(value(name) ?? '').replace(/,/g,'').match(/-?\d+(?:\.\d+)?/);
+        return raw ? Number(raw[0]) : null;
+      };
+      const protein = numberValue('단백질(g)'), sodium = numberValue('나트륨(mg)'), sugar = numberValue('당류(g)');
+      const insightParts = [];
+      if (protein != null) insightParts.push(protein >= 20 ? '단백질이 20g 이상' : `단백질 ${protein}g`);
+      if (sodium != null) insightParts.push(sodium >= 1000 ? '나트륨 높은 편이라 섭취량 확인' : `나트륨 ${sodium}mg`);
+      if (sugar != null) insightParts.push(sugar >= 20 ? '당류 20g 이상' : `당류 ${sugar}g`);
+      if (related.length) insightParts.push(`관련 레시피 ${related.length}개`);
+      const detailInsight = insightParts.length ? insightParts.join(' · ') : '공식 원문 기준 영양정보를 한눈에 비교해 보세요';
+      target.innerHTML = `<div class="catalog-detail-hero"><div class="catalog-detail-image"><img src="${esc(detailImage.src)}" alt="${esc(item.row[1])} ${esc(detailImage.label)}" onerror="this.src='assets/images/food-placeholder.svg'"><span>${esc(detailImage.label)}</span></div><div><p class="catalog-source">${esc(dataset.name)}</p><h2 id="catalog-title">${esc(item.row[1])}</h2><p>${esc(item.row[0])} · ${esc(value('제조사명') || value('출처명') || '')}</p><div class="catalog-insight catalog-insight--detail"><b>한눈 인사이트</b><span>${esc(detailInsight)}</span></div></div></div>${item.evidence ? `<p class="catalog-notice">연결 근거: ${esc(item.evidence.label)} · ${esc(item.evidence.term)}. 같은 레시피의 영양값으로 확정된 자료는 아닙니다.</p>` : ''}<p class="catalog-notice">영양 기준량: <strong>${esc(basis)}</strong> · 식품중량: ${esc(value('식품중량') || value('식품중량/부피') || '원문 미제공')}<br>1회 섭취참고량: ${esc(value('1회 섭취참고량') || '원문 미제공')} · 원본 기준량 그대로 표시</p><div class="catalog-nutrients">${nutrients}</div>${product ? `<p>품목제조보고번호: ${esc(value('품목제조보고번호') || '원문 미제공')}</p><p class="source-note">${item.group === 'supplements' ? '건강기능식품의 제품별 영양 자료입니다. 일반 음식과 구분하여 표시합니다. ' : ''}공식 신고·원재료·회수·업소 HACCP 자료는 아래 품목번호 연결에서 확인하세요.</p><a class="catalog-link" href="https://search.shopping.naver.com/search/all?query=${encodeURIComponent(item.row[1]+' '+(item.row[3] || ''))}" target="_blank" rel="noopener noreferrer">이 제품 구매처 검색 ↗</a><p class="source-note">일반 쇼핑 검색 링크입니다. 동일 제품·가격·재고를 보장하지 않습니다.</p><section data-safety-product class="catalog-related"></section>` : ''}${related.length ? `<section class="catalog-related"><h3>음식명으로 연결된 레시피</h3><p class="source-note">이름이 일치하거나 해당 음식명을 포함한 후보입니다. 조리법·분량은 각각 확인하세요.</p>${related.map(recipe => `<button type="button" class="catalog-link" data-catalog-recipe="${esc(recipe.id)}">${esc(recipe.name)} 레시피 보기 →</button>`).join('')}</section>` : ''}<details><summary>제공된 원문 전체 항목</summary><div class="catalog-table"><table><tbody>${sourceRows}</tbody></table></div></details><footer class="source-note">${esc(dataset.sourceAttribution)} · 원본 버전 ${esc(dataset.version)}<br>수집 시각(UTC): ${esc(dataset.fetchedAt)}<br><a href="${esc(dataset.sourceUrl)}" target="_blank" rel="noopener noreferrer">공식 원본 다운로드 ↗</a></footer>`;
       if (product) window.FoodSafety?.mountProduct(target.querySelector('[data-safety-product]'), value('품목제조보고번호'));
       dialog.setAttribute('aria-labelledby','catalog-title'); dialog.scrollTop = 0;
     } catch (error) { if (token === detailSequence && dialog.open) target.textContent = error.message; }
