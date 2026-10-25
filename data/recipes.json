@@ -4,7 +4,7 @@
     "sourceUrl": "https://www.data.go.kr/data/15060073/openapi.do",
     "apiDocsUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?menu_grp=MENU_GRP31&menu_no=661&show_cnt=10&start_idx=1&svc_no=COOKRCP01",
     "licenseUrl": "https://www.data.go.kr/data/15060073/openapi.do",
-    "fetchedAt": "2026-10-24T23:19:00Z",
+    "fetchedAt": "2026-10-25T23:19:20Z",
     "datasetMode": "official-full",
     "count": 1156,
     "totalAvailable": 1156
