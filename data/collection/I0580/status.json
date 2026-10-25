@@ -2,9 +2,9 @@
   "id": "I0580",
   "name": "HACCP 적용업소 지정 현황",
   "status": "complete",
-  "count": 39430,
+  "count": 39444,
   "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0580",
-  "attemptedAt": "2026-10-23T21:50:17+00:00",
+  "attemptedAt": "2026-10-25T21:22:15+00:00",
   "sourceFields": [
     "ASGN_CANCL_DT",
     "BSSH_NM",
@@ -20,46 +20,43 @@
     "PRSDNT_NM",
     "SITE_ADDR"
   ],
-  "sourceTotal": 39430,
-  "apiTotal": 39430,
+  "sourceTotal": 39444,
+  "apiTotal": 39444,
   "bulkContentType": "application/gzip",
-  "sourceLastModified": "Fri, 23 Oct 2026 15:11:10 GMT",
-  "bulkBytes": 1413480,
-  "originalSha256": "698026bc50b4d113707a9332498c892cf558bfcbc4d87cf4bbb4c9483bd81fc6",
+  "sourceLastModified": "Sun, 25 Oct 2026 15:09:27 GMT",
+  "bulkBytes": 1413726,
+  "originalSha256": "a18bf968fcffe18c44d007dfc47da4fd08ba2881dc8e6a86822e08577b8f9e59",
   "originalFile": "source-original.gz",
-  "bulkPrefixHex": "1f8b0800000000000000e4bd5f6f1b59",
+  "bulkPrefixHex": "1f8b0800000000000000ecbd5f6f1b59",
   "method": "official-bulk-file",
   "countBasis": "official-file-row-count",
-  "fetchedAt": "2026-10-23T21:50:37+00:00",
-  "uniqueRecords": 39430,
+  "fetchedAt": "2026-10-25T21:22:38+00:00",
+  "uniqueRecords": 39444,
   "chunks": [
     {
       "path": "records-0000.jsonl.gz",
       "count": 10000,
-      "bytes": 374213,
-      "sha256": "128891b975dfe57405857ddbc771a6411dc677c938ca9521e78beb5a44141acb"
+      "bytes": 374241,
+      "sha256": "e8cb3224ac70f2996424eb48a956b2670d734a5c28ce880a2534783df7cbde56"
     },
     {
       "path": "records-0001.jsonl.gz",
       "count": 10000,
-      "bytes": 402417,
-      "sha256": "a69f41eaf804de426176a57295d4edd724f7aa6bd00a00cc74f477d7be6f0384"
+      "bytes": 402594,
+      "sha256": "6b6af1d951ea20f4642a198232c6adc635a74b08db7f5f9f41680ef5d9d4ac1b"
     },
     {
       "path": "records-0002.jsonl.gz",
       "count": 10000,
-      "bytes": 426248,
-      "sha256": "6c5463f48555eddbaf4458b83d4e289f434b3656f05fe60afb2be644af409e56"
+      "bytes": 425884,
+      "sha256": "5e0c346e199f0f33d1c306a08d37c8907fab864c498b26afcfb928bdc00cb94f"
     },
     {
       "path": "records-0003.jsonl.gz",
-      "count": 9430,
-      "bytes": 443173,
-      "sha256": "0f9cad84a73d0973dae681b02a650f510679834a649afce5c52d8ee7db86c242"
+      "count": 9444,
+      "bytes": 443714,
+      "sha256": "b7bf289c723e3046c2edf7f29e1365f9d0acf4caa1ce583b736973a67b780d99"
     }
   ],
-  "bytes": 1646051,
-  "lastAttemptAt": "2026-10-24T22:16:44+00:00",
-  "lastAttemptStatus": "failed",
-  "lastAttemptReason": "공식 API 연결 실패 또는 응답 시간 초과"
+  "bytes": 1646433
 }
