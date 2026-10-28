@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-28T21:37:49+00:00",
+  "generatedAt": "2026-10-28T23:48:22+00:00",
   "totalCollectedRecords": 2884492,
   "completeDatasets": 11,
   "nutritionRecords": 348370,
@@ -2867,7 +2867,10 @@
           "sha256": "105de1db8744ae83ef7d3c672c79db65a94528c251c2ed1fd2f1f7f933ff6bb1"
         }
       ],
-      "bytes": 68178272
+      "bytes": 68178272,
+      "lastAttemptAt": "2026-10-28T23:30:36+00:00",
+      "lastAttemptStatus": "failed",
+      "lastAttemptReason": "공식 API 연결 실패 또는 응답 시간 초과"
     },
     {
       "id": "C005",
@@ -3165,7 +3168,10 @@
           "sha256": "03b7f8672ea568fbfacf5cbb2e495485128eb486293d8ba31927441125374382"
         }
       ],
-      "bytes": 1647407
+      "bytes": 1647407,
+      "lastAttemptAt": "2026-10-28T23:48:09+00:00",
+      "lastAttemptStatus": "failed",
+      "lastAttemptReason": "공식 API 연결 실패 또는 응답 시간 초과"
     },
     {
       "id": "I1020",
@@ -3915,7 +3921,10 @@
           "sha256": "f2258feb99b25c11cfc0c90d25972e01afc13ae1d22e0e04e1a721f97d7595c6"
         }
       ],
-      "bytes": 41893382
+      "bytes": 41893382,
+      "lastAttemptAt": "2026-10-28T23:13:04+00:00",
+      "lastAttemptStatus": "failed",
+      "lastAttemptReason": "공식 API 연결 실패 또는 응답 시간 초과"
     },
     {
       "id": "I2520",
@@ -4127,19 +4136,23 @@
       },
       "daily": {
         "mode": "daily",
-        "status": "success",
-        "startedAt": "2026-10-27T22:47:25+00:00",
-        "completedAt": "2026-10-27T22:52:01+00:00",
+        "status": "partial",
+        "startedAt": "2026-10-28T22:55:35+00:00",
+        "completedAt": "2026-10-28T23:48:22+00:00",
         "services": [
           "I1250",
           "C002",
           "I0580"
         ],
-        "failedServices": [],
+        "failedServices": [
+          "I1250",
+          "C002",
+          "I0580"
+        ],
         "bulkFallbackServices": [],
         "error": null,
-        "runId": "40597171707",
-        "runUrl": "https://github.com/softm/foodhannun/actions/runs/40597171707",
+        "runId": "40783558644",
+        "runUrl": "https://github.com/softm/foodhannun/actions/runs/40783558644",
         "lastSuccessAt": "2026-10-27T22:52:01+00:00"
       },
       "recipes": {
