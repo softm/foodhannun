@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-28T16:04:32+00:00",
+  "generatedAt": "2026-10-28T21:37:49+00:00",
   "totalCollectedRecords": 2884492,
   "completeDatasets": 11,
   "nutritionRecords": 348370,
@@ -3099,7 +3099,10 @@
           "sha256": "a7d51fc552c7d071f383277662fb38f891f7ab8796e40eab50127359762f85f6"
         }
       ],
-      "bytes": 48024
+      "bytes": 48024,
+      "lastAttemptAt": "2026-10-28T21:37:38+00:00",
+      "lastAttemptStatus": "failed",
+      "lastAttemptReason": "공식 API 연결 실패 또는 응답 시간 초과"
     },
     {
       "id": "I0580",
@@ -4107,17 +4110,19 @@
     "runs": {
       "recalls": {
         "mode": "recalls",
-        "status": "success",
-        "startedAt": "2026-10-28T16:04:03+00:00",
-        "completedAt": "2026-10-28T16:04:32+00:00",
+        "status": "partial",
+        "startedAt": "2026-10-28T21:02:39+00:00",
+        "completedAt": "2026-10-28T21:37:49+00:00",
         "services": [
           "I0490"
         ],
-        "failedServices": [],
+        "failedServices": [
+          "I0490"
+        ],
         "bulkFallbackServices": [],
         "error": null,
-        "runId": "40721510689",
-        "runUrl": "https://github.com/softm/foodhannun/actions/runs/40721510689",
+        "runId": "40768466232",
+        "runUrl": "https://github.com/softm/foodhannun/actions/runs/40768466232",
         "lastSuccessAt": "2026-10-28T16:04:32+00:00"
       },
       "daily": {
