@@ -41,20 +41,18 @@
     },
     "recipes": {
       "mode": "recipes",
-      "status": "failed",
-      "startedAt": "2026-10-28T00:32:42+00:00",
-      "completedAt": "2026-10-28T00:33:27+00:00",
+      "status": "success",
+      "startedAt": "2026-10-29T01:01:11+00:00",
+      "completedAt": "2026-10-29T01:01:27+00:00",
       "services": [
         "COOKRCP01"
       ],
-      "failedServices": [
-        "COOKRCP01"
-      ],
+      "failedServices": [],
       "bulkFallbackServices": [],
-      "error": "검증·변환 실패: CalledProcessError. 마지막 정상 수집본을 유지합니다.",
-      "runId": "40609386630",
-      "runUrl": "https://github.com/softm/foodhannun/actions/runs/40609386630",
-      "lastSuccessAt": "2026-10-27T00:30:09+00:00"
+      "error": null,
+      "runId": "40797710176",
+      "runUrl": "https://github.com/softm/foodhannun/actions/runs/40797710176",
+      "lastSuccessAt": "2026-10-29T01:01:27+00:00"
     },
     "weekly": {
       "mode": "weekly",
