@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-30T05:46:13+00:00",
-  "totalCollectedRecords": 2886096,
+  "generatedAt": "2026-10-30T12:53:33+00:00",
+  "totalCollectedRecords": 2886100,
   "completeDatasets": 11,
   "nutritionRecords": 348370,
   "datasets": [
@@ -3061,9 +3061,9 @@
       "id": "I0490",
       "name": "회수·판매중지 정보",
       "status": "complete",
-      "count": 393,
+      "count": 397,
       "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490",
-      "attemptedAt": "2026-10-30T05:45:51+00:00",
+      "attemptedAt": "2026-10-30T12:52:57+00:00",
       "sourceFields": [
         "ADDR",
         "BRCDNO",
@@ -3085,31 +3085,21 @@
         "RTRVL_GRDCD_NM",
         "TELNO"
       ],
-      "sourceTotal": 393,
-      "apiTotal": 394,
-      "bulkContentType": "application/gzip",
-      "sourceLastModified": "Thu, 29 Oct 2026 15:12:39 GMT",
-      "bulkBytes": 44884,
-      "originalSha256": "a014e565a5a1f518d0eb03fa7babc27e652aa4aba7074b7654ec97f3d247d0b8",
-      "originalFile": "source-original.gz",
-      "bulkPrefixHex": "1f8b0800000000000000ecbd5b735b57",
-      "method": "official-bulk-file",
-      "countNote": "공식 전체파일 393행 / 실시간 API 394건으로 건수가 다릅니다. 전체파일 기준 수집.",
-      "countBasis": "official-file-row-count",
-      "fetchedAt": "2026-10-30T05:46:00+00:00",
-      "uniqueRecords": 393,
+      "sourceTotal": 397,
+      "apiTotal": 397,
+      "method": "official-paginated-full",
+      "countBasis": "api-row-count",
+      "fetchedAt": "2026-10-30T12:53:01+00:00",
+      "uniqueRecords": 397,
       "chunks": [
         {
           "path": "records-0000.jsonl.gz",
-          "count": 393,
-          "bytes": 48212,
-          "sha256": "faa1e3a709d71dd8b69c36a406ada526a1397b1906048c66e1bd9ddcce3e1529"
+          "count": 397,
+          "bytes": 48787,
+          "sha256": "fb26cea83b8ac0d2f7146d33eae948ca35b445059ebf016c8a053ed9ef40e4b3"
         }
       ],
-      "bytes": 48212,
-      "apiPageAttemptStatus": "failed",
-      "apiPageAttemptReason": "수집 중 전체 건수 변동 또는 빈 페이지",
-      "freshnessNote": "실시간 API 전체 건수 대조 실패로 공식 전체파일 기준 조회. 수집 중 전체 건수 변동 또는 빈 페이지"
+      "bytes": 48787
     },
     {
       "id": "I0580",
@@ -4049,9 +4039,9 @@
     "linksPath": "data/food-links.json.gz"
   },
   "officialSourceIntegration": {
-    "sourceRecords": 2536570,
-    "indexedRecords": 2536570,
-    "lookupPointers": 2936481
+    "sourceRecords": 2536574,
+    "indexedRecords": 2536574,
+    "lookupPointers": 2936486
   },
   "automation": {
     "timeZone": "Asia/Seoul",
@@ -4117,20 +4107,18 @@
     "runs": {
       "recalls": {
         "mode": "recalls",
-        "status": "warning",
-        "startedAt": "2026-10-30T05:45:46+00:00",
-        "completedAt": "2026-10-30T05:46:12+00:00",
+        "status": "success",
+        "startedAt": "2026-10-30T12:52:57+00:00",
+        "completedAt": "2026-10-30T12:53:33+00:00",
         "services": [
           "I0490"
         ],
         "failedServices": [],
-        "bulkFallbackServices": [
-          "I0490"
-        ],
+        "bulkFallbackServices": [],
         "error": null,
-        "runId": "41010125907",
-        "runUrl": "https://github.com/softm/foodhannun/actions/runs/41010125907",
-        "lastSuccessAt": "2026-10-30T05:46:12+00:00"
+        "runId": "41058648903",
+        "runUrl": "https://github.com/softm/foodhannun/actions/runs/41058648903",
+        "lastSuccessAt": "2026-10-30T12:53:33+00:00"
       },
       "daily": {
         "mode": "daily",
