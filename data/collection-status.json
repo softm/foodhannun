@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T01:32:14+00:00",
+  "generatedAt": "2026-11-03T02:56:27+00:00",
   "totalCollectedRecords": 2893588,
   "completeDatasets": 11,
   "nutritionRecords": 354551,
@@ -3099,7 +3099,7 @@
       "status": "complete",
       "count": 392,
       "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490",
-      "attemptedAt": "2026-11-02T11:00:57+00:00",
+      "attemptedAt": "2026-11-03T02:55:56+00:00",
       "sourceFields": [
         "ADDR",
         "BRCDNO",
@@ -3125,20 +3125,17 @@
       "apiTotal": 392,
       "method": "official-paginated-full",
       "countBasis": "api-row-count",
-      "fetchedAt": "2026-11-02T11:01:02+00:00",
+      "fetchedAt": "2026-11-03T02:55:59+00:00",
       "uniqueRecords": 392,
       "chunks": [
         {
           "path": "records-0000.jsonl.gz",
           "count": 392,
-          "bytes": 48436,
-          "sha256": "65a83b74b0ff2c5ab687912f2561cb1edcd0c6af67062ee90ac1912050b208bb"
+          "bytes": 48497,
+          "sha256": "0d52881da613c4703bf42e9e8e65ccca1d959eed5ba093f152a3b3a0188a0b1e"
         }
       ],
-      "bytes": 48436,
-      "lastAttemptAt": "2026-11-02T21:21:37+00:00",
-      "lastAttemptStatus": "failed",
-      "lastAttemptReason": "공식 API 연결 실패 또는 응답 시간 초과"
+      "bytes": 48497
     },
     {
       "id": "I0580",
@@ -4146,20 +4143,18 @@
     "runs": {
       "recalls": {
         "mode": "recalls",
-        "status": "partial",
-        "startedAt": "2026-11-02T20:46:42+00:00",
-        "completedAt": "2026-11-02T21:21:50+00:00",
+        "status": "success",
+        "startedAt": "2026-11-03T02:55:55+00:00",
+        "completedAt": "2026-11-03T02:56:27+00:00",
         "services": [
           "I0490"
         ],
-        "failedServices": [
-          "I0490"
-        ],
+        "failedServices": [],
         "bulkFallbackServices": [],
         "error": null,
-        "runId": "41522061915",
-        "runUrl": "https://github.com/softm/foodhannun/actions/runs/41522061915",
-        "lastSuccessAt": "2026-11-02T11:01:33+00:00"
+        "runId": "41568963591",
+        "runUrl": "https://github.com/softm/foodhannun/actions/runs/41568963591",
+        "lastSuccessAt": "2026-11-03T02:56:27+00:00"
       },
       "daily": {
         "mode": "daily",
