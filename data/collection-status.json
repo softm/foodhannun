@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-04T01:27:42+00:00",
+  "generatedAt": "2026-11-04T06:18:19+00:00",
   "totalCollectedRecords": 2894489,
   "completeDatasets": 11,
   "nutritionRecords": 354551,
@@ -3100,7 +3100,7 @@
       "status": "complete",
       "count": 398,
       "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490",
-      "attemptedAt": "2026-11-03T23:59:00+00:00",
+      "attemptedAt": "2026-11-04T06:17:46+00:00",
       "sourceFields": [
         "ADDR",
         "BRCDNO",
@@ -3126,17 +3126,17 @@
       "apiTotal": 398,
       "method": "official-paginated-full",
       "countBasis": "api-row-count",
-      "fetchedAt": "2026-11-03T23:59:04+00:00",
+      "fetchedAt": "2026-11-04T06:17:51+00:00",
       "uniqueRecords": 398,
       "chunks": [
         {
           "path": "records-0000.jsonl.gz",
           "count": 398,
-          "bytes": 48861,
-          "sha256": "b91e8e723f54b598a8653defc17ab9a0a8bd80fd9949631e3a087150f8a217d0"
+          "bytes": 48884,
+          "sha256": "ff383dd4c7164c078d45cf02b77c9ca0718a12794a0d34234cfa94875498189b"
         }
       ],
-      "bytes": 48861
+      "bytes": 48884
     },
     {
       "id": "I0580",
@@ -4144,17 +4144,17 @@
       "recalls": {
         "mode": "recalls",
         "status": "success",
-        "startedAt": "2026-11-03T23:59:00+00:00",
-        "completedAt": "2026-11-03T23:59:14+00:00",
+        "startedAt": "2026-11-04T06:17:46+00:00",
+        "completedAt": "2026-11-04T06:18:19+00:00",
         "services": [
           "I0490"
         ],
         "failedServices": [],
         "bulkFallbackServices": [],
         "error": null,
-        "runId": "41743222529",
-        "runUrl": "https://github.com/softm/foodhannun/actions/runs/41743222529",
-        "lastSuccessAt": "2026-11-03T23:59:14+00:00"
+        "runId": "41784492585",
+        "runUrl": "https://github.com/softm/foodhannun/actions/runs/41784492585",
+        "lastSuccessAt": "2026-11-04T06:18:19+00:00"
       },
       "daily": {
         "mode": "daily",
