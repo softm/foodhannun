@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-05T00:09:24+00:00",
+  "generatedAt": "2026-11-05T01:30:02+00:00",
   "totalCollectedRecords": 2894557,
   "completeDatasets": 11,
   "nutritionRecords": 354551,
@@ -10,7 +10,7 @@
       "status": "complete",
       "count": 1156,
       "sourceTotal": 1156,
-      "fetchedAt": "2026-11-04T01:27:41Z",
+      "fetchedAt": "2026-11-05T01:30:01Z",
       "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=COOKRCP01",
       "path": "data/recipes.json"
     },
@@ -4063,7 +4063,7 @@
       "withoutCandidates": 759,
       "shownCandidates": 1284
     },
-    "recipeSha256": "c0858ee68ad7d5ab8f1e68a134fbc5c190d4201eb1a22aca16073b529cd3ad6f",
+    "recipeSha256": "cd837314f2dfee75995a2de58696df3d061465d4b63fc7da7b4f8beb719fc59e",
     "foodIndexSha256": "0d30bf6c87dfa917514b98b4914ee4ff88fc39d50183e9977d0976eeb3ee895e",
     "rules": [
       "이름 일치·별칭 일치·가장 구체적인 음식명 포함 후보를 구분",
@@ -4177,17 +4177,17 @@
       "recipes": {
         "mode": "recipes",
         "status": "success",
-        "startedAt": "2026-11-04T01:27:22+00:00",
-        "completedAt": "2026-11-04T01:27:42+00:00",
+        "startedAt": "2026-11-05T01:29:45+00:00",
+        "completedAt": "2026-11-05T01:30:02+00:00",
         "services": [
           "COOKRCP01"
         ],
         "failedServices": [],
         "bulkFallbackServices": [],
         "error": null,
-        "runId": "41754087993",
-        "runUrl": "https://github.com/softm/foodhannun/actions/runs/41754087993",
-        "lastSuccessAt": "2026-11-04T01:27:42+00:00"
+        "runId": "41948809534",
+        "runUrl": "https://github.com/softm/foodhannun/actions/runs/41948809534",
+        "lastSuccessAt": "2026-11-05T01:30:02+00:00"
       },
       "weekly": {
         "mode": "weekly",
