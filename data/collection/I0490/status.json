@@ -4,7 +4,7 @@
   "status": "complete",
   "count": 398,
   "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490",
-  "attemptedAt": "2026-11-05T18:44:52+00:00",
+  "attemptedAt": "2026-11-06T00:15:37+00:00",
   "sourceFields": [
     "ADDR",
     "BRCDNO",
@@ -30,7 +30,7 @@
   "apiTotal": 398,
   "method": "official-paginated-full",
   "countBasis": "api-row-count",
-  "fetchedAt": "2026-11-05T18:44:56+00:00",
+  "fetchedAt": "2026-11-06T00:15:41+00:00",
   "uniqueRecords": 398,
   "chunks": [
     {
