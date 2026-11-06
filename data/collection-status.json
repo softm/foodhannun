@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-06T15:02:49+00:00",
-  "totalCollectedRecords": 2895603,
+  "generatedAt": "2026-11-06T20:53:51+00:00",
+  "totalCollectedRecords": 2895602,
   "completeDatasets": 11,
   "nutritionRecords": 354551,
   "datasets": [
@@ -3097,9 +3097,9 @@
       "id": "I0490",
       "name": "회수·판매중지 정보",
       "status": "complete",
-      "count": 398,
+      "count": 397,
       "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490",
-      "attemptedAt": "2026-11-06T15:02:16+00:00",
+      "attemptedAt": "2026-11-06T20:53:26+00:00",
       "sourceFields": [
         "ADDR",
         "BRCDNO",
@@ -3121,21 +3121,21 @@
         "RTRVL_GRDCD_NM",
         "TELNO"
       ],
-      "sourceTotal": 398,
-      "apiTotal": 398,
+      "sourceTotal": 397,
+      "apiTotal": 397,
       "method": "official-paginated-full",
       "countBasis": "api-row-count",
-      "fetchedAt": "2026-11-06T15:02:20+00:00",
-      "uniqueRecords": 398,
+      "fetchedAt": "2026-11-06T20:53:31+00:00",
+      "uniqueRecords": 397,
       "chunks": [
         {
           "path": "records-0000.jsonl.gz",
-          "count": 398,
-          "bytes": 49023,
-          "sha256": "e1c092b3a3d276a3fcea8b2b659ab11bcc2c30c698ed837853893179f2217c82"
+          "count": 397,
+          "bytes": 48885,
+          "sha256": "4ad310f35212b8e31e7fdbfdb49eb7203ab27f5607bddd6ac1349edb2343274b"
         }
       ],
-      "bytes": 49023
+      "bytes": 48885
     },
     {
       "id": "I0580",
@@ -4075,9 +4075,9 @@
     "linksPath": "data/food-links.json.gz"
   },
   "officialSourceIntegration": {
-    "sourceRecords": 2539896,
-    "indexedRecords": 2539896,
-    "lookupPointers": 2939815
+    "sourceRecords": 2539895,
+    "indexedRecords": 2539895,
+    "lookupPointers": 2939814
   },
   "automation": {
     "timeZone": "Asia/Seoul",
@@ -4144,17 +4144,17 @@
       "recalls": {
         "mode": "recalls",
         "status": "success",
-        "startedAt": "2026-11-06T15:02:16+00:00",
-        "completedAt": "2026-11-06T15:02:49+00:00",
+        "startedAt": "2026-11-06T20:53:26+00:00",
+        "completedAt": "2026-11-06T20:53:51+00:00",
         "services": [
           "I0490"
         ],
         "failedServices": [],
         "bulkFallbackServices": [],
         "error": null,
-        "runId": "42239164552",
-        "runUrl": "https://github.com/softm/foodhannun/actions/runs/42239164552",
-        "lastSuccessAt": "2026-11-06T15:02:49+00:00"
+        "runId": "42292045750",
+        "runUrl": "https://github.com/softm/foodhannun/actions/runs/42292045750",
+        "lastSuccessAt": "2026-11-06T20:53:51+00:00"
       },
       "daily": {
         "mode": "daily",
