@@ -40,5 +40,8 @@
       "sha256": "e1bd23094ae82578244e77cdc600773dde2876c685bf2a34508cce76c96ad48e"
     }
   ],
-  "bytes": 48572
+  "bytes": 48572,
+  "lastAttemptAt": "2026-11-08T10:53:19+00:00",
+  "lastAttemptStatus": "failed",
+  "lastAttemptReason": "공식 API 연결 실패 또는 응답 시간 초과"
 }
