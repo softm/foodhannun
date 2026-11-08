@@ -4,7 +4,7 @@
   "status": "complete",
   "count": 43634,
   "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I2520",
-  "attemptedAt": "2026-11-01T23:14:36+00:00",
+  "attemptedAt": "2026-11-08T23:19:18+00:00",
   "sourceFields": [
     "ENG_NM",
     "LAST_UPDT_DTM",
@@ -27,14 +27,14 @@
   "sourceTotal": 43634,
   "apiTotal": 43634,
   "bulkContentType": "application/gzip",
-  "sourceLastModified": "Sun, 01 Nov 2026 15:25:19 GMT",
+  "sourceLastModified": "Sun, 08 Nov 2026 15:28:46 GMT",
   "bulkBytes": 1350149,
   "originalSha256": "edc607aaa358c49c0e7b6c1085568d35f715e2c270e4752837c7493c83043189",
   "originalFile": "source-original.gz",
   "bulkPrefixHex": "1f8b0800000000000000e4bd6b731cd7",
   "method": "official-bulk-file",
   "countBasis": "official-file-row-count",
-  "fetchedAt": "2026-11-01T23:14:57+00:00",
+  "fetchedAt": "2026-11-08T23:19:43+00:00",
   "uniqueRecords": 43634,
   "chunks": [
     {
