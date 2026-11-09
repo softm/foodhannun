@@ -67,8 +67,8 @@
     "nutrition": {
       "mode": "nutrition",
       "status": "success",
-      "startedAt": "2026-11-01T23:51:16+00:00",
-      "completedAt": "2026-11-01T23:55:32+00:00",
+      "startedAt": "2026-11-08T23:58:44+00:00",
+      "completedAt": "2026-11-09T00:05:19+00:00",
       "services": [
         "foods",
         "processed-foods",
@@ -77,9 +77,9 @@
       "failedServices": [],
       "bulkFallbackServices": [],
       "error": null,
-      "runId": "41364066225",
-      "runUrl": "https://github.com/softm/foodhannun/actions/runs/41364066225",
-      "lastSuccessAt": "2026-11-01T23:55:32+00:00"
+      "runId": "42537665640",
+      "runUrl": "https://github.com/softm/foodhannun/actions/runs/42537665640",
+      "lastSuccessAt": "2026-11-09T00:05:19+00:00"
     }
   }
 }

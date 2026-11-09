@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-08T23:19:57+00:00",
+  "generatedAt": "2026-11-09T00:05:19+00:00",
   "totalCollectedRecords": 2896209,
   "completeDatasets": 11,
   "nutritionRecords": 354551,
@@ -24,7 +24,7 @@
       "columnCount": 160,
       "sourceUrl": "https://various.foodsafetykorea.go.kr/nutrient/general/down/historyList.do",
       "version": "2026-08-28",
-      "fetchedAt": "2026-11-01T23:52:21+00:00",
+      "fetchedAt": "2026-11-09T00:00:01+00:00",
       "sourceSha256": "1ef3551f9a1d0ee87891d6306fa22bbd6a7ffcc90f2c70a4a184dbfe3fce6ea6",
       "sourceBytes": 12071982,
       "sourceAttribution": "식품영양성분 데이터베이스 (K-FCDB), 식품의약품안전처",
@@ -166,7 +166,7 @@
       "columnCount": 169,
       "sourceUrl": "https://various.foodsafetykorea.go.kr/nutrient/general/down/historyList.do",
       "version": "2026-06-23",
-      "fetchedAt": "2026-11-01T23:52:23+00:00",
+      "fetchedAt": "2026-11-09T00:00:05+00:00",
       "sourceSha256": "082873eea2e2d55e79dd4e21763b82204df77b8f3f8e8147e32b3354810aed7d",
       "sourceBytes": 3374666,
       "sourceAttribution": "식품영양성분 데이터베이스 (K-FCDB), 식품의약품안전처",
@@ -224,7 +224,7 @@
       "columnCount": 166,
       "sourceUrl": "https://various.foodsafetykorea.go.kr/nutrient/general/down/historyList.do",
       "version": "2026-10-29",
-      "fetchedAt": "2026-11-01T23:55:27+00:00",
+      "fetchedAt": "2026-11-09T00:05:10+00:00",
       "sourceSha256": "e569c1b9def712e7061766fa35cbec2a1e057e9bd12521277ad2e8b92005bdd6",
       "sourceBytes": 210051499,
       "sourceAttribution": "식품영양성분 데이터베이스 (K-FCDB), 식품의약품안전처",
@@ -4206,8 +4206,8 @@
       "nutrition": {
         "mode": "nutrition",
         "status": "success",
-        "startedAt": "2026-11-01T23:51:16+00:00",
-        "completedAt": "2026-11-01T23:55:32+00:00",
+        "startedAt": "2026-11-08T23:58:44+00:00",
+        "completedAt": "2026-11-09T00:05:19+00:00",
         "services": [
           "foods",
           "processed-foods",
@@ -4216,9 +4216,9 @@
         "failedServices": [],
         "bulkFallbackServices": [],
         "error": null,
-        "runId": "41364066225",
-        "runUrl": "https://github.com/softm/foodhannun/actions/runs/41364066225",
-        "lastSuccessAt": "2026-11-01T23:55:32+00:00"
+        "runId": "42537665640",
+        "runUrl": "https://github.com/softm/foodhannun/actions/runs/42537665640",
+        "lastSuccessAt": "2026-11-09T00:05:19+00:00"
       }
     }
   }
