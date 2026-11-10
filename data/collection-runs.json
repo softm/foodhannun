@@ -4,8 +4,8 @@
     "recalls": {
       "mode": "recalls",
       "status": "warning",
-      "startedAt": "2026-11-10T02:06:47+00:00",
-      "completedAt": "2026-11-10T02:07:12+00:00",
+      "startedAt": "2026-11-10T09:47:04+00:00",
+      "completedAt": "2026-11-10T09:47:28+00:00",
       "services": [
         "I0490"
       ],
@@ -14,9 +14,9 @@
         "I0490"
       ],
       "error": null,
-      "runId": "42740369365",
-      "runUrl": "https://github.com/softm/foodhannun/actions/runs/42740369365",
-      "lastSuccessAt": "2026-11-10T02:07:12+00:00"
+      "runId": "42793477432",
+      "runUrl": "https://github.com/softm/foodhannun/actions/runs/42793477432",
+      "lastSuccessAt": "2026-11-10T09:47:28+00:00"
     },
     "daily": {
       "mode": "daily",
