@@ -2,9 +2,9 @@
   "id": "I0490",
   "name": "회수·판매중지 정보",
   "status": "complete",
-  "count": 389,
+  "count": 390,
   "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490",
-  "attemptedAt": "2026-11-13T07:56:09+00:00",
+  "attemptedAt": "2026-11-13T16:20:53+00:00",
   "sourceFields": [
     "ADDR",
     "BRCDNO",
@@ -26,28 +26,19 @@
     "RTRVL_GRDCD_NM",
     "TELNO"
   ],
-  "sourceTotal": 389,
-  "apiTotal": 389,
-  "bulkContentType": "application/gzip",
-  "sourceLastModified": "Thu, 12 Nov 2026 15:09:49 GMT",
-  "bulkBytes": 44757,
-  "originalSha256": "3c9692e9a92d26536722b467d4e9c6f2218979c0cfdfcbca4adc609e3b5b14fa",
-  "originalFile": "source-original.gz",
-  "bulkPrefixHex": "1f8b0800000000000000ecbd6d731b57",
-  "method": "official-bulk-file",
-  "countBasis": "official-file-row-count",
-  "fetchedAt": "2026-11-13T07:56:19+00:00",
-  "uniqueRecords": 389,
+  "sourceTotal": 390,
+  "apiTotal": 390,
+  "method": "official-paginated-full",
+  "countBasis": "api-row-count",
+  "fetchedAt": "2026-11-13T16:20:58+00:00",
+  "uniqueRecords": 390,
   "chunks": [
     {
       "path": "records-0000.jsonl.gz",
-      "count": 389,
-      "bytes": 48240,
-      "sha256": "33d5ff89b0ef364640c064501264767e3eb15b11c2a051494353af2dea8bdb38"
+      "count": 390,
+      "bytes": 48399,
+      "sha256": "5046b916e2b7c7776d4e9acd0b8131273ea11aa1abde3ec327d7ae67415a9902"
     }
   ],
-  "bytes": 48240,
-  "apiPageAttemptStatus": "failed",
-  "apiPageAttemptReason": "원본 389건 / 수집 390건 불일치",
-  "freshnessNote": "실시간 API 전체 건수 대조 실패로 공식 전체파일 기준 조회. 원본 389건 / 수집 390건 불일치"
+  "bytes": 48399
 }
