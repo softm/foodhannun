@@ -41,7 +41,7 @@
 - Google·카카오·네이버 선택 및 신규 회원가입 동의는 **Cloudflare Worker** `https://softm-hannun-account.softm.workers.dev/account`에서 처리하며, 설정/승인되지 않은 SNS 버튼은 서버 정책에 따라 비활성화됩니다.
 - 인증 세션은 1시간 만료의 탭 세션에 보관됩니다. 개인 레시피·장보기·메모는 아직 현재 기기에만 저장되며 Cloudflare D1으로 자동 이전/동기화하지 않습니다.
 - 이전 Firebase 보관소의 백업 확인이 필요하면 사용자가 명시적으로 `?legacyAccount=1`로 접속합니다. Cloudflare와 Firebase 보관소를 동시에 활성화하지 않습니다.
-- 현재 Android WebView 래퍼는 외부 브라우저 OAuth 반환 딥링크가 없어 웹용 로그인을 자동 적용하지 않습니다. Android 인증은 별도 네이티브 핸드오프 검증이 필요합니다.
+- Android 소스에는 외부 시스템 브라우저 OAuth·일회용 코드 딥링크 복귀를 추가했습니다. 새로운 Android APK, Cloudflare Worker UI 및 정적 복귀 페이지 배포·실기기 인증 검증 전에는 Android 로그인 완료로 판정하지 않습니다. 기존 구버전 APK는 동작하지 않는 팝업을 노출하지 않습니다.
 - 프런트 구현: `assets/cloudflare-account.mjs`, UI: `softm.github.io/shared/platform/v1/account-menu.mjs`, 인증: `services/cloudflare-account/src/client.mjs`. 계정 쿠키·OAuth 비밀키는 Worker에만 둡니다.
 
 ## 실제 데이터와 제공 범위

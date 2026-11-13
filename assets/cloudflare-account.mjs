@@ -36,10 +36,11 @@ export function createFoodAccountClient({siteId}={}) {
 }
 
 export function mountFoodAccount() {
-  // App-local files and the current Android wrapper cannot receive OAuth popup handoff.
-  // Android will use a separately verified native browser/deep-link implementation.
-  if(location.protocol==='file:'||location.hostname==='appassets.androidplatform.net'||
-     navigator.userAgent.includes('FoodHannunAndroid/'))return null;
+  // An old Android APK does not have a browser-return bridge; avoid a broken WebView popup.
+  // Updated Android shells handle OAuth in the system browser and return a one-time PKCE code.
+  if(location.protocol==='file:'||location.hostname==='appassets.androidplatform.net')return null;
+  if(navigator.userAgent.includes('FoodHannunAndroid/')&&
+     typeof window.FoodHannunAndroid?.startCloudflareLogin!=='function')return null;
 
   if(new URL(location.href).searchParams.get('legacyAccount')==='1'){
     // Explicitly opt in to inspect pre-migration Firebase backups. Never mount both providers.
