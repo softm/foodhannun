@@ -3,7 +3,7 @@ on:
   pull_request:
   push:
     branches: [main]
-    paths: ['index.html','docs/COMMON-VAULT.md','.github/workflows/common-vault-check.yml']
+    paths: ['index.html','assets/cloudflare-account.mjs','assets/styles.css','privacy.html','docs/COMMON-VAULT.md','tests/**','.github/workflows/common-vault-check.yml']
 permissions:
   contents: read
 jobs:
@@ -18,4 +18,5 @@ jobs:
       - name: Existing application regression checks
         run: |
           node --check assets/app.js
-          node --test tests/*.test.js
+          node --check assets/cloudflare-account.mjs
+          node --test tests/*.test.js tests/*.test.mjs
