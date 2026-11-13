@@ -33,7 +33,16 @@
 
 검색어 예: `두부`, `달걀`, `계란찜`, `새우`, `오이`, `토마토`, `북어국`, `ㄷㅂ`.
 
-저장한 음식·메모·장보기는 계정 동기화 없이 현재 브라우저의 localStorage에 보관됩니다. 브라우저 데이터를 삭제하면 지워지며, 저장 공간 사용이 차단된 경우에는 이번 화면에서만 유지됩니다. 장보기에는 담을 당시 재료와 분량을 보관합니다.
+저장한 음식·메모·장보기는 현재 브라우저의 localStorage에 보관됩니다. 브라우저 데이터를 삭제하면 지워지며, 저장 공간 사용이 차단된 경우에는 이번 화면에서만 유지됩니다. 장보기에는 담을 당시 재료와 분량을 보관합니다. Cloudflare 로그인은 계정 식별만 제공하며 이 자료를 자동 동기화하지 않습니다.
+
+## Cloudflare 로그인·회원가입 (2026-11-13)
+
+- 상단의 사람 아이콘을 누르면 공통 계정 메뉴가 표시됩니다. 로그인 전에는 **로그인·회원가입**, 로그인 후에는 SNS 프로필 사진(없을 때 첫 글자), **계정 관리·로그아웃**이 표시됩니다.
+- Google·카카오·네이버 선택 및 신규 회원가입 동의는 **Cloudflare Worker** `https://softm-hannun-account.softm.workers.dev/account`에서 처리하며, 설정/승인되지 않은 SNS 버튼은 서버 정책에 따라 비활성화됩니다.
+- 인증 세션은 1시간 만료의 탭 세션에 보관됩니다. 개인 레시피·장보기·메모는 아직 현재 기기에만 저장되며 Cloudflare D1으로 자동 이전/동기화하지 않습니다.
+- 이전 Firebase 보관소의 백업 확인이 필요하면 사용자가 명시적으로 `?legacyAccount=1`로 접속합니다. Cloudflare와 Firebase 보관소를 동시에 활성화하지 않습니다.
+- 현재 Android WebView 래퍼는 외부 브라우저 OAuth 반환 딥링크가 없어 웹용 로그인을 자동 적용하지 않습니다. Android 인증은 별도 네이티브 핸드오프 검증이 필요합니다.
+- 프런트 구현: `assets/cloudflare-account.mjs`, UI: `softm.github.io/shared/platform/v1/account-menu.mjs`, 인증: `services/cloudflare-account/src/client.mjs`. 계정 쿠키·OAuth 비밀키는 Worker에만 둡니다.
 
 ## 실제 데이터와 제공 범위
 
