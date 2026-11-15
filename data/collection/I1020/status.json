@@ -2,9 +2,9 @@
   "id": "I1020",
   "name": "식품원재료 정보",
   "status": "complete",
-  "count": 24893,
+  "count": 24894,
   "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I1020",
-  "attemptedAt": "2026-11-08T23:18:58+00:00",
+  "attemptedAt": "2026-11-15T23:40:10+00:00",
   "sourceFields": [
     "ENG_NM",
     "LCLAS_NM",
@@ -17,18 +17,18 @@
     "USE_CND_NM",
     "USE_CND_STDR_CN"
   ],
-  "sourceTotal": 24893,
-  "apiTotal": 24893,
+  "sourceTotal": 24894,
+  "apiTotal": 24894,
   "bulkContentType": "application/gzip",
-  "sourceLastModified": "Sun, 08 Nov 2026 15:13:30 GMT",
-  "bulkBytes": 607388,
-  "originalSha256": "6454de776872d736490a031da70b09ffeb0f2d0f04ceeac8fc33e474a55e0b0e",
+  "sourceLastModified": "Sun, 15 Nov 2026 15:10:15 GMT",
+  "bulkBytes": 607394,
+  "originalSha256": "6f3cf7bfe388f675b8efe7e24772bc7cb8753af5e51124adc98e1976f75e1bf9",
   "originalFile": "source-original.gz",
   "bulkPrefixHex": "1f8b0800000000000000ecbd6b6f1c47",
   "method": "official-bulk-file",
   "countBasis": "official-file-row-count",
-  "fetchedAt": "2026-11-08T23:19:15+00:00",
-  "uniqueRecords": 24893,
+  "fetchedAt": "2026-11-15T23:40:26+00:00",
+  "uniqueRecords": 24894,
   "chunks": [
     {
       "path": "records-0000.jsonl.gz",
@@ -40,14 +40,14 @@
       "path": "records-0001.jsonl.gz",
       "count": 10000,
       "bytes": 360291,
-      "sha256": "af922b7ad7beef74de2c32a42d3fd7e03dcd5495d1888d17f1ac95ec485fec7f"
+      "sha256": "ef20b1d8de76df8b52e6c88b77481726dd4308530678811e5e465566ac11ff6f"
     },
     {
       "path": "records-0002.jsonl.gz",
-      "count": 4893,
-      "bytes": 58934,
-      "sha256": "121e77b7d2f726151af07cfb38e97047c7d25d2ba138b16985e12b06527d4fd9"
+      "count": 4894,
+      "bytes": 58948,
+      "sha256": "201e0d36393a604232883262f2e5d26ad659bccd52c3e4d4a4edd82e26d3aa82"
     }
   ],
-  "bytes": 671808
+  "bytes": 671822
 }
