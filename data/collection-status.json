@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-16T09:41:25+00:00",
-  "totalCollectedRecords": 2898347,
+  "generatedAt": "2026-11-16T20:28:48+00:00",
+  "totalCollectedRecords": 2898348,
   "completeDatasets": 11,
   "nutritionRecords": 354551,
   "datasets": [
@@ -3097,9 +3097,9 @@
       "id": "I0490",
       "name": "회수·판매중지 정보",
       "status": "complete",
-      "count": 388,
+      "count": 389,
       "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490",
-      "attemptedAt": "2026-11-16T09:40:52+00:00",
+      "attemptedAt": "2026-11-16T20:28:20+00:00",
       "sourceFields": [
         "ADDR",
         "BRCDNO",
@@ -3121,30 +3121,21 @@
         "RTRVL_GRDCD_NM",
         "TELNO"
       ],
-      "sourceTotal": 388,
-      "apiTotal": 388,
-      "bulkContentType": "application/gzip",
-      "sourceLastModified": "Sun, 15 Nov 2026 15:09:19 GMT",
-      "bulkBytes": 44638,
-      "originalSha256": "14b78e71c2c3b487e9f22b6439dd125135b83cca9a29eab5217d4330a1d56748",
-      "originalFile": "source-original.gz",
-      "bulkPrefixHex": "1f8b0800000000000000ecbd5b735b57",
-      "method": "official-bulk-file",
-      "countBasis": "official-file-row-count",
-      "fetchedAt": "2026-11-16T09:40:59+00:00",
-      "uniqueRecords": 388,
+      "sourceTotal": 389,
+      "apiTotal": 389,
+      "method": "official-paginated-full",
+      "countBasis": "api-row-count",
+      "fetchedAt": "2026-11-16T20:28:24+00:00",
+      "uniqueRecords": 389,
       "chunks": [
         {
           "path": "records-0000.jsonl.gz",
-          "count": 388,
-          "bytes": 48105,
-          "sha256": "969cf29a6479d428267893550066eedbee041101ab2e98d7938a4f7ee8c0a497"
+          "count": 389,
+          "bytes": 48159,
+          "sha256": "f667822620b15908829a21befca8498882e47ecc478b5e7906d6b93d7c56800e"
         }
       ],
-      "bytes": 48105,
-      "apiPageAttemptStatus": "failed",
-      "apiPageAttemptReason": "원본 388건 / 수집 389건 불일치",
-      "freshnessNote": "실시간 API 전체 건수 대조 실패로 공식 전체파일 기준 조회. 원본 388건 / 수집 389건 불일치"
+      "bytes": 48159
     },
     {
       "id": "I0580",
@@ -4083,8 +4074,8 @@
     "linksPath": "data/food-links.json.gz"
   },
   "officialSourceIntegration": {
-    "sourceRecords": 2542640,
-    "indexedRecords": 2542640,
+    "sourceRecords": 2542641,
+    "indexedRecords": 2542641,
     "lookupPointers": 2942570
   },
   "automation": {
@@ -4151,20 +4142,18 @@
     "runs": {
       "recalls": {
         "mode": "recalls",
-        "status": "warning",
-        "startedAt": "2026-11-16T09:40:48+00:00",
-        "completedAt": "2026-11-16T09:41:25+00:00",
+        "status": "success",
+        "startedAt": "2026-11-16T20:28:20+00:00",
+        "completedAt": "2026-11-16T20:28:48+00:00",
         "services": [
           "I0490"
         ],
         "failedServices": [],
-        "bulkFallbackServices": [
-          "I0490"
-        ],
+        "bulkFallbackServices": [],
         "error": null,
-        "runId": "43841541675",
-        "runUrl": "https://github.com/softm/foodhannun/actions/runs/43841541675",
-        "lastSuccessAt": "2026-11-16T09:41:25+00:00"
+        "runId": "43949850604",
+        "runUrl": "https://github.com/softm/foodhannun/actions/runs/43949850604",
+        "lastSuccessAt": "2026-11-16T20:28:48+00:00"
       },
       "daily": {
         "mode": "daily",

@@ -3,20 +3,18 @@
   "runs": {
     "recalls": {
       "mode": "recalls",
-      "status": "warning",
-      "startedAt": "2026-11-16T09:40:48+00:00",
-      "completedAt": "2026-11-16T09:41:25+00:00",
+      "status": "success",
+      "startedAt": "2026-11-16T20:28:20+00:00",
+      "completedAt": "2026-11-16T20:28:48+00:00",
       "services": [
         "I0490"
       ],
       "failedServices": [],
-      "bulkFallbackServices": [
-        "I0490"
-      ],
+      "bulkFallbackServices": [],
       "error": null,
-      "runId": "43841541675",
-      "runUrl": "https://github.com/softm/foodhannun/actions/runs/43841541675",
-      "lastSuccessAt": "2026-11-16T09:41:25+00:00"
+      "runId": "43949850604",
+      "runUrl": "https://github.com/softm/foodhannun/actions/runs/43949850604",
+      "lastSuccessAt": "2026-11-16T20:28:48+00:00"
     },
     "daily": {
       "mode": "daily",
