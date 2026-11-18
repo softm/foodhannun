@@ -2,9 +2,9 @@
   "id": "I0490",
   "name": "회수·판매중지 정보",
   "status": "complete",
-  "count": 389,
+  "count": 390,
   "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490",
-  "attemptedAt": "2026-11-18T04:18:56+00:00",
+  "attemptedAt": "2026-11-18T13:57:25+00:00",
   "sourceFields": [
     "ADDR",
     "BRCDNO",
@@ -26,19 +26,19 @@
     "RTRVL_GRDCD_NM",
     "TELNO"
   ],
-  "sourceTotal": 389,
-  "apiTotal": 389,
+  "sourceTotal": 390,
+  "apiTotal": 390,
   "method": "official-paginated-full",
   "countBasis": "api-row-count",
-  "fetchedAt": "2026-11-18T04:19:01+00:00",
-  "uniqueRecords": 389,
+  "fetchedAt": "2026-11-18T13:57:30+00:00",
+  "uniqueRecords": 390,
   "chunks": [
     {
       "path": "records-0000.jsonl.gz",
-      "count": 389,
-      "bytes": 48252,
-      "sha256": "f622ebcd18213af52b00af2c717cd7ae7ed3d578394d1ea00dee704a969e571e"
+      "count": 390,
+      "bytes": 48438,
+      "sha256": "be519008015c22bb2021fd7b5bf2d8e2a72b29f402851ccc4a8243c4e514c8b9"
     }
   ],
-  "bytes": 48252
+  "bytes": 48438
 }
