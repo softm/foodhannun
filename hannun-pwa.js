@@ -9,7 +9,6 @@ function hannunInstallPlatform(){
 }
 
 function hannunInstallSteps(){
- if(hannunInstallPrompt)return ['아래 설치 버튼을 누릅니다.','브라우저 설치 확인창에서 설치를 선택합니다.'];
  if(hannunInstallPlatform()==='ios')return ['이 페이지를 Safari에서 엽니다.','공유 버튼을 누릅니다.','홈 화면에 추가를 선택한 뒤 추가를 누릅니다.'];
  if(hannunInstallPlatform()==='android')return ['브라우저 오른쪽 위 메뉴를 누릅니다.','앱 설치, 설치 및 바로가기 만들기 또는 홈 화면에 추가를 선택합니다.'];
  return ['주소창 오른쪽의 설치 아이콘을 누릅니다.','아이콘이 없으면 브라우저 메뉴에서 앱 설치를 선택합니다.'];
@@ -27,15 +26,13 @@ async function hannunRequestInstall(){
  if(!hannunInstallPrompt){hannunOpenInstallGuide();return;}
  const prompt=hannunInstallPrompt;hannunInstallPrompt=null;
  await prompt.prompt();
- const choice=await prompt.userChoice.catch(()=>({outcome:'dismissed'}));
- if(choice.outcome==='accepted')document.getElementById('hannun-pwa-dialog')?.close();
- else hannunOpenInstallGuide();
+ await prompt.userChoice.catch(()=>({outcome:'dismissed'}));
 }
 
 function hannunMountInstallUI(){
  if(hannunStandalone||hannunNative)return;
  const name=document.querySelector('meta[name="application-name"]')?.content||document.title.split(/[|·—]/)[0].trim()||'한눈서비스';
- document.body.insertAdjacentHTML('beforeend',`<button type="button" id="hannun-pwa-install" class="hannun-pwa-install">앱 설치</button><dialog id="hannun-pwa-dialog" class="hannun-pwa-dialog" aria-labelledby="hannun-pwa-title"><button type="button" class="hannun-pwa-close" aria-label="설치 안내 닫기">×</button><span class="hannun-pwa-eyebrow">INSTALL WEB APP</span><h2 id="hannun-pwa-title">${name}을 홈 화면에 설치하세요.</h2><p>APK를 내려받지 않고 현재 웹 서비스를 앱처럼 설치합니다.</p><ol id="hannun-pwa-steps"></ol><button type="button" id="hannun-pwa-action" class="hannun-pwa-action">${name} 설치</button></dialog>`);
+ document.body.insertAdjacentHTML('beforeend',`<button type="button" id="hannun-pwa-install" class="hannun-pwa-install" aria-label="${name}을 홈 화면에 추가"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14"/></svg><span>홈 화면에 추가</span></button><dialog id="hannun-pwa-dialog" class="hannun-pwa-dialog" aria-labelledby="hannun-pwa-title"><button type="button" class="hannun-pwa-close" aria-label="안내 닫기">×</button><span class="hannun-pwa-eyebrow">ADD TO HOME SCREEN</span><h2 id="hannun-pwa-title">${name}을 홈 화면에 추가</h2><p>홈 화면에서 한 번에 열고, 브라우저 화면 없이 사용할 수 있어요.</p><ol id="hannun-pwa-steps"></ol><button type="button" id="hannun-pwa-action" class="hannun-pwa-action">홈 화면에 추가</button></dialog>`);
  document.getElementById('hannun-pwa-install').addEventListener('click',hannunRequestInstall);
  document.getElementById('hannun-pwa-action').addEventListener('click',hannunRequestInstall);
  document.querySelector('.hannun-pwa-close').addEventListener('click',()=>document.getElementById('hannun-pwa-dialog').close());
