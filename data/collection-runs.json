@@ -51,8 +51,8 @@
     "weekly": {
       "mode": "weekly",
       "status": "success",
-      "startedAt": "2026-11-15T23:40:10+00:00",
-      "completedAt": "2026-11-15T23:41:22+00:00",
+      "startedAt": "2026-11-23T00:32:57+00:00",
+      "completedAt": "2026-11-23T00:34:03+00:00",
       "services": [
         "I1020",
         "I2520"
@@ -60,9 +60,9 @@
       "failedServices": [],
       "bulkFallbackServices": [],
       "error": null,
-      "runId": "43775922506",
-      "runUrl": "https://github.com/softm/foodhannun/actions/runs/43775922506",
-      "lastSuccessAt": "2026-11-15T23:41:22+00:00"
+      "runId": "45089315622",
+      "runUrl": "https://github.com/softm/foodhannun/actions/runs/45089315622",
+      "lastSuccessAt": "2026-11-23T00:34:03+00:00"
     },
     "nutrition": {
       "mode": "nutrition",

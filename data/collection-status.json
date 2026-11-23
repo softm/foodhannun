@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-23T00:03:39+00:00",
-  "totalCollectedRecords": 2900104,
+  "generatedAt": "2026-11-23T00:34:03+00:00",
+  "totalCollectedRecords": 2900108,
   "completeDatasets": 11,
   "nutritionRecords": 354551,
   "datasets": [
@@ -3203,9 +3203,9 @@
       "id": "I1020",
       "name": "식품원재료 정보",
       "status": "complete",
-      "count": 24894,
+      "count": 24895,
       "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I1020",
-      "attemptedAt": "2026-11-15T23:40:10+00:00",
+      "attemptedAt": "2026-11-23T00:32:57+00:00",
       "sourceFields": [
         "ENG_NM",
         "LCLAS_NM",
@@ -3218,39 +3218,39 @@
         "USE_CND_NM",
         "USE_CND_STDR_CN"
       ],
-      "sourceTotal": 24894,
-      "apiTotal": 24894,
+      "sourceTotal": 24895,
+      "apiTotal": 24895,
       "bulkContentType": "application/gzip",
-      "sourceLastModified": "Sun, 15 Nov 2026 15:10:15 GMT",
-      "bulkBytes": 607394,
-      "originalSha256": "6f3cf7bfe388f675b8efe7e24772bc7cb8753af5e51124adc98e1976f75e1bf9",
+      "sourceLastModified": "Sun, 22 Nov 2026 15:14:01 GMT",
+      "bulkBytes": 607468,
+      "originalSha256": "43fec7fd43e5081a643072b5017c3c22c6240e5a8f8ebbf78027963d71ac13fc",
       "originalFile": "source-original.gz",
       "bulkPrefixHex": "1f8b0800000000000000ecbd6b6f1c47",
       "method": "official-bulk-file",
       "countBasis": "official-file-row-count",
-      "fetchedAt": "2026-11-15T23:40:26+00:00",
-      "uniqueRecords": 24894,
+      "fetchedAt": "2026-11-23T00:33:16+00:00",
+      "uniqueRecords": 24895,
       "chunks": [
         {
           "path": "records-0000.jsonl.gz",
           "count": 10000,
-          "bytes": 252583,
-          "sha256": "3eeb35b187d7a9da468bbe92aad199f0391e89d7b0ce8d423d07a469f20a83a1"
+          "bytes": 252533,
+          "sha256": "845c91dd4d6d00d28331605402fc021d23645778fc7dc4c6f15e5cebf1fa3225"
         },
         {
           "path": "records-0001.jsonl.gz",
           "count": 10000,
-          "bytes": 360291,
-          "sha256": "ef20b1d8de76df8b52e6c88b77481726dd4308530678811e5e465566ac11ff6f"
+          "bytes": 360399,
+          "sha256": "9ed2b57dcf1f12057296a3126ccdde52f0be322d689f0f54ef7b6befd03c82a3"
         },
         {
           "path": "records-0002.jsonl.gz",
-          "count": 4894,
-          "bytes": 58948,
-          "sha256": "201e0d36393a604232883262f2e5d26ad659bccd52c3e4d4a4edd82e26d3aa82"
+          "count": 4895,
+          "bytes": 58968,
+          "sha256": "d5604d2027e7cef2430de9a84b941dcbf2b30bc0feb602d9e0e93797056123cc"
         }
       ],
-      "bytes": 671822
+      "bytes": 671900
     },
     {
       "id": "I1250",
@@ -3953,9 +3953,9 @@
       "id": "I2520",
       "name": "식품원재료코드",
       "status": "complete",
-      "count": 43636,
+      "count": 43639,
       "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I2520",
-      "attemptedAt": "2026-11-15T23:40:29+00:00",
+      "attemptedAt": "2026-11-23T00:33:19+00:00",
       "sourceFields": [
         "ENG_NM",
         "LAST_UPDT_DTM",
@@ -3975,18 +3975,18 @@
         "VALD_BGN_DT",
         "VALD_END_DT"
       ],
-      "sourceTotal": 43636,
-      "apiTotal": 43636,
+      "sourceTotal": 43639,
+      "apiTotal": 43639,
       "bulkContentType": "application/gzip",
-      "sourceLastModified": "Sun, 15 Nov 2026 15:27:16 GMT",
-      "bulkBytes": 1350292,
-      "originalSha256": "5c43b4b0ee294a5f25c428921018a48516fad2cbe4f8e38083cd38bbf409faf4",
+      "sourceLastModified": "Sun, 22 Nov 2026 15:28:49 GMT",
+      "bulkBytes": 1350548,
+      "originalSha256": "19dcf05c49e4beccaf7387c4a0a3c17ea840310d2a41f83c248ff488da53d996",
       "originalFile": "source-original.gz",
       "bulkPrefixHex": "1f8b0800000000000000e4bd6b731cd7",
       "method": "official-bulk-file",
       "countBasis": "official-file-row-count",
-      "fetchedAt": "2026-11-15T23:40:49+00:00",
-      "uniqueRecords": 43636,
+      "fetchedAt": "2026-11-23T00:33:37+00:00",
+      "uniqueRecords": 43639,
       "chunks": [
         {
           "path": "records-0000.jsonl.gz",
@@ -3997,29 +3997,29 @@
         {
           "path": "records-0001.jsonl.gz",
           "count": 10000,
-          "bytes": 407723,
-          "sha256": "7cb950d92c01b2ee9c0b1c5052b2e3d2160cb5aeee24b666a67eb4d8d876e7bf"
+          "bytes": 407703,
+          "sha256": "a55662a70562663c1e927682ec8ce236525d7a22281417523f2c0e2a59eb2655"
         },
         {
           "path": "records-0002.jsonl.gz",
           "count": 10000,
-          "bytes": 472798,
-          "sha256": "f2b8b4eb3ae6d109b0f2d43816535e40aae2fbf2050ab08682a7ea2f393dd3c4"
+          "bytes": 473123,
+          "sha256": "c84eca3392e779e686272702f3e90568105fdc9e58fba3b91fded38215266c55"
         },
         {
           "path": "records-0003.jsonl.gz",
           "count": 10000,
-          "bytes": 175583,
-          "sha256": "caa343ffdfe98e91eb909c3cc44a7a2ab0c3c64b50dfe8268f5c441dbfbd5196"
+          "bytes": 175538,
+          "sha256": "7c6fa6434a3b0908973de7020830203448c156b3749728d2eb96f2076cbcb309"
         },
         {
           "path": "records-0004.jsonl.gz",
-          "count": 3636,
-          "bytes": 68953,
-          "sha256": "d58ab63cffde13562ce56f1ca1f35ec5937a3ea7436cdbf621b564fb958f53a0"
+          "count": 3639,
+          "bytes": 69041,
+          "sha256": "7477985175156ad6cbcfcec8bb98cad61cea0819cba1a5449325c9c1a36bddf4"
         }
       ],
-      "bytes": 1497694
+      "bytes": 1498042
     },
     {
       "id": "rda",
@@ -4074,9 +4074,9 @@
     "linksPath": "data/food-links.json.gz"
   },
   "officialSourceIntegration": {
-    "sourceRecords": 2544397,
-    "indexedRecords": 2544397,
-    "lookupPointers": 2944324
+    "sourceRecords": 2544401,
+    "indexedRecords": 2544401,
+    "lookupPointers": 2944334
   },
   "automation": {
     "timeZone": "Asia/Seoul",
@@ -4190,8 +4190,8 @@
       "weekly": {
         "mode": "weekly",
         "status": "success",
-        "startedAt": "2026-11-15T23:40:10+00:00",
-        "completedAt": "2026-11-15T23:41:22+00:00",
+        "startedAt": "2026-11-23T00:32:57+00:00",
+        "completedAt": "2026-11-23T00:34:03+00:00",
         "services": [
           "I1020",
           "I2520"
@@ -4199,9 +4199,9 @@
         "failedServices": [],
         "bulkFallbackServices": [],
         "error": null,
-        "runId": "43775922506",
-        "runUrl": "https://github.com/softm/foodhannun/actions/runs/43775922506",
-        "lastSuccessAt": "2026-11-15T23:41:22+00:00"
+        "runId": "45089315622",
+        "runUrl": "https://github.com/softm/foodhannun/actions/runs/45089315622",
+        "lastSuccessAt": "2026-11-23T00:34:03+00:00"
       },
       "nutrition": {
         "mode": "nutrition",

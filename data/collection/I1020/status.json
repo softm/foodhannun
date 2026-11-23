@@ -2,9 +2,9 @@
   "id": "I1020",
   "name": "식품원재료 정보",
   "status": "complete",
-  "count": 24894,
+  "count": 24895,
   "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I1020",
-  "attemptedAt": "2026-11-15T23:40:10+00:00",
+  "attemptedAt": "2026-11-23T00:32:57+00:00",
   "sourceFields": [
     "ENG_NM",
     "LCLAS_NM",
@@ -17,37 +17,37 @@
     "USE_CND_NM",
     "USE_CND_STDR_CN"
   ],
-  "sourceTotal": 24894,
-  "apiTotal": 24894,
+  "sourceTotal": 24895,
+  "apiTotal": 24895,
   "bulkContentType": "application/gzip",
-  "sourceLastModified": "Sun, 15 Nov 2026 15:10:15 GMT",
-  "bulkBytes": 607394,
-  "originalSha256": "6f3cf7bfe388f675b8efe7e24772bc7cb8753af5e51124adc98e1976f75e1bf9",
+  "sourceLastModified": "Sun, 22 Nov 2026 15:14:01 GMT",
+  "bulkBytes": 607468,
+  "originalSha256": "43fec7fd43e5081a643072b5017c3c22c6240e5a8f8ebbf78027963d71ac13fc",
   "originalFile": "source-original.gz",
   "bulkPrefixHex": "1f8b0800000000000000ecbd6b6f1c47",
   "method": "official-bulk-file",
   "countBasis": "official-file-row-count",
-  "fetchedAt": "2026-11-15T23:40:26+00:00",
-  "uniqueRecords": 24894,
+  "fetchedAt": "2026-11-23T00:33:16+00:00",
+  "uniqueRecords": 24895,
   "chunks": [
     {
       "path": "records-0000.jsonl.gz",
       "count": 10000,
-      "bytes": 252583,
-      "sha256": "3eeb35b187d7a9da468bbe92aad199f0391e89d7b0ce8d423d07a469f20a83a1"
+      "bytes": 252533,
+      "sha256": "845c91dd4d6d00d28331605402fc021d23645778fc7dc4c6f15e5cebf1fa3225"
     },
     {
       "path": "records-0001.jsonl.gz",
       "count": 10000,
-      "bytes": 360291,
-      "sha256": "ef20b1d8de76df8b52e6c88b77481726dd4308530678811e5e465566ac11ff6f"
+      "bytes": 360399,
+      "sha256": "9ed2b57dcf1f12057296a3126ccdde52f0be322d689f0f54ef7b6befd03c82a3"
     },
     {
       "path": "records-0002.jsonl.gz",
-      "count": 4894,
-      "bytes": 58948,
-      "sha256": "201e0d36393a604232883262f2e5d26ad659bccd52c3e4d4a4edd82e26d3aa82"
+      "count": 4895,
+      "bytes": 58968,
+      "sha256": "d5604d2027e7cef2430de9a84b941dcbf2b30bc0feb602d9e0e93797056123cc"
     }
   ],
-  "bytes": 671822
+  "bytes": 671900
 }
