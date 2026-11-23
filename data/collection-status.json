@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T01:47:45+00:00",
+  "generatedAt": "2026-11-23T09:01:35+00:00",
   "totalCollectedRecords": 2900108,
   "completeDatasets": 11,
   "nutritionRecords": 354551,
@@ -3099,7 +3099,7 @@
       "status": "complete",
       "count": 389,
       "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490",
-      "attemptedAt": "2026-11-23T00:51:25+00:00",
+      "attemptedAt": "2026-11-23T09:01:13+00:00",
       "sourceFields": [
         "ADDR",
         "BRCDNO",
@@ -3123,9 +3123,15 @@
       ],
       "sourceTotal": 389,
       "apiTotal": 389,
-      "method": "official-paginated-full",
-      "countBasis": "api-row-count",
-      "fetchedAt": "2026-11-23T00:51:29+00:00",
+      "bulkContentType": "application/gzip",
+      "sourceLastModified": "Sun, 22 Nov 2026 15:13:04 GMT",
+      "bulkBytes": 44772,
+      "originalSha256": "731e04dc38556f03e25288de3b508b71fd3d0b60b4fb62c35b3ed9b657f289c8",
+      "originalFile": "source-original.gz",
+      "bulkPrefixHex": "1f8b0800000000000000ecbd6d731b57",
+      "method": "official-bulk-file",
+      "countBasis": "official-file-row-count",
+      "fetchedAt": "2026-11-23T09:01:23+00:00",
       "uniqueRecords": 389,
       "chunks": [
         {
@@ -3135,7 +3141,10 @@
           "sha256": "151303c1edfab54c45c6cf823f43ff2295a61ade6a2390eb42d16e5c23f706a6"
         }
       ],
-      "bytes": 48295
+      "bytes": 48295,
+      "apiPageAttemptStatus": "failed",
+      "apiPageAttemptReason": "원본 389건 / 수집 390건 불일치",
+      "freshnessNote": "실시간 API 전체 건수 대조 실패로 공식 전체파일 기준 조회. 원본 389건 / 수집 390건 불일치"
     },
     {
       "id": "I0580",
@@ -4142,18 +4151,20 @@
     "runs": {
       "recalls": {
         "mode": "recalls",
-        "status": "success",
-        "startedAt": "2026-11-23T00:51:25+00:00",
-        "completedAt": "2026-11-23T00:51:38+00:00",
+        "status": "warning",
+        "startedAt": "2026-11-23T09:01:08+00:00",
+        "completedAt": "2026-11-23T09:01:35+00:00",
         "services": [
           "I0490"
         ],
         "failedServices": [],
-        "bulkFallbackServices": [],
+        "bulkFallbackServices": [
+          "I0490"
+        ],
         "error": null,
-        "runId": "45091057011",
-        "runUrl": "https://github.com/softm/foodhannun/actions/runs/45091057011",
-        "lastSuccessAt": "2026-11-23T00:51:38+00:00"
+        "runId": "45143111669",
+        "runUrl": "https://github.com/softm/foodhannun/actions/runs/45143111669",
+        "lastSuccessAt": "2026-11-23T09:01:35+00:00"
       },
       "daily": {
         "mode": "daily",
