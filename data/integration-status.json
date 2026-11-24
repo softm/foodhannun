@@ -7,7 +7,7 @@
     "withoutCandidates": 759,
     "shownCandidates": 1284
   },
-  "recipeSha256": "afb855abe2c9a45c9c739583448338bb733d4b2ea25b717ab09c724ff46322db",
+  "recipeSha256": "2367d0f01387ea410e6a2509b714f3a103ca30bd0c9770a07e8a5dc511070738",
   "foodIndexSha256": "0d30bf6c87dfa917514b98b4914ee4ff88fc39d50183e9977d0976eeb3ee895e",
   "rules": [
     "이름 일치·별칭 일치·가장 구체적인 음식명 포함 후보를 구분",

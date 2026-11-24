@@ -36,17 +36,17 @@
     "recipes": {
       "mode": "recipes",
       "status": "success",
-      "startedAt": "2026-11-23T01:47:27+00:00",
-      "completedAt": "2026-11-23T01:47:45+00:00",
+      "startedAt": "2026-11-24T05:22:02+00:00",
+      "completedAt": "2026-11-24T05:22:20+00:00",
       "services": [
         "COOKRCP01"
       ],
       "failedServices": [],
       "bulkFallbackServices": [],
       "error": null,
-      "runId": "45096413531",
-      "runUrl": "https://github.com/softm/foodhannun/actions/runs/45096413531",
-      "lastSuccessAt": "2026-11-23T01:47:45+00:00"
+      "runId": "45332688004",
+      "runUrl": "https://github.com/softm/foodhannun/actions/runs/45332688004",
+      "lastSuccessAt": "2026-11-24T05:22:20+00:00"
     },
     "weekly": {
       "mode": "weekly",
