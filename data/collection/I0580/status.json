@@ -4,7 +4,7 @@
   "status": "complete",
   "count": 26090,
   "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0580",
-  "attemptedAt": "2026-11-25T02:55:21+00:00",
+  "attemptedAt": "2026-11-26T02:04:01+00:00",
   "sourceFields": [
     "ASGN_CANCL_DT",
     "BSSH_NM",
@@ -21,37 +21,37 @@
     "SITE_ADDR"
   ],
   "sourceTotal": 26090,
-  "apiTotal": 26096,
+  "apiTotal": 26107,
   "bulkContentType": "application/gzip",
-  "sourceLastModified": "Tue, 24 Nov 2026 15:10:09 GMT",
-  "bulkBytes": 871085,
-  "originalSha256": "a2d05bc09bacac303c74d2a78c8e37ebe3038eb47c64eb61271c530d0059aedc",
+  "sourceLastModified": "Wed, 25 Nov 2026 15:09:23 GMT",
+  "bulkBytes": 870774,
+  "originalSha256": "5fed3784fae82bdd4590bb03ce86690bdecf91fe0c650474da94d3b44a65f7ec",
   "originalFile": "source-original.gz",
-  "bulkPrefixHex": "1f8b0800000000000000dcbd5b6f1c49",
+  "bulkPrefixHex": "1f8b0800000000000000e4bd5b6f1c57",
   "method": "official-bulk-file",
-  "countNote": "공식 전체파일 26,090행 / 실시간 API 26,096건으로 건수가 다릅니다. 전체파일 기준 수집.",
+  "countNote": "공식 전체파일 26,090행 / 실시간 API 26,107건으로 건수가 다릅니다. 전체파일 기준 수집.",
   "countBasis": "official-file-row-count",
-  "fetchedAt": "2026-11-25T02:55:40+00:00",
+  "fetchedAt": "2026-11-26T02:04:20+00:00",
   "uniqueRecords": 26090,
   "chunks": [
     {
       "path": "records-0000.jsonl.gz",
       "count": 10000,
-      "bytes": 377124,
-      "sha256": "b05171af719d05538207f44851b41f20f0659f57a4d6dcfefe4bb39eb2e9576d"
+      "bytes": 377331,
+      "sha256": "eec5d84ecd8cb2af76b67094e21218fc371d1d92505b8349026d1666d879f3ba"
     },
     {
       "path": "records-0001.jsonl.gz",
       "count": 10000,
-      "bytes": 398451,
-      "sha256": "7f2b7c1cb1632403c0d90def10b57e31fcae4fd9745c3033c53477ffad11d871"
+      "bytes": 398557,
+      "sha256": "617c727c96d5d3b92f92a983998d85de6a4786fdb38ad05d8dfc26263974e0ac"
     },
     {
       "path": "records-0002.jsonl.gz",
       "count": 6090,
-      "bytes": 243271,
-      "sha256": "80fdad9fdebae54c6ce3714f494589953fb034b74235c55f6c1ddce2012cc7f9"
+      "bytes": 242998,
+      "sha256": "9d4b67ef9744e7f90f0c86810c982ab4db2756bb2e65634a3087b48c37e69990"
     }
   ],
-  "bytes": 1018846
+  "bytes": 1018886
 }
