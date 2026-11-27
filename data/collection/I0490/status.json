@@ -4,7 +4,7 @@
   "status": "complete",
   "count": 388,
   "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0490",
-  "attemptedAt": "2026-11-26T23:52:08+00:00",
+  "attemptedAt": "2026-11-27T08:27:50+00:00",
   "sourceFields": [
     "ADDR",
     "BRCDNO",
@@ -27,10 +27,17 @@
     "TELNO"
   ],
   "sourceTotal": 388,
-  "apiTotal": 388,
-  "method": "official-paginated-full",
-  "countBasis": "api-row-count",
-  "fetchedAt": "2026-11-26T23:52:12+00:00",
+  "apiTotal": 391,
+  "bulkContentType": "application/gzip",
+  "sourceLastModified": "Thu, 26 Nov 2026 15:09:22 GMT",
+  "bulkBytes": 44871,
+  "originalSha256": "3a588a7468dcb4a2ae793c64b8c4ed906f2b5b309df885407e322de29b0c508c",
+  "originalFile": "source-original.gz",
+  "bulkPrefixHex": "1f8b0800000000000000ecbd6d735b57",
+  "method": "official-bulk-file",
+  "countNote": "공식 전체파일 388행 / 실시간 API 391건으로 건수가 다릅니다. 전체파일 기준 수집.",
+  "countBasis": "official-file-row-count",
+  "fetchedAt": "2026-11-27T08:28:00+00:00",
   "uniqueRecords": 388,
   "chunks": [
     {
@@ -40,5 +47,8 @@
       "sha256": "d174dc8993b5b0fc5b3ccea67693e3dbfcc5d71c5fa6a1c3cd372f0498b1182d"
     }
   ],
-  "bytes": 48303
+  "bytes": 48303,
+  "apiPageAttemptStatus": "failed",
+  "apiPageAttemptReason": "원본 391건 / 수집 392건 불일치",
+  "freshnessNote": "실시간 API 전체 건수 대조 실패로 공식 전체파일 기준 조회. 원본 391건 / 수집 392건 불일치"
 }
