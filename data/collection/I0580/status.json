@@ -2,9 +2,9 @@
   "id": "I0580",
   "name": "HACCP 적용업소 지정 현황",
   "status": "complete",
-  "count": 26090,
+  "count": 26093,
   "sourceUrl": "https://www.foodsafetykorea.go.kr/api/openApiInfo.do?svc_no=I0580",
-  "attemptedAt": "2026-11-26T02:04:01+00:00",
+  "attemptedAt": "2026-11-27T02:02:54+00:00",
   "sourceFields": [
     "ASGN_CANCL_DT",
     "BSSH_NM",
@@ -20,38 +20,38 @@
     "PRSDNT_NM",
     "SITE_ADDR"
   ],
-  "sourceTotal": 26090,
-  "apiTotal": 26107,
+  "sourceTotal": 26093,
+  "apiTotal": 26097,
   "bulkContentType": "application/gzip",
-  "sourceLastModified": "Wed, 25 Nov 2026 15:09:23 GMT",
-  "bulkBytes": 870774,
-  "originalSha256": "5fed3784fae82bdd4590bb03ce86690bdecf91fe0c650474da94d3b44a65f7ec",
+  "sourceLastModified": "Thu, 26 Nov 2026 15:09:26 GMT",
+  "bulkBytes": 871295,
+  "originalSha256": "b0d0d26342507215549d7bb31003be292ff38f258d8b5e05e35b6717b2835a02",
   "originalFile": "source-original.gz",
-  "bulkPrefixHex": "1f8b0800000000000000e4bd5b6f1c57",
+  "bulkPrefixHex": "1f8b0800000000000000e4bd5f6f1b59",
   "method": "official-bulk-file",
-  "countNote": "공식 전체파일 26,090행 / 실시간 API 26,107건으로 건수가 다릅니다. 전체파일 기준 수집.",
+  "countNote": "공식 전체파일 26,093행 / 실시간 API 26,097건으로 건수가 다릅니다. 전체파일 기준 수집.",
   "countBasis": "official-file-row-count",
-  "fetchedAt": "2026-11-26T02:04:20+00:00",
-  "uniqueRecords": 26090,
+  "fetchedAt": "2026-11-27T02:03:10+00:00",
+  "uniqueRecords": 26093,
   "chunks": [
     {
       "path": "records-0000.jsonl.gz",
       "count": 10000,
-      "bytes": 377331,
-      "sha256": "eec5d84ecd8cb2af76b67094e21218fc371d1d92505b8349026d1666d879f3ba"
+      "bytes": 377078,
+      "sha256": "821cd10534aef7835a4a772ab60c343b014e1a15db1b31357d5b2baedbbb16b1"
     },
     {
       "path": "records-0001.jsonl.gz",
       "count": 10000,
-      "bytes": 398557,
-      "sha256": "617c727c96d5d3b92f92a983998d85de6a4786fdb38ad05d8dfc26263974e0ac"
+      "bytes": 398597,
+      "sha256": "29fc42eb4b71300f13a00c0b4d8396cbe489da096589955a2a9c5e4d1993b13e"
     },
     {
       "path": "records-0002.jsonl.gz",
-      "count": 6090,
-      "bytes": 242998,
-      "sha256": "9d4b67ef9744e7f90f0c86810c982ab4db2756bb2e65634a3087b48c37e69990"
+      "count": 6093,
+      "bytes": 243268,
+      "sha256": "dd32a22588ba5555ced6c75ead886d1f25c47d8f8f1995891897d4eb34d5ebe1"
     }
   ],
-  "bytes": 1018886
+  "bytes": 1018943
 }
